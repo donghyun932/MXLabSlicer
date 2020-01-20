@@ -720,7 +720,7 @@ static int stk500_loadaddr(PROGRAMMER * pgm, AVRMEM * mem, unsigned int addr)
   }
 
   buf[0] = Cmnd_STK_LOAD_ADDRESS;
-  // Workaround for the infamous ';' bug in the Prusa3D usb to serial converter.
+  // Workaround for the infamous ';' bug in the MXLab3D usb to serial converter.
   // Send the binary data by nibbles to avoid transmitting the ';' character.
   buf[1] = addr & 0x0f;
   buf[2] = addr & 0xf0;
@@ -773,7 +773,7 @@ static int stk500_paged_write(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
   int tries;
   unsigned int n;
   unsigned int i, j;
-  unsigned int prusa3d_semicolon_workaround_round = 0;
+  unsigned int mxlab3d_semicolon_workaround_round = 0;
   bool has_semicolon = false;
 
   if (strcmp(m->desc, "flash") == 0) {
@@ -821,12 +821,12 @@ static int stk500_paged_write(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
         break;
       }
 
-    for (prusa3d_semicolon_workaround_round = 0; prusa3d_semicolon_workaround_round < (has_semicolon ? 2u : 1u); prusa3d_semicolon_workaround_round++) {
+    for (mxlab3d_semicolon_workaround_round = 0; mxlab3d_semicolon_workaround_round < (has_semicolon ? 2u : 1u); mxlab3d_semicolon_workaround_round++) {
       /* build command block and avoid multiple send commands as it leads to a crash
           of the silabs usb serial driver on mac os x */
       i = 0;
       buf[i++] = Cmnd_STK_PROG_PAGE;
-      // Workaround for the infamous ';' bug in the Prusa3D usb to serial converter.
+      // Workaround for the infamous ';' bug in the MXLab3D usb to serial converter.
       // Send the binary data by nibbles to avoid transmitting the ';' character.
       buf[i++] = (block_size >> 8) & 0xf0;
       buf[i++] = (block_size >> 8) & 0x0f;
@@ -837,7 +837,7 @@ static int stk500_paged_write(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
         for (j = 0; j < (unsigned)block_size; ++i, ++ j) {
           buf[i] = m->buf[addr + j];
           if (buf[i] == ';')
-            buf[i] |= (prusa3d_semicolon_workaround_round ? 0xf0 : 0x0f);
+            buf[i] |= (mxlab3d_semicolon_workaround_round ? 0xf0 : 0x0f);
         }
       } else {
         memcpy(&buf[i], &m->buf[addr], block_size);
@@ -922,7 +922,7 @@ static int stk500_paged_load(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
     tries++;
     stk500_loadaddr(pgm, m, addr/a_div);
     buf[0] = Cmnd_STK_READ_PAGE;
-    // Workaround for the infamous ';' bug in the Prusa3D usb to serial converter.
+    // Workaround for the infamous ';' bug in the MXLab3D usb to serial converter.
     // Send the binary data by nibbles to avoid transmitting the ';' character.
     buf[1] = (block_size >> 8) & 0xf0;
     buf[2] = (block_size >> 8) & 0x0f;

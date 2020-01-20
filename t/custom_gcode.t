@@ -48,7 +48,7 @@ use Slic3r::Test;
 {
     my $parser = Slic3r::GCode::PlaceholderParser->new;
     my $config = Slic3r::Config::new_from_defaults;
-    $config->set('printer_notes', '  PRINTER_VENDOR_PRUSA3D  PRINTER_MODEL_MK2  ');
+    $config->set('printer_notes', '  PRINTER_VENDOR_MXLAB3D  PRINTER_MODEL_MK2  ');
     $config->set('nozzle_diameter', [0.6,0.6,0.6,0.6]);
     $parser->apply_config($config);
     $parser->set('foo' => 0);
@@ -104,9 +104,9 @@ use Slic3r::Test;
     is $parser->evaluate_boolean_expression('12 <= 12'), 1, 'boolean expression parser: lower than or equal (same values) - true';
     is $parser->evaluate_boolean_expression('12 >= 12'), 1, 'boolean expression parser: greater than or equal (same values) - true';
 
-    is $parser->evaluate_boolean_expression('printer_notes=~/.*PRINTER_VENDOR_PRUSA3D.*/ and printer_notes=~/.*PRINTER_MODEL_MK2.*/ and nozzle_diameter[0]==0.6 and num_extruders>1'), 1, 'complex expression';
-    is $parser->evaluate_boolean_expression('printer_notes=~/.*PRINTER_VEwerfNDOR_PRUSA3D.*/ or printer_notes=~/.*PRINTertER_MODEL_MK2.*/ or (nozzle_diameter[0]==0.6 and num_extruders>1)'), 1, 'complex expression2';
-    is $parser->evaluate_boolean_expression('printer_notes=~/.*PRINTER_VEwerfNDOR_PRUSA3D.*/ or printer_notes=~/.*PRINTertER_MODEL_MK2.*/ or (nozzle_diameter[0]==0.3 and num_extruders>1)'), 0, 'complex expression3';
+    is $parser->evaluate_boolean_expression('printer_notes=~/.*PRINTER_VENDOR_MXLAB3D.*/ and printer_notes=~/.*PRINTER_MODEL_MK2.*/ and nozzle_diameter[0]==0.6 and num_extruders>1'), 1, 'complex expression';
+    is $parser->evaluate_boolean_expression('printer_notes=~/.*PRINTER_VEwerfNDOR_MXLAB3D.*/ or printer_notes=~/.*PRINTertER_MODEL_MK2.*/ or (nozzle_diameter[0]==0.6 and num_extruders>1)'), 1, 'complex expression2';
+    is $parser->evaluate_boolean_expression('printer_notes=~/.*PRINTER_VEwerfNDOR_MXLAB3D.*/ or printer_notes=~/.*PRINTertER_MODEL_MK2.*/ or (nozzle_diameter[0]==0.3 and num_extruders>1)'), 0, 'complex expression3';
 }
 
 {

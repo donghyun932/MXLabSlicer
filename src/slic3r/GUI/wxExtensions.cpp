@@ -2084,7 +2084,7 @@ IMPLEMENT_VARIANT_OBJECT(DataViewBitmapText)
 #if ENABLE_NONCUSTOM_DATA_VIEW_RENDERING
 BitmapTextRenderer::BitmapTextRenderer(wxDataViewCellMode mode /*= wxDATAVIEW_CELL_EDITABLE*/, 
                                                  int align /*= wxDVR_DEFAULT_ALIGNMENT*/): 
-wxDataViewRenderer(wxT("PrusaDataViewBitmapText"), mode, align)
+wxDataViewRenderer(wxT("MXLabDataViewBitmapText"), mode, align)
 {
     SetMode(mode);
     SetAlignment(align);
@@ -3907,7 +3907,7 @@ void MenuWithSeparators::SetSecondSeparator()
 }
 
 // ----------------------------------------------------------------------------
-// PrusaBitmap
+// MXLabBitmap
 // ----------------------------------------------------------------------------
 ScalableBitmap::ScalableBitmap( wxWindow *parent, 
                                 const std::string& icon_name/* = ""*/,
@@ -3926,7 +3926,7 @@ void ScalableBitmap::msw_rescale()
 }
 
 // ----------------------------------------------------------------------------
-// PrusaButton
+// MXLabButton
 // ----------------------------------------------------------------------------
 
 ScalableButton::ScalableButton( wxWindow *          parent,

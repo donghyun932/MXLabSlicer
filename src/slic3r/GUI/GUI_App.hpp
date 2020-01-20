@@ -38,7 +38,7 @@ enum FileType
     FT_OBJ,
     FT_AMF,
     FT_3MF,
-    FT_PRUSA,
+    FT_MXLAB,
     FT_GCODE,
     FT_MODEL,
     FT_PROJECT,
@@ -150,7 +150,7 @@ public:
     void            load_current_presets();
 
     wxString        current_language_code() const { return m_wxLocale->GetCanonicalName(); }
-	// Translate the language code to a code, for which Prusa Research maintains translations. Defaults to "en_US".
+	// Translate the language code to a code, for which MXLab Research maintains translations. Defaults to "en_US".
     wxString 		current_language_code_safe() const;
 
     virtual bool OnExceptionInMainLoop() override;

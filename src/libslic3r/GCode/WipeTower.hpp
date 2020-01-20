@@ -375,4 +375,4 @@ private:
 
 }; // namespace Slic3r
 
-#endif // WipeTowerPrusaMM_hpp_ 
+#endif // WipeTowerMXLabMM_hpp_ 

@@ -129,7 +129,7 @@ public:
 
 
 // ----------------------------------------------------------------------------
-// DataViewBitmapText: helper class used by PrusaBitmapTextRenderer
+// DataViewBitmapText: helper class used by MXLabBitmapTextRenderer
 // ----------------------------------------------------------------------------
 
 class DataViewBitmapText : public wxObject

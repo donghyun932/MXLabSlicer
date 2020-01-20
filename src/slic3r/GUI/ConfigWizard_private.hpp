@@ -102,9 +102,9 @@ struct Bundle
     std::unique_ptr<PresetBundle> preset_bundle;
     VendorProfile *vendor_profile;
     const bool is_in_resources;
-    const bool is_prusa_bundle;
+    const bool is_mxlab_bundle;
 
-    Bundle(fs::path source_path, bool is_in_resources, bool is_prusa_bundle = false);
+    Bundle(fs::path source_path, bool is_in_resources, bool is_mxlab_bundle = false);
     Bundle(Bundle &&other);
 
     const std::string& vendor_id() const { return vendor_profile->id; }
@@ -114,8 +114,8 @@ struct BundleMap: std::unordered_map<std::string /* = vendor ID */, Bundle>
 {
     static BundleMap load();
 
-    Bundle& prusa_bundle();
-    const Bundle& prusa_bundle() const;
+    Bundle& mxlab_bundle();
+    const Bundle& mxlab_bundle() const;
 };
 
 struct PrinterPickerEvent;

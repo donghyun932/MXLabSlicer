@@ -12,9 +12,9 @@ Thank you for understanding.
 
 ---
 
-# Building PrusaSlicer on Microsoft Windows
+# Building MXLabSlicer on Microsoft Windows
 
-~~The currently supported way of building PrusaSlicer on Windows is with CMake and MS Visual Studio 2013.
+~~The currently supported way of building MXLabSlicer on Windows is with CMake and MS Visual Studio 2013.
 You can use the free [Visual Studio 2013 Community Edition](https://www.visualstudio.com/vs/older-downloads/).
 CMake installer can be downloaded from [the official website](https://cmake.org/download/).~~
 
@@ -24,7 +24,7 @@ _Note:_ Thanks to [**@supermerill**](https://github.com/supermerill) for testing
 
 ### Dependencies
 
-On Windows PrusaSlicer is built against statically built libraries.
+On Windows MXLabSlicer is built against statically built libraries.
 ~~We provide a prebuilt package of all the needed dependencies. This package only works on Visual Studio 2013, so~~ if you are using a newer version of Visual Studio, you need to compile the dependencies yourself as per [below](#building-the-dependencies-package-yourself).
 The package comes in a several variants:
 
@@ -39,14 +39,14 @@ If you're unsure where to unpack the package, unpack it into `C:\local\` (but it
 
 Alternatively you can also compile the dependencies yourself, see below.
 
-### Building PrusaSlicer with Visual Studio
+### Building MXLabSlicer with Visual Studio
 
-First obtain the PrusaSlicer sources via either git or by extracting the source archive.
+First obtain the MXLabSlicer sources via either git or by extracting the source archive.
 
 Then you will need to note down the so-called 'prefix path' to the dependencies, this is the location of the dependencies packages + `\usr\local` appended.
 For example on 64 bits this would be `C:\local\destdir-64\usr\local`. The prefix path will need to be passed to CMake.
 
-When ready, open the relevant Visual Studio command line and `cd` into the directory with PrusaSlicer sources.
+When ready, open the relevant Visual Studio command line and `cd` into the directory with MXLabSlicer sources.
 Use these commands to prepare Visual Studio solution file:
 
     mkdir build
@@ -57,16 +57,16 @@ Note that if you're building a 32-bit variant, you will need to change the `"Vis
 
 Conversely, if you're using Visual Studio version other than 2013, the version number will need to be changed accordingly.
 
-If `cmake` has finished without errors, go to the build directory and open the `PrusaSlicer.sln` solution file in Visual Studio.
-Before building, make sure you're building the right project (use one of those starting with `PrusaSlicer_app_...`) and that you're building
+If `cmake` has finished without errors, go to the build directory and open the `MXLabSlicer.sln` solution file in Visual Studio.
+Before building, make sure you're building the right project (use one of those starting with `MXLabSlicer_app_...`) and that you're building
 with the right configuration, i.e. _Release_ vs. _Debug_. When unsure, choose _Release_.
 Note that you won't be able to build a _Debug_ variant against a _Release_-only dependencies package.
 
 #### Installing using the `INSTALL` project
 
-PrusaSlicer can be run from the Visual Studio or from Visual Studio's build directory (`src\Release` or `src\Debug`),
+MXLabSlicer can be run from the Visual Studio or from Visual Studio's build directory (`src\Release` or `src\Debug`),
 but for longer-term usage you might want to install somewhere using the `INSTALL` project.
-By default, this installs into `C:\Program Files\PrusaSlicer`.
+By default, this installs into `C:\Program Files\MXLabSlicer`.
 To customize the install path, use the `-DCMAKE_INSTALL_PREFIX=<path of your choice>` when invoking `cmake`.
 
 ### Building from the command line
@@ -88,10 +88,10 @@ To install, use `msbuild /P:Configuration=Release INSTALL.vcxproj` , `ninja inst
 
 ### Building the dependencies package yourself
 
-The dependencies package is built using CMake scripts inside the `deps` subdirectory of PrusaSlicer sources.
+The dependencies package is built using CMake scripts inside the `deps` subdirectory of MXLabSlicer sources.
 (This is intentionally not interconnected with the CMake scripts in the rest of the sources.)
 
-Open the preferred Visual Studio command line (64 or 32 bit variant) and `cd` into the directory with PrusaSlicer sources.
+Open the preferred Visual Studio command line (64 or 32 bit variant) and `cd` into the directory with MXLabSlicer sources.
 Then `cd` into the `deps` directory and use these commands to build:
 
     mkdir build

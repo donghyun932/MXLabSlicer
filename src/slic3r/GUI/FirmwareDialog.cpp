@@ -58,7 +58,7 @@ using Utils::Serial;
 
 // USB IDs used to perform device lookup
 enum {
-	USB_VID_PRUSA    = 0x2c99,
+	USB_VID_MXLAB    = 0x2c99,
 	USB_PID_MK2      = 1,
 	USB_PID_MK3      = 2,
 	USB_PID_MMU_BOOT = 3,
@@ -376,7 +376,7 @@ bool FirmwareDialog::priv::check_model_id()
 
 	// std::string line;
 	// error_code ec;
-	// serial.printer_write_line("PRUSA Rev");
+	// serial.printer_write_line("MXLAB Rev");
 	// while (serial.read_line(TIMEOUT, line, ec)) {
 	// 	if (ec) {
 	// 		queue_error(wxString::Format(_(L("Could not connect to the printer at %s")), port->port));
@@ -408,7 +408,7 @@ void FirmwareDialog::priv::avr109_wait_for_bootloader(Avr109Pid usb_pid, unsigne
 
 		auto ports = Utils::scan_serial_ports_extended();
 		ports.erase(std::remove_if(ports.begin(), ports.end(), [=](const SerialPortInfo &port ) {
-			return port.id_vendor != USB_VID_PRUSA || port.id_product != usb_pid.boot;
+			return port.id_vendor != USB_VID_MXLAB || port.id_product != usb_pid.boot;
 		}), ports.end());
 
 		if (ports.size() == 1) {
@@ -441,7 +441,7 @@ void FirmwareDialog::priv::avr109_lookup_port(Avr109Pid usb_pid)
 
 	auto ports = Utils::scan_serial_ports_extended();
 	ports.erase(std::remove_if(ports.begin(), ports.end(), [=](const SerialPortInfo &port ) {
-		return port.id_vendor != USB_VID_PRUSA ||
+		return port.id_vendor != USB_VID_MXLAB ||
 			(port.id_product != usb_pid.boot && port.id_product != usb_pid.app);
 	}), ports.end());
 
@@ -477,7 +477,7 @@ void FirmwareDialog::priv::prepare_common()
 		extra_verbose ? "-vvvvv" : "-v",
 		"-p", "atmega2560",
 		// Using the "Wiring" mode to program Rambo or Einsy, using the STK500v2 protocol (not the STK500).
-		// The Prusa's avrdude is patched to never send semicolons inside the data packets, as the USB to serial chip
+		// The MXLab's avrdude is patched to never send semicolons inside the data packets, as the USB to serial chip
 		// is flashed with a buggy firmware.
 		"-c", "wiring",
 		"-P", port->port,
@@ -523,7 +523,7 @@ void FirmwareDialog::priv::prepare_mk3()
 		extra_verbose ? "-vvvvv" : "-v",
 		"-p", "atmega2560",
 		// Using the "Arduino" mode to program Einsy's external flash with languages, using the STK500 protocol (not the STK500v2).
-		// The Prusa's avrdude is patched again to never send semicolons inside the data packets.
+		// The MXLab's avrdude is patched again to never send semicolons inside the data packets.
 		"-c", "arduino",
 		"-P", port->port,
 		"-b", "115200",
@@ -760,10 +760,10 @@ void FirmwareDialog::priv::ensure_joined()
 const char* FirmwareDialog::priv::avr109_dev_name(Avr109Pid usb_pid) {
 	switch (usb_pid.boot) {
 		case USB_PID_MMU_BOOT:
-			return "Original Prusa MMU 2.0 Control";
+			return "Original MXLab MMU 2.0 Control";
 		break;
 		case USB_PID_CW1_BOOT:
-			return "Original Prusa CW1";
+			return "Original MXLab CW1";
 		break;
 
 		default: throw std::runtime_error((boost::format("Invalid avr109 device USB PID: %1%") % usb_pid.boot).str());

@@ -26,7 +26,7 @@ use Slic3r::Test;
     $config->set('temperature', [200, 180, 170, 160]);
     $config->set('first_layer_temperature', [206, 186, 166, 156]);
     $config->set('toolchange_gcode', 'T[next_extruder] ;toolchange');  # test that it doesn't crash when this is supplied
-    # Since July 2019, PrusaSlicer only emits automatic Tn command in case that the toolchange_gcode is empty
+    # Since July 2019, MXLabSlicer only emits automatic Tn command in case that the toolchange_gcode is empty
     # The "T[next_extruder]" is therefore needed in this test.
     
     my $print = Slic3r::Test::init_print('20mm_cube', config => $config);

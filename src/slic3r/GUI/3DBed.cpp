@@ -273,11 +273,11 @@ void Bed3D::render(GLCanvas3D& canvas, float theta, float scale_factor, bool sho
 
     switch (m_type)
     {
-    case MK2: { render_prusa(canvas, "mk2", theta > 90.0f); break; }
-    case MK3: { render_prusa(canvas, "mk3", theta > 90.0f); break; }
-    case SL1: { render_prusa(canvas, "sl1", theta > 90.0f); break; }
-    case MINI: { render_prusa(canvas, "mini", theta > 90.0f); break; }
-    case ENDER3: { render_prusa(canvas, "ender3", theta > 90.0f); break; }
+    case MK2: { render_mxlab(canvas, "mk2", theta > 90.0f); break; }
+    case MK3: { render_mxlab(canvas, "mk3", theta > 90.0f); break; }
+    case SL1: { render_mxlab(canvas, "sl1", theta > 90.0f); break; }
+    case MINI: { render_mxlab(canvas, "mini", theta > 90.0f); break; }
+    case ENDER3: { render_mxlab(canvas, "ender3", theta > 90.0f); break; }
     default:
     case Custom: { render_custom(canvas, theta > 90.0f); break; }
     }
@@ -355,7 +355,7 @@ Bed3D::EType Bed3D::detect_type(const Pointfs& shape) const
             {
                 if (curr->vendor != nullptr)
                 {
-                    if ((curr->vendor->name == "Prusa Research") && (shape == dynamic_cast<const ConfigOptionPoints*>(curr->config.option("bed_shape"))->values))
+                    if ((curr->vendor->name == "MXLab Research") && (shape == dynamic_cast<const ConfigOptionPoints*>(curr->config.option("bed_shape"))->values))
                     {
                         if (boost::contains(curr->name, "SL1"))
                         {
@@ -402,7 +402,7 @@ void Bed3D::render_axes() const
         m_axes.render();
 }
 
-void Bed3D::render_prusa(GLCanvas3D& canvas, const std::string& key, bool bottom) const
+void Bed3D::render_mxlab(GLCanvas3D& canvas, const std::string& key, bool bottom) const
 {
     if (!bottom)
         render_model(m_custom_model.empty() ? resources_dir() + "/models/" + key + "_bed.stl" : m_custom_model);

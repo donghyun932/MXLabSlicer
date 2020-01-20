@@ -193,12 +193,12 @@ const char* SL1Host::get_name() const { return "SL1Host"; }
 
 wxString SL1Host::get_test_ok_msg () const
 {
-    return _(L("Connection to Prusa SL1 works correctly."));
+    return _(L("Connection to MXLab SL1 works correctly."));
 }
 
 wxString SL1Host::get_test_failed_msg (wxString &msg) const
 {
-    return wxString::Format("%s: %s", _(L("Could not connect to Prusa SLA")), msg);
+    return wxString::Format("%s: %s", _(L("Could not connect to MXLab SLA")), msg);
 }
 
 bool SL1Host::can_start_print() const
@@ -208,7 +208,7 @@ bool SL1Host::can_start_print() const
 
 bool SL1Host::validate_version_text(const boost::optional<std::string> &version_text) const
 {
-    return version_text ? boost::starts_with(*version_text, "Prusa SLA") : false;
+    return version_text ? boost::starts_with(*version_text, "MXLab SLA") : false;
 }
 
 

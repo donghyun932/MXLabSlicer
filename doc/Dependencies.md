@@ -1,4 +1,4 @@
-# Dependency report for PrusaSlicer
+# Dependency report for MXLabSlicer
 ## Possible dynamic linking on Linux
 * zlib: Strict dependency required from the system, linked dynamically. Many other libs depend on zlib.
 * wxWidgets: searches for wx-3.1 by default, but with cmake option `SLIC3R_WX_STABLE=ON` it will use wx-3.0 bundled with most distros.

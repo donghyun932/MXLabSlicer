@@ -1340,7 +1340,7 @@ private:
     static const std::regex pattern_drop;
 };
 
-const std::regex PlaterDropTarget::pattern_drop(".*[.](stl|obj|amf|3mf|prusa)", std::regex::icase);
+const std::regex PlaterDropTarget::pattern_drop(".*[.](stl|obj|amf|3mf|mxlab)", std::regex::icase);
 
 bool PlaterDropTarget::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString &filenames)
 {
@@ -1836,7 +1836,7 @@ struct Plater::priv
     static const std::regex pattern_3mf;
     static const std::regex pattern_zip_amf;
     static const std::regex pattern_any_amf;
-    static const std::regex pattern_prusa;
+    static const std::regex pattern_mxlab;
 
     priv(Plater *q, MainFrame *main_frame);
     ~priv();
@@ -2030,11 +2030,11 @@ private:
     std::string m_last_sla_printer_profile_name;
 };
 
-const std::regex Plater::priv::pattern_bundle(".*[.](amf|amf[.]xml|zip[.]amf|3mf|prusa)", std::regex::icase);
+const std::regex Plater::priv::pattern_bundle(".*[.](amf|amf[.]xml|zip[.]amf|3mf|mxlab)", std::regex::icase);
 const std::regex Plater::priv::pattern_3mf(".*3mf", std::regex::icase);
 const std::regex Plater::priv::pattern_zip_amf(".*[.]zip[.]amf", std::regex::icase);
 const std::regex Plater::priv::pattern_any_amf(".*[.](amf|amf[.]xml|zip[.]amf)", std::regex::icase);
-const std::regex Plater::priv::pattern_prusa(".*prusa", std::regex::icase);
+const std::regex Plater::priv::pattern_mxlab(".*mxlab", std::regex::icase);
 
 Plater::priv::priv(Plater *q, MainFrame *main_frame)
     : q(q)
@@ -2334,10 +2334,10 @@ std::vector<size_t> Plater::priv::load_files(const std::vector<fs::path>& input_
         const bool type_3mf = std::regex_match(path.string(), pattern_3mf);
         const bool type_zip_amf = !type_3mf && std::regex_match(path.string(), pattern_zip_amf);
         const bool type_any_amf = !type_3mf && std::regex_match(path.string(), pattern_any_amf);
-        const bool type_prusa = std::regex_match(path.string(), pattern_prusa);
+        const bool type_mxlab = std::regex_match(path.string(), pattern_mxlab);
 
         Slic3r::Model model;
-        bool is_project_file = type_prusa;
+        bool is_project_file = type_mxlab;
         try {
             if (type_3mf || type_zip_amf) {
                 DynamicPrintConfig config;

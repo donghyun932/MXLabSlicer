@@ -53,9 +53,9 @@ const std::string THUMBNAIL_FILE = "Metadata/thumbnail.png";
 const std::string PRINT_CONFIG_FILE = "Metadata/Slic3r_PE.config";
 const std::string MODEL_CONFIG_FILE = "Metadata/Slic3r_PE_model.config";
 const std::string LAYER_HEIGHTS_PROFILE_FILE = "Metadata/Slic3r_PE_layer_heights_profile.txt";
-const std::string LAYER_CONFIG_RANGES_FILE = "Metadata/Prusa_Slicer_layer_config_ranges.xml";
+const std::string LAYER_CONFIG_RANGES_FILE = "Metadata/MXLab_Slicer_layer_config_ranges.xml";
 const std::string SLA_SUPPORT_POINTS_FILE = "Metadata/Slic3r_PE_sla_support_points.txt";
-const std::string CUSTOM_GCODE_PER_PRINT_Z_FILE = "Metadata/Prusa_Slicer_custom_gcode_per_print_z.xml";
+const std::string CUSTOM_GCODE_PER_PRINT_Z_FILE = "Metadata/MXLab_Slicer_custom_gcode_per_print_z.xml";
 
 const char* MODEL_TAG = "model";
 const char* RESOURCES_TAG = "resources";
@@ -1931,7 +1931,7 @@ namespace Slic3r {
         }
 
         // Adds content types file ("[Content_Types].xml";).
-        // The content of this file is the same for each PrusaSlicer 3mf.
+        // The content of this file is the same for each MXLabSlicer 3mf.
         if (!_add_content_types_file_to_archive(archive))
         {
             close_zip_writer(&archive);
@@ -1953,7 +1953,7 @@ namespace Slic3r {
 #endif // ENABLE_THUMBNAIL_GENERATOR
 
         // Adds relationships file ("_rels/.rels"). 
-        // The content of this file is the same for each PrusaSlicer 3mf.
+        // The content of this file is the same for each MXLabSlicer 3mf.
         // The relationshis file contains a reference to the geometry file "3D/3dmodel.model", the name was chosen to be compatible with CURA.
         if (!_add_relationships_file_to_archive(archive))
         {
@@ -2002,7 +2002,7 @@ namespace Slic3r {
             return false;
         }
 
-        // Adds custom gcode per height file ("Metadata/Prusa_Slicer_custom_gcode_per_print_z.xml").
+        // Adds custom gcode per height file ("Metadata/MXLab_Slicer_custom_gcode_per_print_z.xml").
         // All custom gcode per height of whole Model are stored here
         if (!_add_custom_gcode_per_print_z_file_to_archive(archive, model))
         {

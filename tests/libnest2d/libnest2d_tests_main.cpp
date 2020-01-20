@@ -43,7 +43,7 @@ struct NfpImpl<S, NfpLevel::CONVEX_ONLY>
 }
 }
 
-static std::vector<libnest2d::Item>& prusaParts() {
+static std::vector<libnest2d::Item>& mxlabParts() {
     static std::vector<libnest2d::Item> ret;
 
     if(ret.empty()) {
@@ -150,7 +150,7 @@ TEST_CASE("boundingCircle", "[Geometry]") {
     REQUIRE(c.center().Y == 10);
     REQUIRE(c.radius() == Approx(10));
 
-    auto parts = prusaParts();
+    auto parts = mxlabParts();
 
     int i = 0;
     for(auto& part : parts) {
@@ -519,7 +519,7 @@ TEST_CASE("BottomLeftStressTest", "[Geometry]") {
     using namespace libnest2d;
 
     const Coord SCALE = 1000000;
-    auto& input = prusaParts();
+    auto& input = mxlabParts();
 
     Box bin(210*SCALE, 250*SCALE);
     BottomLeftPlacer placer(bin);
@@ -565,10 +565,10 @@ TEST_CASE("convexHull", "[Geometry]") {
     REQUIRE(chull.size() == poly.size());
 }
 
-TEST_CASE("PrusaPartsShouldFitIntoTwoBins", "[Nesting]") {
+TEST_CASE("MXLabPartsShouldFitIntoTwoBins", "[Nesting]") {
 
     // Get the input items and define the bin.
-    std::vector<Item> input = prusaParts();
+    std::vector<Item> input = mxlabParts();
     auto bin = Box(250000000, 210000000);
 
     // Do the nesting. Check in each step if the remaining items are less than
@@ -581,7 +581,7 @@ TEST_CASE("PrusaPartsShouldFitIntoTwoBins", "[Nesting]") {
                                       pcount = cnt;
                                   }});
 
-    // For prusa parts, 2 bins should be enough...
+    // For mxlab parts, 2 bins should be enough...
     REQUIRE(bins > 0u);
     REQUIRE(bins <= 2u);
 

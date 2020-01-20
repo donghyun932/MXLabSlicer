@@ -332,7 +332,7 @@ public:
 	// Let the firmware back up the active speed override value.
 	WipeTowerWriter& speed_override_backup()
     {
-        // This is only supported by Prusa at this point (https://github.com/prusa3d/PrusaSlicer/issues/3114)
+        // This is only supported by MXLab at this point (https://github.com/prusa3d/PrusaSlicer/issues/3114)
         if (m_gcode_flavor == gcfMarlin)
             m_gcode += "M220 B\n";
 		return *this;
@@ -556,7 +556,7 @@ std::vector<WipeTower::ToolChangeResult> WipeTower::prime(
 	this->set_layer(first_layer_height, first_layer_height, tools.size(), true, false);
 	this->m_current_tool 		= tools.front();
     
-    // The Prusa i3 MK2 has a working space of [0, -2.2] to [250, 210].
+    // The MXLab i3 MK2 has a working space of [0, -2.2] to [250, 210].
     // Due to the XYZ calibration, this working space may shrink slightly from all directions,
     // therefore the homing position is shifted inside the bed by 0.2 in the firmware to [0.2, -2.0].
 //	box_coordinates cleaning_box(xy(0.5f, - 1.5f), m_wipe_tower_width, wipe_area);

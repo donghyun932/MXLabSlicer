@@ -101,7 +101,7 @@ void RasterWriter::set_config(const DynamicPrintConfig &cfg)
     m_config["printProfile"]   = get_cfg_value(cfg, "sla_print_settings_id");
 
     m_config["fileCreationTimestamp"] = Utils::utc_timestamp();
-    m_config["prusaSlicerVersion"]    = SLIC3R_BUILD_ID;
+    m_config["mxlabSlicerVersion"]    = SLIC3R_BUILD_ID;
 }
 
 void RasterWriter::set_statistics(const PrintStatistics &stats)
