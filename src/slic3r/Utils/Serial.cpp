@@ -62,7 +62,7 @@ namespace Utils {
 
 static bool looks_like_printer(const std::string &friendly_name)
 {
-	return friendly_name.find("Original Prusa") != std::string::npos;
+	return friendly_name.find("Original MXLab") != std::string::npos;
 }
 
 #if _WIN32

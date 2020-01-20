@@ -43,7 +43,7 @@
 #include "libslic3r/Format/OBJ.hpp"
 #include "libslic3r/Utils.hpp"
 
-#include "PrusaSlicer.hpp"
+#include "MXLabSlicer.hpp"
 
 #ifdef SLIC3R_GUI
     #include "slic3r/GUI/GUI.hpp"
@@ -511,7 +511,7 @@ int CLI::run(int argc, char **argv)
                 gui->mainframe->load_config(m_extra_config);
         });
         int result = wxEntry(argc, argv);
-        //FIXME this is a workaround for the PrusaSlicer 2.1 release.
+        //FIXME this is a workaround for the MXLabSlicer 2.1 release.
 		_3DScene::destroy();
         return result;
 #else /* SLIC3R_GUI */
@@ -608,8 +608,8 @@ void CLI::print_help(bool include_print_options, PrinterTechnology printer_techn
         << " (without GUI support)"
 #endif /* SLIC3R_GUI */
         << std::endl
-        << "https://github.com/prusa3d/PrusaSlicer" << std::endl << std::endl
-        << "Usage: prusa-slicer [ ACTIONS ] [ TRANSFORM ] [ OPTIONS ] [ file.stl ... ]" << std::endl
+        << "https://github.com/donghyun932/MXLabSlicer" << std::endl << std::endl
+        << "Usage: mxlab-slicer [ ACTIONS ] [ TRANSFORM ] [ OPTIONS ] [ file.stl ... ]" << std::endl
         << std::endl
         << "Actions:" << std::endl;
     cli_actions_config_def.print_cli_help(boost::nowide::cout, false);

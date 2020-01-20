@@ -13,14 +13,14 @@ static const float MMMIN_TO_MMSEC = 1.0f / 60.0f;
 static const float MILLISEC_TO_SEC = 0.001f;
 static const float INCHES_TO_MM = 25.4f;
 
-static const float DEFAULT_FEEDRATE = 1500.0f; // from Prusa Firmware (Marlin_main.cpp)
-static const float DEFAULT_ACCELERATION = 1500.0f; // Prusa Firmware 1_75mm_MK2
-static const float DEFAULT_RETRACT_ACCELERATION = 1500.0f; // Prusa Firmware 1_75mm_MK2
-static const float DEFAULT_AXIS_MAX_FEEDRATE[] = { 500.0f, 500.0f, 12.0f, 120.0f }; // Prusa Firmware 1_75mm_MK2
-static const float DEFAULT_AXIS_MAX_ACCELERATION[] = { 9000.0f, 9000.0f, 500.0f, 10000.0f }; // Prusa Firmware 1_75mm_MK2
-static const float DEFAULT_AXIS_MAX_JERK[] = { 10.0f, 10.0f, 0.4f, 2.5f }; // from Prusa Firmware (Configuration.h)
-static const float DEFAULT_MINIMUM_FEEDRATE = 0.0f; // from Prusa Firmware (Configuration_adv.h)
-static const float DEFAULT_MINIMUM_TRAVEL_FEEDRATE = 0.0f; // from Prusa Firmware (Configuration_adv.h)
+static const float DEFAULT_FEEDRATE = 1500.0f; // from MXLab Firmware (Marlin_main.cpp)
+static const float DEFAULT_ACCELERATION = 1500.0f; // MXLab Firmware 1_75mm_MK2
+static const float DEFAULT_RETRACT_ACCELERATION = 1500.0f; // MXLab Firmware 1_75mm_MK2
+static const float DEFAULT_AXIS_MAX_FEEDRATE[] = { 500.0f, 500.0f, 12.0f, 120.0f }; // MXLab Firmware 1_75mm_MK2
+static const float DEFAULT_AXIS_MAX_ACCELERATION[] = { 9000.0f, 9000.0f, 500.0f, 10000.0f }; // MXLab Firmware 1_75mm_MK2
+static const float DEFAULT_AXIS_MAX_JERK[] = { 10.0f, 10.0f, 0.4f, 2.5f }; // from MXLab Firmware (Configuration.h)
+static const float DEFAULT_MINIMUM_FEEDRATE = 0.0f; // from MXLab Firmware (Configuration_adv.h)
+static const float DEFAULT_MINIMUM_TRAVEL_FEEDRATE = 0.0f; // from MXLab Firmware (Configuration_adv.h)
 static const float DEFAULT_EXTRUDE_FACTOR_OVERRIDE_PERCENTAGE = 1.0f; // 100 percent
 
 static const float PREVIOUS_FEEDRATE_THRESHOLD = 0.0001f;
@@ -1366,7 +1366,7 @@ namespace Slic3r {
                 set_retract_acceleration(value);
             if (line.has_value('T', value)) {
                 // Interpret the T value as the travel acceleration in the new Marlin format.
-                //FIXME Prusa3D firmware currently does not support travel acceleration value independent from the extruding acceleration value.
+                //FIXME MXLab3D firmware currently does not support travel acceleration value independent from the extruding acceleration value.
                 // set_travel_acceleration(value);
             }
         }

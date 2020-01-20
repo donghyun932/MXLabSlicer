@@ -91,9 +91,9 @@
 #define CMD_XPROG_SETMODE                   0x51
 
 
-// *****************[ STK Prusa3D specific command constants ]*****************
+// *****************[ STK MXLab3D specific command constants ]*****************
 
-#define CMD_SET_UPLOAD_SIZE_PRUSA3D         0x71
+#define CMD_SET_UPLOAD_SIZE_MXLAB3D         0x71
 
 
 // *** AVR32 JTAG Programming command ***

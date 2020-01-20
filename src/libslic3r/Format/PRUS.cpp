@@ -293,7 +293,7 @@ static void extract_model_from_archive(
     }
 }
 
-// Load a PrusaControl project file into a provided model.
+// Load a MXLabControl project file into a provided model.
 bool load_prus(const char *path, Model *model)
 {
     mz_zip_archive archive;

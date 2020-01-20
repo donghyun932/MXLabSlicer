@@ -163,7 +163,7 @@ VendorProfile VendorProfile::from_ini(const ptree &tree, const boost::filesystem
             }
 
             model.family = section.second.get<std::string>("family", std::string());
-            if (model.family.empty() && res.name == "Prusa Research") {
+            if (model.family.empty() && res.name == "MXLab Research") {
                 // If no family is specified, it can be inferred for known printers
                 const auto from_pre_map = pre_family_model_map.find(model.id);
                 if (from_pre_map != pre_family_model_map.end()) { model.family = from_pre_map->second; }

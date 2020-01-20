@@ -3888,7 +3888,7 @@ static void debug_output_thumbnail(const ThumbnailData& thumbnail_data)
         }
     }
 
-    image.SaveFile("C:/prusa/test/test.png", wxBITMAP_TYPE_PNG);
+    image.SaveFile("C:/mxlab/test/test.png", wxBITMAP_TYPE_PNG);
 }
 #endif // ENABLE_THUMBNAIL_GENERATOR_DEBUG_OUTPUT
 

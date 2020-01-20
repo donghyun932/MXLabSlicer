@@ -1,7 +1,7 @@
-THIS IS A PRUSA3D BRANCH, WORKING AROUND A SPECIFIC PROBLEM 
+THIS IS A MXLAB3D BRANCH, WORKING AROUND A SPECIFIC PROBLEM 
 IN THE EARLY I3 MK2 USB COMMUNICATION CHIPS.
 
-Some of the early Prusa3D i3 MK2 printers were shipped with a buggy
+Some of the early MXLab3D i3 MK2 printers were shipped with a buggy
 USB communication controller firmware. This fork of avrdude contains
 a workaround inside the stk500v2 protocol implementation. 
 
@@ -10,9 +10,9 @@ bootloader, which is installed on the i3 MK2 printers:
 
 https://github.com/arduino/Arduino-stk500v2-bootloader
 
-The avrdude binary modified by Prusa3D could replace the avrdude bianary
+The avrdude binary modified by MXLab3D could replace the avrdude bianary
 of arduino to program the RAMBo board. In that case the modified binary
-is identified by a "-prusa3d" suffix to the version information.
+is identified by a "-mxlab3d" suffix to the version information.
 
 -------------------------------------------------------------------
 

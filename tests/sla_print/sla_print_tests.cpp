@@ -522,7 +522,7 @@ TEST_CASE("DefaultRasterShouldBeEmpty", "[SLARasterOutput]") {
 }
 
 TEST_CASE("InitializedRasterShouldBeNONEmpty", "[SLARasterOutput]") {
-    // Default Prusa SL1 display parameters
+    // Default MXLab SL1 display parameters
     sla::Raster::Resolution res{2560, 1440};
     sla::Raster::PixelDim   pixdim{120. / res.width_px, 68. / res.height_px};
 

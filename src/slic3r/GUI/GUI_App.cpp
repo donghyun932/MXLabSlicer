@@ -68,9 +68,9 @@ wxString file_wildcards(FileType file_type, const std::string &custom_extension)
         /* FT_OBJ */     "OBJ files (*.obj)|*.obj;*.OBJ",
         /* FT_AMF */     "AMF files (*.amf)|*.zip.amf;*.amf;*.AMF;*.xml;*.XML",
         /* FT_3MF */     "3MF files (*.3mf)|*.3mf;*.3MF;",
-        /* FT_PRUSA */   "Prusa Control files (*.prusa)|*.prusa;*.PRUSA",
+        /* FT_MXLAB */   "MXLab Control files (*.mxlab)|*.mxlab;*.MXLAB",
         /* FT_GCODE */   "G-code files (*.gcode, *.gco, *.g, *.ngc)|*.gcode;*.GCODE;*.gco;*.GCO;*.g;*.G;*.ngc;*.NGC",
-        /* FT_MODEL */   "Known files (*.stl, *.obj, *.amf, *.xml, *.3mf, *.prusa)|*.stl;*.STL;*.obj;*.OBJ;*.amf;*.AMF;*.xml;*.XML;*.3mf;*.3MF;*.prusa;*.PRUSA",
+        /* FT_MODEL */   "Known files (*.stl, *.obj, *.amf, *.xml, *.3mf, *.mxlab)|*.stl;*.STL;*.obj;*.OBJ;*.amf;*.AMF;*.xml;*.XML;*.3mf;*.3MF;*.mxlab;*.MXLAB",
         /* FT_PROJECT */ "Project files (*.3mf, *.amf)|*.3mf;*.3MF;*.amf;*.AMF",
 
         /* FT_INI */     "INI files (*.ini)|*.ini;*.INI",
@@ -186,7 +186,7 @@ bool GUI_App::on_init_inner()
     wxCHECK_MSG(wxDirExists(resources_dir), false,
         wxString::Format("Resources path does not exist or is not a directory: %s", resources_dir));
 
-    // Profiles for the alpha are stored into the PrusaSlicer-alpha directory to not mix with the current release.
+    // Profiles for the alpha are stored into the MXLabSlicer-alpha directory to not mix with the current release.
     // SetAppName(SLIC3R_APP_KEY);
     SetAppName(SLIC3R_APP_KEY "-alpha");
     SetAppDisplayName(SLIC3R_APP_NAME);
@@ -575,7 +575,7 @@ void GUI_App::import_model(wxWindow *parent, wxArrayString& input_files) const
 {
     input_files.Clear();
     wxFileDialog dialog(parent ? parent : GetTopWindow(),
-        _(L("Choose one or more files (STL/OBJ/AMF/3MF/PRUSA):")),
+        _(L("Choose one or more files (STL/OBJ/AMF/3MF/MXLAB):")),
         from_u8(app_config->get_last_dir()), "",
         file_wildcards(FT_MODEL), wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
 
@@ -665,10 +665,10 @@ bool GUI_App::load_language(wxString language, bool initial)
     if (initial) {
     	// There is a static list of lookup path prefixes in wxWidgets. Add ours.
 	    wxFileTranslationsLoader::AddCatalogLookupPathPrefix(from_u8(localization_dir()));
-    	// Get the active language from PrusaSlicer.ini, or empty string if the key does not exist.
+    	// Get the active language from MXLabSlicer.ini, or empty string if the key does not exist.
         language = app_config->get("translation_language");
         if (! language.empty())
-        	BOOST_LOG_TRIVIAL(trace) << boost::format("translation_language provided by PrusaSlicer.ini: %1%") % language;
+        	BOOST_LOG_TRIVIAL(trace) << boost::format("translation_language provided by MXLabSlicer.ini: %1%") % language;
 
         // Get the system language.
         {
@@ -684,7 +684,7 @@ bool GUI_App::load_language(wxString language, bool initial)
 	    	wxLocale temp_locale;
 	    	// Set the current translation's language to default, otherwise GetBestTranslation() may not work (see the wxWidgets source code).
 	    	wxTranslations::Get()->SetLanguage(wxLANGUAGE_DEFAULT);
-	    	// Let the wxFileTranslationsLoader enumerate all translation dictionaries for PrusaSlicer
+	    	// Let the wxFileTranslationsLoader enumerate all translation dictionaries for MXLabSlicer
 	    	// and try to match them with the system specific "preferred languages". 
 	    	// There seems to be a support for that on Windows and OSX, while on Linuxes the code just returns wxLocale::GetSystemLanguage().
 	    	// The last parameter gets added to the list of detected dictionaries. This is a workaround 
@@ -706,7 +706,7 @@ bool GUI_App::load_language(wxString language, bool initial)
 	}
 
 	if (language_info != nullptr && language_info->LayoutDirection == wxLayout_RightToLeft) {
-    	BOOST_LOG_TRIVIAL(trace) << boost::format("The following language code requires right to left layout, which is not supported by PrusaSlicer: %1%") % language_info->CanonicalName.ToUTF8().data();
+    	BOOST_LOG_TRIVIAL(trace) << boost::format("The following language code requires right to left layout, which is not supported by MXLabSlicer: %1%") % language_info->CanonicalName.ToUTF8().data();
 		language_info = nullptr;
 	}
 
@@ -731,14 +731,14 @@ bool GUI_App::load_language(wxString language, bool initial)
 
     if (! wxLocale::IsAvailable(language_info->Language)) {
     	// Loading the language dictionary failed.
-    	wxString message = "Switching PrusaSlicer to language " + language_info->CanonicalName + " failed.";
+    	wxString message = "Switching MXLabSlicer to language " + language_info->CanonicalName + " failed.";
 #if !defined(_WIN32) && !defined(__APPLE__)
         // likely some linux system
         message += "\nYou may need to reconfigure the missing locales, likely by running the \"locale-gen\" and \"dpkg-reconfigure locales\" commands.\n";
 #endif
         if (initial)
         	message + "\n\nApplication will close.";
-        wxMessageBox(message, "PrusaSlicer - Switching language failed", wxOK | wxICON_ERROR);
+        wxMessageBox(message, "MXLabSlicer - Switching language failed", wxOK | wxICON_ERROR);
         if (initial)
 			std::exit(EXIT_FAILURE);
 		else
@@ -834,7 +834,7 @@ void GUI_App::add_config_menu(wxMenuBar *menu)
     local_menu->AppendSeparator();
     local_menu->Append(config_id_base + ConfigMenuFlashFirmware, _(L("Flash printer &firmware")), _(L("Upload a firmware image into an Arduino based printer")));
     // TODO: for when we're able to flash dictionaries
-    // local_menu->Append(config_id_base + FirmwareMenuDict,  _(L("Flash language file")),    _(L("Upload a language dictionary file into a Prusa printer")));
+    // local_menu->Append(config_id_base + FirmwareMenuDict,  _(L("Flash language file")),    _(L("Upload a language dictionary file into a MXLab printer")));
 
     local_menu->Bind(wxEVT_MENU, [this, config_id_base](wxEvent &event) {
         switch (event.GetId() - config_id_base) {
@@ -1042,7 +1042,7 @@ int GUI_App::extruders_edited_cnt() const
 
 wxString GUI_App::current_language_code_safe() const
 {
-	// Translate the language code to a code, for which Prusa Research maintains translations.
+	// Translate the language code to a code, for which MXLab Research maintains translations.
 	const std::map<wxString, wxString> mapping {
 		{ "cs", 	"cs_CZ", },
 		{ "sk", 	"cs_CZ", },
@@ -1302,8 +1302,8 @@ void GUI_App::associate_3mf_files()
     ::GetModuleFileNameW(nullptr, app_path, sizeof(app_path));
 
     std::wstring prog_path = L"\"" + std::wstring(app_path) + L"\"";
-    std::wstring prog_id = L"Prusa.Slicer.1";
-    std::wstring prog_desc = L"PrusaSlicer";
+    std::wstring prog_id = L"MXLab.Slicer.1";
+    std::wstring prog_desc = L"MXLabSlicer";
     std::wstring prog_command = prog_path + L" \"%1\"";
     std::wstring reg_base = L"Software\\Classes";
     std::wstring reg_extension = reg_base + L"\\.3mf";

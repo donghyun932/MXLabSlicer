@@ -1,7 +1,7 @@
 # Distributed under the OSI-approved BSD 3-Clause License.  See accompanying
 # file Copyright.txt or https://cmake.org/licensing for details.
 
-# PrusaSlicer specifics:
+# MXLabSlicer specifics:
 # This file is backported from CMake 3.15 distribution to behave uniformly
 # across all versions of CMake. It explicitly adds GLEW_STATIC complile 
 # definition to static targets which is needed to prevent link errors.

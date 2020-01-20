@@ -184,7 +184,7 @@
 #define PACKAGE_TARNAME "avrdude-slic3r"
 
 /* Define to the home page for this package. */
-#define PACKAGE_URL "https://github.com/prusa3d/PrusaSlicer"
+#define PACKAGE_URL "https://github.com/donghyun932/MXLabSlicer"
 
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "6.3-20160220"

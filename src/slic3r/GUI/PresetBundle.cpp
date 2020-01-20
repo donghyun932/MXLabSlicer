@@ -43,7 +43,7 @@ static std::vector<std::string> s_project_options {
     "wiping_volumes_matrix"
 };
 
-const char *PresetBundle::PRUSA_BUNDLE = "PrusaResearch";
+const char *PresetBundle::MXLAB_BUNDLE = "MXLabResearch";
 
 PresetBundle::PresetBundle() :
     prints(Preset::TYPE_PRINT, Preset::print_options(), static_cast<const HostConfig&>(FullPrintConfig::defaults())), 
@@ -347,7 +347,7 @@ const std::string& PresetBundle::get_preset_name_by_alias( const Preset::Type& p
 void PresetBundle::load_installed_filaments(AppConfig &config)
 {
     if (! config.has_section(AppConfig::SECTION_FILAMENTS)) {
-		// Compatibility with the PrusaSlicer 2.1.1 and older, where the filament profiles were not installable yet.
+		// Compatibility with the MXLabSlicer 2.1.1 and older, where the filament profiles were not installable yet.
 		// Find all filament profiles, which are compatible with installed printers, and act as if these filament profiles
 		// were installed.
         std::unordered_set<const Preset*> compatible_filaments;
@@ -371,7 +371,7 @@ void PresetBundle::load_installed_sla_materials(AppConfig &config)
 {
     if (! config.has_section(AppConfig::SECTION_MATERIALS)) {
         std::unordered_set<const Preset*> comp_sla_materials;
-		// Compatibility with the PrusaSlicer 2.1.1 and older, where the SLA material profiles were not installable yet.
+		// Compatibility with the MXLabSlicer 2.1.1 and older, where the SLA material profiles were not installable yet.
 		// Find all SLA material profiles, which are compatible with installed printers, and act as if these SLA material profiles
 		// were installed.
         for (const Preset &printer : printers)

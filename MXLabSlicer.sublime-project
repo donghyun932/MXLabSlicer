@@ -11,7 +11,7 @@
 			"name": "Run",
 			"working_dir": "$project_path",
    			"file_regex": " at (.*?) line ([0-9]*)",
-//			"shell_cmd": "chdir & perl slic3r.pl  --DataDir \"C:\\Users\\Public\\Documents\\Prusa3D\\Slic3r settings MK2\" --gui \"..\\Slic3r-tests\\gap fill torture 20 -rt.stl\""
+//			"shell_cmd": "chdir & perl slic3r.pl  --DataDir \"C:\\Users\\Public\\Documents\\MXLab3D\\Slic3r settings MK2\" --gui \"..\\Slic3r-tests\\gap fill torture 20 -rt.stl\""
 			"shell_cmd": "chdir & perl slic3r.pl"
 		},
 		{
