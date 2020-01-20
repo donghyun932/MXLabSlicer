@@ -8,12 +8,12 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-05-20 15:59+0200\n"
-"PO-Revision-Date: 2019-05-23 00:37+0300\n"
+"PO-Revision-Date: 2020-01-20 17:48+0900\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.3\n"
+"X-Generator: Poedit 2.2.4\n"
 "Last-Translator: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Language: tr_TR\n"
@@ -50,8 +50,8 @@ msgid "GNU Affero General Public License, version 3"
 msgstr "GNU Affero Genel Kamu Lisansı, sürüm 3"
 
 #: src/slic3r/GUI/AboutDialog.cpp:255
-msgid "PrusaSlicer is based on Slic3r by Alessandro Ranellucci and the RepRap community."
-msgstr "PrusaSlicer, Alessandro Ranellucci ve RepRap topluluğuna ait olan Slic3r alt yapısına sahiptir."
+msgid "MXLabSlicer is based on Slic3r by Alessandro Ranellucci and the RepRap community."
+msgstr "MXLabSlicer, Alessandro Ranellucci ve RepRap topluluğuna ait olan Slic3r alt yapısına sahiptir."
 
 #: src/slic3r/GUI/AboutDialog.cpp:256
 msgid "Contributions by Henrik Brix Andersen, Nicolas Dandrimont, Mark Hindess, Petr Ledvina, Joseph Lenox, Y. Sapir, Mike Sheldrake, Vojtech Bubnik and numerous others."
@@ -168,8 +168,8 @@ msgid "Settings"
 msgstr "Ayarlar"
 
 #: src/slic3r/GUI/BedShapeDialog.cpp:316
-msgid "Choose a file to import bed shape from (STL/OBJ/AMF/3MF/PRUSA):"
-msgstr "Tabla şeklini almak için bir dosya seçin (STL / OBJ / AMF / 3MF / PRUSA):"
+msgid "Choose a file to import bed shape from (STL/OBJ/AMF/3MF):"
+msgstr "Tabla şeklini almak için bir dosya seçin (STL / OBJ / AMF / 3MF):"
 
 #: src/slic3r/GUI/BedShapeDialog.cpp:333 src/slic3r/GUI/GUI_ObjectList.cpp:1442
 msgid "Error!"
@@ -524,12 +524,12 @@ msgid "Cancel"
 msgstr "İptal"
 
 #: src/slic3r/GUI/ConfigWizard.cpp:1129
-msgid "Prusa FFF Technology Printers"
-msgstr "Prusa FFF Teknoloji Yazıcılar"
+msgid "MXLab FFF Technology Printers"
+msgstr "MXLab FFF Teknoloji Yazıcılar"
 
 #: src/slic3r/GUI/ConfigWizard.cpp:1132
-msgid "Prusa MSLA Technology Printers"
-msgstr "Prusa MSLA Teknoloji Yazıcılar"
+msgid "MXLab MSLA Technology Printers"
+msgstr "MXLab MSLA Teknoloji Yazıcılar"
 
 #: src/slic3r/GUI/ConfigWizard.cpp:1201
 msgid "Configuration Assistant"
@@ -1050,8 +1050,8 @@ msgid "Choose one file (3MF/AMF):"
 msgstr "Bir dosya seçin (3MF/AMF):"
 
 #: src/slic3r/GUI/GUI_App.cpp:522
-msgid "Choose one or more files (STL/OBJ/AMF/3MF/PRUSA):"
-msgstr "Bir veya daha fazla dosya seçin (STL / OBJ / AMF / 3MF / PRUSA):"
+msgid "Choose one or more files (STL/OBJ/AMF/3MF):"
+msgstr "Bir veya daha fazla dosya seçin (STL / OBJ / AMF / 3MF):"
 
 #: src/slic3r/GUI/GUI_App.cpp:564
 msgid "Select the language"
@@ -1864,7 +1864,7 @@ msgid ""
 "or to snap by 5% in Gizmo scale\n"
 "or to snap by 1mm in Gizmo move"
 msgstr ""
-"Çizilecek dörtgen içinde kalan nesneleri seçmek \n"
+"Çizilecek dörtgen içinde kalan nesneleri seçmek\n"
 "veya Gizmo ölçeğini %5 değiştirmek\n"
 "veya Gizmo 1mm hareket ettirmek için basılı tutun"
 
@@ -1971,8 +1971,8 @@ msgid "Layers Slider Shortcuts"
 msgstr "Katman Kaydırma Kısayolları"
 
 #: src/slic3r/GUI/MainFrame.cpp:61
-msgid " - Remember to check for updates at http://github.com/prusa3d/PrusaSlicer/releases"
-msgstr " - http://github.com/prusa3d/PrusaSlicer/releases adresindeki güncellemeleri kontrol etmeyi unutmayın"
+msgid " - Remember to check for updates at http://github.com/donghyun932/MXLabSlicer/releases"
+msgstr " - http://github.com/donghyun932/MXLabSlicer/releases adresindeki güncellemeleri kontrol etmeyi unutmayın"
 
 #: src/slic3r/GUI/MainFrame.cpp:150
 msgid "based on Slic3r"
@@ -2326,12 +2326,12 @@ msgid "Right View"
 msgstr "Sağ görünüm"
 
 #: src/slic3r/GUI/MainFrame.cpp:586
-msgid "Prusa 3D &Drivers"
-msgstr "Prusa 3D ve Sürücüler"
+msgid "MXLab 3D &Drivers"
+msgstr "MXLab 3D ve Sürücüler"
 
 #: src/slic3r/GUI/MainFrame.cpp:586
-msgid "Open the Prusa3D drivers download page in your browser"
-msgstr "Prusa3D sürücüleri indirme sayfasını tarayıcınızda açar"
+msgid "Open the MXLab3D drivers download page in your browser"
+msgstr "MXLab3D sürücüleri indirme sayfasını tarayıcınızda açar"
 
 #: src/slic3r/GUI/MainFrame.cpp:588
 msgid "Software &Releases"
@@ -2418,8 +2418,8 @@ msgid "Mate&rial Settings Tab"
 msgstr "Mate&ryal Ayarları Sekmesi"
 
 #: src/slic3r/GUI/MainFrame.cpp:669
-msgid "Choose a file to slice (STL/OBJ/AMF/3MF/PRUSA):"
-msgstr "Dilimlemek için bir dosya seçin (STL / OBJ / AMF / 3MF / PRUSA):"
+msgid "Choose a file to slice (STL/OBJ/AMF/3MF):"
+msgstr "Dilimlemek için bir dosya seçin (STL / OBJ / AMF / 3MF):"
 
 #: src/slic3r/GUI/MainFrame.cpp:683
 msgid "No previously sliced file."
@@ -2994,8 +2994,8 @@ msgid "If this is enabled, Slic3r will pre-process objects as soon as they're lo
 msgstr "Bu etkinse, Slic3r, G kodunu dışa aktarırken zaman kazanmak için nesneleri yüklendikleri anda işleme koyar."
 
 #: src/slic3r/GUI/Preferences.cpp:63
-msgid "If enabled, PrusaSlicer will check for the new versions of itself online. When a new version becomes available a notification is displayed at the next application startup (never during program usage). This is only a notification mechanisms, no automatic installation is done."
-msgstr "Etkinleştirildiğinde, PrusaSlicer çevrimiçi olarak yeni sürümlerini kontrol eder. Yeni bir sürüm kullanıma sunulduğunda, bir sonraki uygulama başlangıcında (hiçbir zaman program kullanımı sırasında) bir bildirim görüntülenir. Bu sadece bir bildirim mekanizmasıdır, otomatik kurulum yapılmaz."
+msgid "If enabled, MXLabSlicer will check for the new versions of itself online. When a new version becomes available a notification is displayed at the next application startup (never during program usage). This is only a notification mechanisms, no automatic installation is done."
+msgstr "Etkinleştirildiğinde, MXLabSlicer çevrimiçi olarak yeni sürümlerini kontrol eder. Yeni bir sürüm kullanıma sunulduğunda, bir sonraki uygulama başlangıcında (hiçbir zaman program kullanımı sırasında) bir bildirim görüntülenir. Bu sadece bir bildirim mekanizmasıdır, otomatik kurulum yapılmaz."
 
 #: src/slic3r/GUI/Preferences.cpp:71
 msgid "If enabled, Slic3r downloads updates of built-in system presets in the background. These updates are downloaded into a separate temporary location. When a new preset version becomes available it is offered at application startup."
@@ -4359,12 +4359,12 @@ msgid "Note: OctoPrint version at least 1.1.0 is required."
 msgstr "Not: OctoPrint sürümü en az 1.1.0 gereklidir."
 
 #: src/slic3r/Utils/OctoPrint.cpp:195
-msgid "Connection to Prusa SL1 works correctly."
-msgstr "Prusa SL1 ile bağlantı düzgün çalışıyor."
+msgid "Connection to MXLab SL1 works correctly."
+msgstr "MXLab SL1 ile bağlantı düzgün çalışıyor."
 
 #: src/slic3r/Utils/OctoPrint.cpp:200
-msgid "Could not connect to Prusa SLA"
-msgstr "Prusa SLA ile bağlantı kurulamadı"
+msgid "Could not connect to MXLab SLA"
+msgstr "MXLab SLA ile bağlantı kurulamadı"
 
 #: src/slic3r/Utils/PresetUpdater.cpp:584
 #, c-format
@@ -5586,8 +5586,8 @@ msgid "Supports remaining times"
 msgstr "Kalan süreleri destekler"
 
 #: src/libslic3r/PrintConfig.cpp:1055
-msgid "Emit M73 P[percent printed] R[remaining time in minutes] at 1 minute intervals into the G-code to let the firmware show accurate remaining time. As of now only the Prusa i3 MK3 firmware recognizes M73. Also the i3 MK3 firmware supports M73 Qxx Sxx for the silent mode."
-msgstr "Yazılımın kalan süreyi doğru göstermesi için M73 P [yazdırılan yüzde] R [dakika cinsinden kalan süre], G-code içine 1 dakikalık aralıklarla uygulanır. Şu an itibariyle sadece Prusa i3 MK3 yazılımı M73'ü tanıyor. Ayrıca i3 MK3 üretici yazılımı sessiz mod için M73 Qxx Sxx'i destekler."
+msgid "Emit M73 P[percent printed] R[remaining time in minutes] at 1 minute intervals into the G-code to let the firmware show accurate remaining time. As of now only the MXLab i3 MK3 firmware recognizes M73. Also the i3 MK3 firmware supports M73 Qxx Sxx for the silent mode."
+msgstr "Yazılımın kalan süreyi doğru göstermesi için M73 P [yazdırılan yüzde] R [dakika cinsinden kalan süre], G-code içine 1 dakikalık aralıklarla uygulanır. Şu an itibariyle sadece MXLab i3 MK3 yazılımı M73'ü tanıyor. Ayrıca i3 MK3 üretici yazılımı sessiz mod için M73 Qxx Sxx'i destekler."
 
 #: src/libslic3r/PrintConfig.cpp:1063
 msgid "Supports stealth mode"

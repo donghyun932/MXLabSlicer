@@ -53,7 +53,7 @@ msgstr ""
 
 #: src/slic3r/GUI/AboutDialog.cpp:260
 msgid ""
-"PrusaSlicer is based on Slic3r by Alessandro Ranellucci and the RepRap "
+"MXLabSlicer is based on PrusaSlicer by Prusa Research "
 "community."
 msgstr ""
 
@@ -66,7 +66,7 @@ msgstr ""
 
 #: src/slic3r/GUI/AppConfig.cpp:105
 msgid ""
-"Error parsing PrusaSlicer config file, it is probably corrupted. Try to "
+"Error parsing MXLabSlicer config file, it is probably corrupted. Try to "
 "manually delete the file to recover from the error. Your user profiles will "
 "not be affected."
 msgstr ""
@@ -460,7 +460,7 @@ msgid "Active"
 msgstr ""
 
 #: src/slic3r/GUI/ConfigSnapshotDialog.cpp:50
-msgid "PrusaSlicer version"
+msgid "MXLabSlicer version"
 msgstr ""
 
 #: src/slic3r/GUI/ConfigSnapshotDialog.cpp:51 src/slic3r/GUI/Preset.cpp:1408
@@ -484,11 +484,11 @@ msgid "version"
 msgstr ""
 
 #: src/slic3r/GUI/ConfigSnapshotDialog.cpp:58
-msgid "min PrusaSlicer version"
+msgid "min MXLabSlicer version"
 msgstr ""
 
 #: src/slic3r/GUI/ConfigSnapshotDialog.cpp:60
-msgid "max PrusaSlicer version"
+msgid "max MXLabSlicer version"
 msgstr ""
 
 #: src/slic3r/GUI/ConfigSnapshotDialog.cpp:63
@@ -651,7 +651,7 @@ msgstr ""
 
 #: src/slic3r/GUI/ConfigWizard.cpp:771
 msgid ""
-"PrusaSlicer's user interfaces comes in three variants:\n"
+"MXLabSlicer's user interfaces comes in three variants:\n"
 "Simple, Advanced, and Expert.\n"
 "The Simple mode shows only the most frequently used settings relevant for "
 "regular 3D printing. The other two offer progressively more sophisticated "
@@ -815,11 +815,11 @@ msgid "Cancel"
 msgstr ""
 
 #: src/slic3r/GUI/ConfigWizard.cpp:1850
-msgid "Prusa FFF Technology Printers"
+msgid "MXLab FFF Technology Printers"
 msgstr ""
 
 #: src/slic3r/GUI/ConfigWizard.cpp:1853
-msgid "Prusa MSLA Technology Printers"
+msgid "MXLab MSLA Technology Printers"
 msgstr ""
 
 #: src/slic3r/GUI/ConfigWizard.cpp:1862
@@ -1267,7 +1267,7 @@ msgstr ""
 #: src/slic3r/GUI/GLCanvas3DManager.cpp:283
 #, possible-c-format
 msgid ""
-"PrusaSlicer requires OpenGL 2.0 capable graphics driver to run correctly, \n"
+"MXLabSlicer requires OpenGL 2.0 capable graphics driver to run correctly, \n"
 "while OpenGL version %s, render %s, vendor %s was detected."
 msgstr ""
 
@@ -1277,8 +1277,8 @@ msgstr ""
 
 #: src/slic3r/GUI/GLCanvas3DManager.cpp:289
 msgid ""
-"As a workaround, you may run PrusaSlicer with a software rendered 3D "
-"graphics by running prusa-slicer.exe with the --sw_renderer parameter."
+"As a workaround, you may run MXLabSlicer with a software rendered 3D "
+"graphics by running mxlab-slicer.exe with the --sw_renderer parameter."
 msgstr ""
 
 #: src/slic3r/GUI/GLCanvas3DManager.cpp:291
@@ -1588,7 +1588,7 @@ msgid "Choose one file (3MF/AMF):"
 msgstr ""
 
 #: src/slic3r/GUI/GUI_App.cpp:572
-msgid "Choose one or more files (STL/OBJ/AMF/3MF/PRUSA):"
+msgid "Choose one or more files (STL/OBJ/AMF/3MF):"
 msgstr ""
 
 #: src/slic3r/GUI/GUI_App.cpp:634
@@ -2797,7 +2797,7 @@ msgstr ""
 
 #: src/slic3r/GUI/MainFrame.cpp:65
 msgid ""
-" - Remember to check for updates at http://github.com/prusa3d/PrusaSlicer/"
+" - Remember to check for updates at http://github.com/donghyun932/MXLabSlicer/"
 "releases"
 msgstr ""
 
@@ -3180,11 +3180,11 @@ msgid "Right View"
 msgstr ""
 
 #: src/slic3r/GUI/MainFrame.cpp:660
-msgid "Prusa 3D &Drivers"
+msgid "MXLab 3D &Drivers"
 msgstr ""
 
 #: src/slic3r/GUI/MainFrame.cpp:660
-msgid "Open the Prusa3D drivers download page in your browser"
+msgid "Open the MXLab3D drivers download page in your browser"
 msgstr ""
 
 #: src/slic3r/GUI/MainFrame.cpp:662
@@ -3276,7 +3276,7 @@ msgid "Mate&rial Settings Tab"
 msgstr ""
 
 #: src/slic3r/GUI/MainFrame.cpp:749
-msgid "Choose a file to slice (STL/OBJ/AMF/3MF/PRUSA):"
+msgid "Choose a file to slice (STL/OBJ/AMF/3MF):"
 msgstr ""
 
 #: src/slic3r/GUI/MainFrame.cpp:760
@@ -3999,7 +3999,7 @@ msgstr ""
 
 #: src/slic3r/GUI/Preferences.cpp:71
 msgid ""
-"If enabled, PrusaSlicer will check for the new versions of itself online. "
+"If enabled, MXLabSlicer will check for the new versions of itself online. "
 "When a new version becomes available a notification is displayed at the next "
 "application startup (never during program usage). This is only a "
 "notification mechanisms, no automatic installation is done."
@@ -5508,11 +5508,11 @@ msgid "Note: OctoPrint version at least 1.1.0 is required."
 msgstr ""
 
 #: src/slic3r/Utils/OctoPrint.cpp:196
-msgid "Connection to Prusa SL1 works correctly."
+msgid "Connection to MXLab SL1 works correctly."
 msgstr ""
 
 #: src/slic3r/Utils/OctoPrint.cpp:201
-msgid "Could not connect to Prusa SLA"
+msgid "Could not connect to MXLab SLA"
 msgstr ""
 
 #: src/slic3r/Utils/FlashAir.cpp:60
@@ -6391,7 +6391,7 @@ msgstr ""
 #: src/libslic3r/PrintConfig.cpp:375
 msgid ""
 "This end procedure is inserted at the end of the output file. Note that you "
-"can use placeholder variables for all PrusaSlicer settings."
+"can use placeholder variables for all MXLabSlicer settings."
 msgstr ""
 
 #: src/libslic3r/PrintConfig.cpp:385
@@ -6399,7 +6399,7 @@ msgid ""
 "This end procedure is inserted at the end of the output file, before the "
 "printer end gcode (and before any toolchange from this filament in case of "
 "multimaterial printers). Note that you can use placeholder variables for all "
-"PrusaSlicer settings. If you have multiple extruders, the gcode is processed "
+"MXLabSlicer settings. If you have multiple extruders, the gcode is processed "
 "in extruder order."
 msgstr ""
 
@@ -6942,7 +6942,7 @@ msgstr ""
 msgid ""
 "Some G/M-code commands, including temperature control and others, are not "
 "universal. Set this option to your printer's firmware to get a compatible "
-"output. The \"No extrusion\" flavor prevents PrusaSlicer from exporting any "
+"output. The \"No extrusion\" flavor prevents MXLabSlicer from exporting any "
 "extrusion value at all."
 msgstr ""
 
@@ -7082,7 +7082,7 @@ msgstr ""
 msgid ""
 "Emit M73 P[percent printed] R[remaining time in minutes] at 1 minute "
 "intervals into the G-code to let the firmware show accurate remaining time. "
-"As of now only the Prusa i3 MK3 firmware recognizes M73. Also the i3 MK3 "
+"As of now only the MXLab i3 MK3 firmware recognizes M73. Also the i3 MK3 "
 "firmware supports M73 Qxx Sxx for the silent mode."
 msgstr ""
 
@@ -7834,10 +7834,10 @@ msgstr ""
 msgid ""
 "This start procedure is inserted at the beginning, after bed has reached the "
 "target temperature and extruder just started heating, and before extruder "
-"has finished heating. If PrusaSlicer detects M104 or M190 in your custom "
+"has finished heating. If MXLabSlicer detects M104 or M190 in your custom "
 "codes, such commands will not be prepended automatically so you're free to "
 "customize the order of heating commands and other custom actions. Note that "
-"you can use placeholder variables for all PrusaSlicer settings, so you can "
+"you can use placeholder variables for all MXLabSlicer settings, so you can "
 "put a \"M109 S[first_layer_temperature]\" command wherever you want."
 msgstr ""
 
@@ -7846,10 +7846,10 @@ msgid ""
 "This start procedure is inserted at the beginning, after any printer start "
 "gcode (and after any toolchange to this filament in case of multi-material "
 "printers). This is used to override settings for a specific filament. If "
-"PrusaSlicer detects M104, M109, M140 or M190 in your custom codes, such "
+"MXLabSlicer detects M104, M109, M140 or M190 in your custom codes, such "
 "commands will not be prepended automatically so you're free to customize the "
 "order of heating commands and other custom actions. Note that you can use "
-"placeholder variables for all PrusaSlicer settings, so you can put a \"M109 "
+"placeholder variables for all MXLabSlicer settings, so you can put a \"M109 "
 "S[first_layer_temperature]\" command wherever you want. If you have multiple "
 "extruders, the gcode is processed in extruder order."
 msgstr ""
@@ -8112,9 +8112,9 @@ msgstr ""
 #: src/libslic3r/PrintConfig.cpp:2083
 msgid ""
 "This custom code is inserted before every toolchange. Placeholder variables "
-"for all PrusaSlicer settings as well as {previous_extruder} and "
+"for all MXLabSlicer settings as well as {previous_extruder} and "
 "{next_extruder} can be used. When a tool-changing command which changes to "
-"the correct extruder is included (such as T{next_extruder}), PrusaSlicer "
+"the correct extruder is included (such as T{next_extruder}), MXLabSlicer "
 "will emit no other such command. It is therefore possible to script custom "
 "behaviour both before and after the toolchange."
 msgstr ""
