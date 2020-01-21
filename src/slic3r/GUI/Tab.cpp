@@ -178,7 +178,7 @@ void Tab::create_preset_tab()
     m_default_text_clr		= wxGetApp().get_label_clr_default();
 
     // Sizer with buttons for mode changing
-    m_mode_sizer = new ModeSizer(panel);
+    // m_mode_sizer = new ModeSizer(panel);
 
     const float scale_factor = /*wxGetApp().*/em_unit(this)*0.1;// GetContentScaleFactor();
     m_hsizer = new wxBoxSizer(wxHORIZONTAL);
@@ -199,7 +199,7 @@ void Tab::create_preset_tab()
     // StretchSpacer has a strange behavior under OSX, so
     // There is used just additional sizer for m_mode_sizer with right alignment
     auto mode_sizer = new wxBoxSizer(wxVERTICAL);
-    mode_sizer->Add(m_mode_sizer, 1, wxALIGN_RIGHT);
+    // mode_sizer->Add(m_mode_sizer, 1, wxALIGN_RIGHT);
     m_hsizer->Add(mode_sizer, 1, wxALIGN_CENTER_VERTICAL | wxRIGHT, wxOSX ? 15 : 10);
 
     //Horizontal sizer to hold the tree and the selected page.
@@ -733,7 +733,7 @@ void Tab::update_mode()
     m_mode = wxGetApp().get_mode();
 
     // update mode for ModeSizer
-    m_mode_sizer->SetMode(m_mode);
+    // m_mode_sizer->SetMode(m_mode);
 
     update_visibility();
 
@@ -756,7 +756,7 @@ void Tab::msw_rescale()
 {
     m_em_unit = wxGetApp().em_unit();
 
-    m_mode_sizer->msw_rescale();
+    // m_mode_sizer->msw_rescale();
 
     m_presets_choice->SetSize(35 * m_em_unit, -1);
     m_treectrl->SetMinSize(wxSize(20 * m_em_unit, -1));

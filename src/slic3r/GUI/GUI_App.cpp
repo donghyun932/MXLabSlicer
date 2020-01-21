@@ -771,19 +771,22 @@ Tab* GUI_App::get_tab(Preset::Type type)
 
 ConfigOptionMode GUI_App::get_mode()
 {
-    if (!app_config->has("view_mode"))
-        return comSimple;
+    // only use advanced mode
+    return comAdvanced;
+    // if (!app_config->has("view_mode"))
+    //     return comSimple;
 
-    const auto mode = app_config->get("view_mode");
-    return mode == "expert" ? comExpert : 
-           mode == "simple" ? comSimple : comAdvanced;
+    // const auto mode = app_config->get("view_mode");
+    // return mode == "expert" ? comExpert : 
+    //        mode == "simple" ? comSimple : comAdvanced;
 }
 
 void GUI_App::save_mode(const /*ConfigOptionMode*/int mode) 
 {
-    const std::string mode_str = mode == comExpert ? "expert" :
-                                 mode == comSimple ? "simple" : "advanced";
-    app_config->set("view_mode", mode_str);
+    // const std::string mode_str = mode == comExpert ? "expert" :
+    //                              mode == comSimple ? "simple" : "advanced";
+    // app_config->set("view_mode", mode_str);
+    app_config->set("view_mode", "advanced");
     app_config->save(); 
     update_mode();
 }
