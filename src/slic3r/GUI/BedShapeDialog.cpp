@@ -80,9 +80,12 @@ void BedShapePanel::build_panel(const ConfigOptionPoints& default_pt, const Conf
 	optgroup->append_single_option_line(option);
 
 	def.type = coPoints;
-	def.set_default_value(new ConfigOptionPoints{ Vec2d(0, 0) });
+  // for origin centering, not left-front
+	def.set_default_value(new ConfigOptionPoints{ Vec2d(100, 100) });
+  // def.set_default_value(new ConfigOptionPoints{ Vec2d(0, 0) });
 	def.label = L("Origin");
-	def.tooltip = L("Distance of the 0,0 G-code coordinate from the front left corner of the rectangle.");
+  def.tooltip = L("Distance of the 100,100 G-code coordinate from the center of the rectangle.");
+	// def.tooltip = L("Distance of the 0,0 G-code coordinate from the front left corner of the rectangle.");
 	option = Option(def, "rect_origin");
 	optgroup->append_single_option_line(option);
 
@@ -350,7 +353,9 @@ void BedShapePanel::set_shape(const ConfigOptionPoints& points)
                 y_max = std::max(y_max, pt(1));
             }
 
-            auto origin = new ConfigOptionPoints{ Vec2d(-x_min, -y_min) };
+            // for origin centering, not left-front
+            auto origin = new ConfigOptionPoints{ Vec2d(-x_min + (x_min + x_max) / 2, -y_min + (y_min + y_max) / 2) };
+            // auto origin = new ConfigOptionPoints{ Vec2d(-x_min, -y_min) };
 
 			m_shape_options_book->SetSelection(SHAPE_RECTANGULAR);
 			auto optgroup = m_optgroups[SHAPE_RECTANGULAR];
@@ -398,7 +403,9 @@ void BedShapePanel::set_shape(const ConfigOptionPoints& points)
 		m_shape_options_book->SetSelection(SHAPE_RECTANGULAR);
 		auto optgroup = m_optgroups[SHAPE_RECTANGULAR];
 		optgroup->set_value("rect_size", new ConfigOptionPoints{ Vec2d(200, 200) });
-		optgroup->set_value("rect_origin", new ConfigOptionPoints{ Vec2d(0, 0) });
+    // for origin centering, not left-front
+		optgroup->set_value("rect_origin", new ConfigOptionPoints{ Vec2d(100, 100) });
+    // optgroup->set_value("rect_origin", new ConfigOptionPoints{ Vec2d(0, 0) });
 		update_shape();
 		return;
 	}
