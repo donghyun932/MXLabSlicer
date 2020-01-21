@@ -756,7 +756,7 @@ Sidebar::Sidebar(Plater *parent)
     p->scrolled->SetSizer(scrolled_sizer);
 
     // Sizer with buttons for mode changing
-    p->mode_sizer = new ModeSizer(p->scrolled);
+    // p->mode_sizer = new ModeSizer(p->scrolled);
 
     // The preset chooser
     p->sizer_presets = new wxFlexGridSizer(10, 1, 1, 2);
@@ -839,7 +839,7 @@ Sidebar::Sidebar(Plater *parent)
     p->sliced_info = new SlicedInfo(p->scrolled);
 
     // Sizer in the scrolled area
-    scrolled_sizer->Add(p->mode_sizer, 0, wxALIGN_CENTER_HORIZONTAL/*RIGHT | wxBOTTOM | wxRIGHT, 5*/);
+    // scrolled_sizer->Add(p->mode_sizer, 0, wxALIGN_CENTER_HORIZONTAL/*RIGHT | wxBOTTOM | wxRIGHT, 5*/);
     is_msw ?
         scrolled_sizer->Add(p->presets_panel, 0, wxEXPAND | wxLEFT, margin_5) :
         scrolled_sizer->Add(p->sizer_presets, 0, wxEXPAND | wxLEFT, margin_5);
@@ -1017,7 +1017,7 @@ void Sidebar::update_presets(Preset::Type preset_type)
 
 void Sidebar::update_mode_sizer() const
 {
-    p->mode_sizer->SetMode(m_mode);
+    // p->mode_sizer->SetMode(m_mode);
 }
 
 void Sidebar::update_reslice_btn_tooltip() const
@@ -1032,7 +1032,7 @@ void Sidebar::msw_rescale()
 {
     SetMinSize(wxSize(40 * wxGetApp().em_unit(), -1));
 
-    p->mode_sizer->msw_rescale();
+    // p->mode_sizer->msw_rescale();
 
     // Rescale preset comboboxes in respect to the current  em_unit ...
     for (PresetComboBox* combo : std::vector<PresetComboBox*> { p->combo_print,
