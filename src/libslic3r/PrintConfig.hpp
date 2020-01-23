@@ -768,6 +768,8 @@ public:
     double                          min_object_distance() const;
     static double                   min_object_distance(const ConfigBase *config);
 
+    ConfigOptionFloat               dwell_time;
+    ConfigOptionBool                shield_gas_applied;
     ConfigOptionBool                avoid_crossing_perimeters;
     ConfigOptionPoints              bed_shape;
     ConfigOptionInts                bed_temperature;
@@ -840,6 +842,8 @@ protected:
     {
         this->MachineEnvelopeConfig::initialize(cache, base_ptr);
         this->GCodeConfig::initialize(cache, base_ptr);
+        OPT_PTR(dwell_time);
+        OPT_PTR(shield_gas_applied);
         OPT_PTR(avoid_crossing_perimeters);
         OPT_PTR(bed_shape);
         OPT_PTR(bed_temperature);
