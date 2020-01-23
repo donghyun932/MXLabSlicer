@@ -1035,8 +1035,11 @@ void TabPrint::build()
     m_presets = &m_preset_bundle->prints;
     load_initial_data();
 
-    auto page = add_options_page(_(L("Layers and perimeters")), "layers");
-        auto optgroup = page->new_optgroup(_(L("Layer height")));
+    auto page = add_options_page(_(L("General")), "wrench");
+        auto optgroup = page->new_optgroup(_(L("Slicing")));
+
+    page = add_options_page(_(L("Layers and perimeters")), "layers");
+        optgroup = page->new_optgroup(_(L("Layer height")));
         optgroup->append_single_option_line("layer_height");
         optgroup->append_single_option_line("first_layer_height");
 
