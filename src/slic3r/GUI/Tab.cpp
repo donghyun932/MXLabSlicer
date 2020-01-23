@@ -1036,13 +1036,19 @@ void TabPrint::build()
     load_initial_data();
 
     auto page = add_options_page(_(L("General")), "wrench");
-        auto optgroup = page->new_optgroup(_(L("Dwell Time")));
+        auto optgroup = page->new_optgroup(_(L("Slicing")));
+        optgroup->append_single_option_line("layer_height");
+        optgroup->append_single_option_line("fill_density");
+
+        optgroup = page->new_optgroup(_(L("Dwell Time")));
         optgroup->append_single_option_line("dwell_time");
         optgroup->append_single_option_line("shield_gas_applied");
 
+        optgroup = page->new_optgroup(_(L("Traverse Speed")));
+        optgroup->append_single_option_line("perimeter_speed");
+
         page = add_options_page(_(L("Layers and perimeters")), "layers");
         optgroup = page->new_optgroup(_(L("Layer height")));
-        optgroup->append_single_option_line("layer_height");
         optgroup->append_single_option_line("first_layer_height");
 
         optgroup = page->new_optgroup(_(L("Vertical shells")));
@@ -1075,7 +1081,6 @@ void TabPrint::build()
 
     page = add_options_page(_(L("Infill")), "infill");
         optgroup = page->new_optgroup(_(L("Infill")));
-        optgroup->append_single_option_line("fill_density");
         optgroup->append_single_option_line("fill_pattern");
         optgroup->append_single_option_line("top_fill_pattern");
         optgroup->append_single_option_line("bottom_fill_pattern");
@@ -1129,7 +1134,6 @@ void TabPrint::build()
 
     page = add_options_page(_(L("Speed")), "time");
         optgroup = page->new_optgroup(_(L("Speed for print moves")));
-        optgroup->append_single_option_line("perimeter_speed");
         optgroup->append_single_option_line("small_perimeter_speed");
         optgroup->append_single_option_line("external_perimeter_speed");
         optgroup->append_single_option_line("infill_speed");

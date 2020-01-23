@@ -65,7 +65,7 @@ void PrintConfigDef::init_common_params()
 
     def = this->add("layer_height", coFloat);
     def->label = L("Layer height");
-    def->category = L("Layers and Perimeters");
+    def->category = L("General");
     def->tooltip = L("This setting controls the height (and thus the total number) of the slices/layers. "
                    "Thinner layers give better accuracy but take more time to print.");
     def->sidetext = L("mm");
@@ -116,6 +116,7 @@ void PrintConfigDef::init_fff_params()
 
     def = this->add("dwell_time", coFloat);
     def->label = L("Dwell Time");
+    def->category = L("General");
     def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
                    "TODO 설명 적고 po 파일에 번역본 저장");
     def->sidetext = L("sec");
@@ -125,6 +126,7 @@ void PrintConfigDef::init_fff_params()
 
     def = this->add("shield_gas_applied", coBool);
     def->label = L("Shield Gas Applied");
+    def->category = L("General");
     def->tooltip = L("... "
                    "... "
                    "...");
@@ -733,7 +735,7 @@ void PrintConfigDef::init_fff_params()
     def->gui_type = "f_enum_open";
     def->gui_flags = "show_value";
     def->label = L("Fill density");
-    def->category = L("Infill");
+    def->category = L("General");
     def->tooltip = L("Density of internal infill, expressed in the range 0% - 100%.");
     def->mode = comSimple;
     def->sidetext = L("%");
@@ -1333,7 +1335,7 @@ void PrintConfigDef::init_fff_params()
 
     def = this->add("perimeter_speed", coFloat);
     def->label = L("Perimeters");
-    def->category = L("Speed");
+    def->category = L("General");
     def->tooltip = L("Speed for perimeters (contours, aka vertical shells). Set to zero for auto.");
     def->sidetext = L("mm/s");
     def->aliases = { "perimeter_feed_rate" };
