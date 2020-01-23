@@ -1036,9 +1036,11 @@ void TabPrint::build()
     load_initial_data();
 
     auto page = add_options_page(_(L("General")), "wrench");
-        auto optgroup = page->new_optgroup(_(L("Slicing")));
+        auto optgroup = page->new_optgroup(_(L("Dwell Time")));
+        optgroup->append_single_option_line("dwell_time");
+        optgroup->append_single_option_line("shield_gas_applied");
 
-    page = add_options_page(_(L("Layers and perimeters")), "layers");
+        page = add_options_page(_(L("Layers and perimeters")), "layers");
         optgroup = page->new_optgroup(_(L("Layer height")));
         optgroup->append_single_option_line("layer_height");
         optgroup->append_single_option_line("first_layer_height");

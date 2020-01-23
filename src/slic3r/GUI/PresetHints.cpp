@@ -80,6 +80,9 @@ std::string PresetHints::maximum_volumetric_flow_description(const PresetBundle 
     // Current printer values.
     float  nozzle_diameter                  = (float)printer_config.opt_float("nozzle_diameter", idx_extruder);
 
+    // custom
+    double dwell_time                       = print_config.opt_float("dwell_time");
+    bool shield_gas_applied                 = print_config.opt_bool("shield_gas_applied");
     // Print config values
     double layer_height                     = print_config.opt_float("layer_height");
     double first_layer_height               = print_config.get_abs_value("first_layer_height", layer_height);

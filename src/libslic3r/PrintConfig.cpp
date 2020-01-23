@@ -114,6 +114,23 @@ void PrintConfigDef::init_fff_params()
     // Maximum extruder temperature, bumped to 1500 to support printing of glass.
     const int max_temp = 1500;
 
+    def = this->add("dwell_time", coFloat);
+    def->label = L("Dwell Time");
+    def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
+                   "TODO 설명 적고 po 파일에 번역본 저장");
+    def->sidetext = L("sec");
+    def->min = 0;
+    def->mode = comSimple;
+    def->set_default_value(new ConfigOptionFloat(1));
+
+    def = this->add("shield_gas_applied", coBool);
+    def->label = L("Shield Gas Applied");
+    def->tooltip = L("... "
+                   "... "
+                   "...");
+    def->mode = comSimple;
+    def->set_default_value(new ConfigOptionBool(false));
+
     def = this->add("avoid_crossing_perimeters", coBool);
     def->label = L("Avoid crossing perimeters");
     def->tooltip = L("Optimize travel moves in order to minimize the crossing of perimeters. "

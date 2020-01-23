@@ -69,6 +69,8 @@ bool Print::invalidate_state_by_config_options(const std::vector<t_config_option
     // Cache the plenty of parameters, which influence the G-code generator only,
     // or they are only notes not influencing the generated G-code.
     static std::unordered_set<std::string> steps_gcode = {
+        "dwell_time",
+        "shield_gas_applied",
         "avoid_crossing_perimeters",
         "bed_shape",
         "bed_temperature",
