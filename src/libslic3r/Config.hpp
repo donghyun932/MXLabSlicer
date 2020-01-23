@@ -1424,7 +1424,7 @@ public:
     // By setting min=0, only nonnegative input is allowed.
     int                                 min = INT_MIN;
     int                                 max = INT_MAX;
-    ConfigOptionMode                    mode = comSimple;
+    ConfigOptionMode                    mode = comExpert;
     // Legacy names for this configuration option.
     // Used when parsing legacy configuration file.
     std::vector<t_config_option_key>    aliases;
