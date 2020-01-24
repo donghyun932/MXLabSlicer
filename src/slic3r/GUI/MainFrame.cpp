@@ -218,9 +218,9 @@ void MainFrame::create_preset_tabs()
     wxGetApp().update_label_colours_from_appconfig();
     add_created_tab(new TabPrint(m_tabpanel));
     add_created_tab(new TabFilament(m_tabpanel));
-    add_created_tab(new TabSLAPrint(m_tabpanel));
-    add_created_tab(new TabSLAMaterial(m_tabpanel));
-    add_created_tab(new TabPrinter(m_tabpanel));
+//    add_created_tab(new TabSLAPrint(m_tabpanel));
+//    add_created_tab(new TabSLAMaterial(m_tabpanel));
+//    add_created_tab(new TabPrinter(m_tabpanel));
 }
 
 void MainFrame::add_created_tab(Tab* panel)
