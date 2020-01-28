@@ -271,16 +271,8 @@ void Bed3D::render(GLCanvas3D& canvas, float theta, float scale_factor, bool sho
 
     glsafe(::glEnable(GL_DEPTH_TEST));
 
-    switch (m_type)
-    {
-    case MK2: { render_mxlab(canvas, "mk2", theta > 90.0f); break; }
-    case MK3: { render_mxlab(canvas, "mk3", theta > 90.0f); break; }
-    case SL1: { render_mxlab(canvas, "sl1", theta > 90.0f); break; }
-    case MINI: { render_mxlab(canvas, "mini", theta > 90.0f); break; }
-    case ENDER3: { render_mxlab(canvas, "ender3", theta > 90.0f); break; }
-    default:
-    case Custom: { render_custom(canvas, theta > 90.0f); break; }
-    }
+    render_model(resources_dir() + "/models/" + "mxlab_bed.stl");
+    render_texture(resources_dir() + "/icons/bed/" + "mxlab.svg", theta > 90.0f, canvas);
 
     glsafe(::glDisable(GL_DEPTH_TEST));
 }
@@ -351,43 +343,43 @@ Bed3D::EType Bed3D::detect_type(const Pointfs& shape) const
         const Preset* curr = &bundle->printers.get_selected_preset();
         while (curr != nullptr)
         {
-            if (curr->config.has("bed_shape"))
-            {
-                if (curr->vendor != nullptr)
-                {
-                    if ((curr->vendor->name == "MXLab Research") && (shape == dynamic_cast<const ConfigOptionPoints*>(curr->config.option("bed_shape"))->values))
-                    {
-                        if (boost::contains(curr->name, "SL1"))
-                        {
-                            type = SL1;
-                            break;
-                        }
-                        else if (boost::contains(curr->name, "MK3") || boost::contains(curr->name, "MK2.5"))
-                        {
-                            type = MK3;
-                            break;
-                        }
-                        else if (boost::contains(curr->name, "MK2"))
-                        {
-                            type = MK2;
-                            break;
-                        }
-                        else if (boost::contains(curr->name, "MINI"))
-                        {
-                            type = MINI;
-                            break;
-                        }
-                    }
-                    else if ((curr->vendor->name == "Creality") && (shape == dynamic_cast<const ConfigOptionPoints*>(curr->config.option("bed_shape"))->values))
-                    {
-                        if (boost::contains(curr->name, "ENDER-3"))
-                        {
-                            type = ENDER3;
-                            break;
-                        }
-                    }
-                }
-            }
+            // if (curr->config.has("bed_shape"))
+            // {
+            //     if (curr->vendor != nullptr)
+            //     {
+            //         if ((curr->vendor->name == "MXLab Research") && (shape == dynamic_cast<const ConfigOptionPoints*>(curr->config.option("bed_shape"))->values))
+            //         {
+            //             if (boost::contains(curr->name, "SL1"))
+            //             {
+            //                 type = SL1;
+            //                 break;
+            //             }
+            //             else if (boost::contains(curr->name, "MK3") || boost::contains(curr->name, "MK2.5"))
+            //             {
+            //                 type = MK3;
+            //                 break;
+            //             }
+            //             else if (boost::contains(curr->name, "MK2"))
+            //             {
+            //                 type = MK2;
+            //                 break;
+            //             }
+            //             else if (boost::contains(curr->name, "MINI"))
+            //             {
+            //                 type = MINI;
+            //                 break;
+            //             }
+            //         }
+            //         else if ((curr->vendor->name == "Creality") && (shape == dynamic_cast<const ConfigOptionPoints*>(curr->config.option("bed_shape"))->values))
+            //         {
+            //             if (boost::contains(curr->name, "ENDER-3"))
+            //             {
+            //                 type = ENDER3;
+            //                 break;
+            //             }
+            //         }
+            //     }
+            // }
 
             curr = bundle->printers.get_preset_parent(*curr);
         }
@@ -400,14 +392,6 @@ void Bed3D::render_axes() const
 {
     if (!m_shape.empty())
         m_axes.render();
-}
-
-void Bed3D::render_mxlab(GLCanvas3D& canvas, const std::string& key, bool bottom) const
-{
-    if (!bottom)
-        render_model(m_custom_model.empty() ? resources_dir() + "/models/" + key + "_bed.stl" : m_custom_model);
-
-    render_texture(m_custom_texture.empty() ? resources_dir() + "/icons/bed/" + key + ".svg" : m_custom_texture, bottom, canvas);
 }
 
 void Bed3D::render_texture(const std::string& filename, bool bottom, GLCanvas3D& canvas) const

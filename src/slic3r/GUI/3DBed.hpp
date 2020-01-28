@@ -118,7 +118,6 @@ private:
     void calc_gridlines(const ExPolygon& poly, const BoundingBox& bed_bbox);
     EType detect_type(const Pointfs& shape) const;
     void render_axes() const;
-    void render_mxlab(GLCanvas3D& canvas, const std::string& key, bool bottom) const;
     void render_texture(const std::string& filename, bool bottom, GLCanvas3D& canvas) const;
     void render_model(const std::string& filename) const;
     void render_custom(GLCanvas3D& canvas, bool bottom) const;
