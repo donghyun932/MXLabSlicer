@@ -311,7 +311,7 @@ protected:
 
 	void			on_presets_changed();
 	void			update_preset_description_line();
-	void			update_frequently_changed_parameters();
+	// void			update_frequently_changed_parameters();
 	void			fill_icon_descriptions();
 	void			set_tooltips_text();
 

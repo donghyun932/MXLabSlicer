@@ -689,7 +689,7 @@ struct Sidebar::priv
     PresetComboBox *combo_printer;
 
     wxBoxSizer *sizer_params;
-    FreqChangedParams   *frequently_changed_parameters{ nullptr };
+    // FreqChangedParams   *frequently_changed_parameters{ nullptr };
     ObjectList          *object_list{ nullptr };
     ObjectManipulation  *object_manipulation{ nullptr };
     ObjectSettings      *object_settings{ nullptr };
@@ -716,8 +716,8 @@ Sidebar::priv::~priv()
     if (object_settings != nullptr)
         delete object_settings;
 
-    if (frequently_changed_parameters != nullptr)
-        delete frequently_changed_parameters;
+    // if (frequently_changed_parameters != nullptr)
+    //     delete frequently_changed_parameters;
 
     if (object_layers != nullptr)
         delete object_layers;
@@ -735,7 +735,7 @@ void Sidebar::priv::show_preset_comboboxes()
             sizer_presets->Show(i, showSLA);
     }
 
-    frequently_changed_parameters->Show(!showSLA);
+    // frequently_changed_parameters->Show(!showSLA);
 
     scrolled->GetParent()->Layout();
     scrolled->Refresh();
@@ -812,8 +812,8 @@ Sidebar::Sidebar(Plater *parent)
     p->sizer_params = new wxBoxSizer(wxVERTICAL);
 
     // Frequently changed parameters
-    p->frequently_changed_parameters = new FreqChangedParams(p->scrolled);
-    p->sizer_params->Add(p->frequently_changed_parameters->get_sizer(), 0, wxEXPAND | wxTOP | wxBOTTOM, wxOSX ? 1 : margin_5);
+    // p->frequently_changed_parameters = new FreqChangedParams(p->scrolled);
+    // p->sizer_params->Add(p->frequently_changed_parameters->get_sizer(), 0, wxEXPAND | wxTOP | wxBOTTOM, wxOSX ? 1 : margin_5);
 
     // Object List
     p->object_list = new ObjectList(p->scrolled);
@@ -1046,7 +1046,7 @@ void Sidebar::msw_rescale()
     // ... then refill them and set min size to correct layout of the sidebar
     update_all_preset_comboboxes();
 
-    p->frequently_changed_parameters->msw_rescale();
+    // p->frequently_changed_parameters->msw_rescale();
     p->object_list->msw_rescale();
     p->object_manipulation->msw_rescale();
     p->object_settings->msw_rescale();
@@ -1093,15 +1093,15 @@ wxPanel* Sidebar::presets_panel()
     return p->presets_panel;
 }
 
-ConfigOptionsGroup* Sidebar::og_freq_chng_params(const bool is_fff)
-{
-    return p->frequently_changed_parameters->get_og(is_fff);
-}
+// ConfigOptionsGroup* Sidebar::og_freq_chng_params(const bool is_fff)
+// {
+//     return p->frequently_changed_parameters->get_og(is_fff);
+// }
 
-wxButton* Sidebar::get_wiping_dialog_button()
-{
-    return p->frequently_changed_parameters->get_wiping_dialog_button();
-}
+// wxButton* Sidebar::get_wiping_dialog_button()
+// {
+//     return p->frequently_changed_parameters->get_wiping_dialog_button();
+// }
 
 void Sidebar::update_objects_list_extruder_column(size_t extruders_count)
 {
