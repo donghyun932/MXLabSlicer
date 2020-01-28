@@ -4290,22 +4290,22 @@ bool GLCanvas3D::_init_main_toolbar()
     if (!m_main_toolbar.add_item(item))
         return false;
 
-    item.name = "arrange";
-    item.icon_filename = "arrange.svg";
-    item.tooltip = _utf8(L("Arrange")) + " [A]\n" + _utf8(L("Arrange selection")) + " [Shift+A]";
-    item.sprite_id = 3;
-    item.left.action_callback = [this]() { if (m_canvas != nullptr) wxPostEvent(m_canvas, SimpleEvent(EVT_GLTOOLBAR_ARRANGE)); };
-    item.enabling_callback = []()->bool { return wxGetApp().plater()->can_arrange(); };
-    if (!m_main_toolbar.add_item(item))
-        return false;
+    // item.name = "arrange";
+    // item.icon_filename = "arrange.svg";
+    // item.tooltip = _utf8(L("Arrange")) + " [A]\n" + _utf8(L("Arrange selection")) + " [Shift+A]";
+    // item.sprite_id = 3;
+    // item.left.action_callback = [this]() { if (m_canvas != nullptr) wxPostEvent(m_canvas, SimpleEvent(EVT_GLTOOLBAR_ARRANGE)); };
+    // item.enabling_callback = []()->bool { return wxGetApp().plater()->can_arrange(); };
+    // if (!m_main_toolbar.add_item(item))
+    //     return false;
 
-    if (!m_main_toolbar.add_separator())
-        return false;
+    // if (!m_main_toolbar.add_separator())
+    //     return false;
 
     item.name = "copy";
     item.icon_filename = "copy.svg";
     item.tooltip = _utf8(L("Copy")) + " [" + GUI::shortkey_ctrl_prefix() + "C]";
-    item.sprite_id = 4;
+    item.sprite_id = 3;
     item.left.action_callback = [this]() { if (m_canvas != nullptr) wxPostEvent(m_canvas, SimpleEvent(EVT_GLTOOLBAR_COPY)); };
     item.enabling_callback = []()->bool { return wxGetApp().plater()->can_copy_to_clipboard(); };
     if (!m_main_toolbar.add_item(item))
@@ -4314,7 +4314,7 @@ bool GLCanvas3D::_init_main_toolbar()
     item.name = "paste";
     item.icon_filename = "paste.svg";
     item.tooltip = _utf8(L("Paste")) + " [" + GUI::shortkey_ctrl_prefix() + "V]";
-    item.sprite_id = 5;
+    item.sprite_id = 4;
     item.left.action_callback = [this]() { if (m_canvas != nullptr) wxPostEvent(m_canvas, SimpleEvent(EVT_GLTOOLBAR_PASTE)); };
     item.enabling_callback = []()->bool { return wxGetApp().plater()->can_paste_from_clipboard(); };
     if (!m_main_toolbar.add_item(item))
@@ -4323,71 +4323,71 @@ bool GLCanvas3D::_init_main_toolbar()
     if (!m_main_toolbar.add_separator())
         return false;
 
-    item.name = "more";
-    item.icon_filename = "instance_add.svg";
-    item.tooltip = _utf8(L("Add instance")) + " [+]";
-    item.sprite_id = 6;
-    item.left.action_callback = [this]() { if (m_canvas != nullptr) wxPostEvent(m_canvas, SimpleEvent(EVT_GLTOOLBAR_MORE)); };
-    item.visibility_callback = []()->bool { return wxGetApp().get_mode() != comSimple; };
-    item.enabling_callback = []()->bool { return wxGetApp().plater()->can_increase_instances(); };
+    // item.name = "more";
+    // item.icon_filename = "instance_add.svg";
+    // item.tooltip = _utf8(L("Add instance")) + " [+]";
+    // item.sprite_id = 6;
+    // item.left.action_callback = [this]() { if (m_canvas != nullptr) wxPostEvent(m_canvas, SimpleEvent(EVT_GLTOOLBAR_MORE)); };
+    // item.visibility_callback = []()->bool { return wxGetApp().get_mode() != comSimple; };
+    // item.enabling_callback = []()->bool { return wxGetApp().plater()->can_increase_instances(); };
 
-    if (!m_main_toolbar.add_item(item))
-        return false;
+    // if (!m_main_toolbar.add_item(item))
+    //     return false;
 
-    item.name = "fewer";
-    item.icon_filename = "instance_remove.svg";
-    item.tooltip = _utf8(L("Remove instance")) + " [-]";
-    item.sprite_id = 7;
-    item.left.action_callback = [this]() { if (m_canvas != nullptr) wxPostEvent(m_canvas, SimpleEvent(EVT_GLTOOLBAR_FEWER)); };
-    item.visibility_callback = []()->bool { return wxGetApp().get_mode() != comSimple; };
-    item.enabling_callback = []()->bool { return wxGetApp().plater()->can_decrease_instances(); };
-    if (!m_main_toolbar.add_item(item))
-        return false;
+    // item.name = "fewer";
+    // item.icon_filename = "instance_remove.svg";
+    // item.tooltip = _utf8(L("Remove instance")) + " [-]";
+    // item.sprite_id = 7;
+    // item.left.action_callback = [this]() { if (m_canvas != nullptr) wxPostEvent(m_canvas, SimpleEvent(EVT_GLTOOLBAR_FEWER)); };
+    // item.visibility_callback = []()->bool { return wxGetApp().get_mode() != comSimple; };
+    // item.enabling_callback = []()->bool { return wxGetApp().plater()->can_decrease_instances(); };
+    // if (!m_main_toolbar.add_item(item))
+    //     return false;
 
-    if (!m_main_toolbar.add_separator())
-        return false;
+    // if (!m_main_toolbar.add_separator())
+    //     return false;
 
-    item.name = "splitobjects";
-    item.icon_filename = "split_objects.svg";
-    item.tooltip = _utf8(L("Split to objects"));
-    item.sprite_id = 8;
-    item.left.action_callback = [this]() { if (m_canvas != nullptr) wxPostEvent(m_canvas, SimpleEvent(EVT_GLTOOLBAR_SPLIT_OBJECTS)); };
-    item.visibility_callback = GLToolbarItem::Default_Visibility_Callback;
-    item.enabling_callback = []()->bool { return wxGetApp().plater()->can_split_to_objects(); };
-    if (!m_main_toolbar.add_item(item))
-        return false;
+    // item.name = "splitobjects";
+    // item.icon_filename = "split_objects.svg";
+    // item.tooltip = _utf8(L("Split to objects"));
+    // item.sprite_id = 8;
+    // item.left.action_callback = [this]() { if (m_canvas != nullptr) wxPostEvent(m_canvas, SimpleEvent(EVT_GLTOOLBAR_SPLIT_OBJECTS)); };
+    // item.visibility_callback = GLToolbarItem::Default_Visibility_Callback;
+    // item.enabling_callback = []()->bool { return wxGetApp().plater()->can_split_to_objects(); };
+    // if (!m_main_toolbar.add_item(item))
+    //     return false;
 
-    item.name = "splitvolumes";
-    item.icon_filename = "split_parts.svg";
-    item.tooltip = _utf8(L("Split to parts"));
-    item.sprite_id = 9;
-    item.left.action_callback = [this]() { if (m_canvas != nullptr) wxPostEvent(m_canvas, SimpleEvent(EVT_GLTOOLBAR_SPLIT_VOLUMES)); };
-    item.visibility_callback = []()->bool { return wxGetApp().get_mode() != comSimple; };
-    item.enabling_callback = []()->bool { return wxGetApp().plater()->can_split_to_volumes(); };
-    if (!m_main_toolbar.add_item(item))
-        return false;
+    // item.name = "splitvolumes";
+    // item.icon_filename = "split_parts.svg";
+    // item.tooltip = _utf8(L("Split to parts"));
+    // item.sprite_id = 9;
+    // item.left.action_callback = [this]() { if (m_canvas != nullptr) wxPostEvent(m_canvas, SimpleEvent(EVT_GLTOOLBAR_SPLIT_VOLUMES)); };
+    // item.visibility_callback = []()->bool { return wxGetApp().get_mode() != comSimple; };
+    // item.enabling_callback = []()->bool { return wxGetApp().plater()->can_split_to_volumes(); };
+    // if (!m_main_toolbar.add_item(item))
+    //     return false;
 
-    if (!m_main_toolbar.add_separator())
-        return false;
+    // if (!m_main_toolbar.add_separator())
+    //     return false;
 
-    item.name = "layersediting";
-    item.icon_filename = "layers_white.svg";
-    item.tooltip = _utf8(L("Variable layer height"));
-    item.sprite_id = 10;
-    item.left.toggable = true;
-    item.left.action_callback = [this]() { if (m_canvas != nullptr) wxPostEvent(m_canvas, SimpleEvent(EVT_GLTOOLBAR_LAYERSEDITING)); };
-    item.visibility_callback = [this]()->bool
-    {
-        bool res = m_process->current_printer_technology() == ptFFF;
-        // turns off if changing printer technology
-        if (!res && m_main_toolbar.is_item_visible("layersediting") && m_main_toolbar.is_item_pressed("layersediting"))
-            force_main_toolbar_left_action(get_main_toolbar_item_id("layersediting"));
+    // item.name = "layersediting";
+    // item.icon_filename = "layers_white.svg";
+    // item.tooltip = _utf8(L("Variable layer height"));
+    // item.sprite_id = 10;
+    // item.left.toggable = true;
+    // item.left.action_callback = [this]() { if (m_canvas != nullptr) wxPostEvent(m_canvas, SimpleEvent(EVT_GLTOOLBAR_LAYERSEDITING)); };
+    // item.visibility_callback = [this]()->bool
+    // {
+    //     bool res = m_process->current_printer_technology() == ptFFF;
+    //     // turns off if changing printer technology
+    //     if (!res && m_main_toolbar.is_item_visible("layersediting") && m_main_toolbar.is_item_pressed("layersediting"))
+    //         force_main_toolbar_left_action(get_main_toolbar_item_id("layersediting"));
 
-        return res;
-    };
-    item.enabling_callback = []()->bool { return wxGetApp().plater()->can_layers_editing(); };
-    if (!m_main_toolbar.add_item(item))
-        return false;
+    //     return res;
+    // };
+    // item.enabling_callback = []()->bool { return wxGetApp().plater()->can_layers_editing(); };
+    // if (!m_main_toolbar.add_item(item))
+    //     return false;
 
     return true;
 }
