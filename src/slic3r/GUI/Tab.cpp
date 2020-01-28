@@ -3471,7 +3471,7 @@ void TabSLAMaterial::build()
         on_value_change(opt_key, value);
 
         if (opt_key == "bottle_volume" || opt_key == "bottle_cost") {
-            wxGetApp().sidebar().update_sliced_info_sizer();
+            // wxGetApp().sidebar().update_sliced_info_sizer();
             wxGetApp().sidebar().Layout();
         }
     };
