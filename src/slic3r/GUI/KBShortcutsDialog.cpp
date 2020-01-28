@@ -123,8 +123,8 @@ void KBShortcutsDialog::fill_shortcuts()
     main_shortcuts.push_back(Shortcut(ctrl+"P"          ,L("Preferences")));
     main_shortcuts.push_back(Shortcut(ctrl+"J"          ,L("Print host upload queue")));
     main_shortcuts.push_back(Shortcut("0-6"             ,L("Camera view")));
-    main_shortcuts.push_back(Shortcut("+"               ,L("Add Instance of the selected object")));
-    main_shortcuts.push_back(Shortcut("-"               ,L("Remove Instance of the selected object")));
+    // main_shortcuts.push_back(Shortcut("+"               ,L("Add Instance of the selected object")));
+    // main_shortcuts.push_back(Shortcut("-"               ,L("Remove Instance of the selected object")));
     main_shortcuts.push_back(Shortcut("?"               ,L("Show keyboard shortcuts list")));
     main_shortcuts.push_back(Shortcut(ctrl/*+"LeftMouse"*/,L("Press to select multiple object or move multiple object with mouse")));
 
@@ -134,8 +134,8 @@ void KBShortcutsDialog::fill_shortcuts()
     Shortcuts plater_shortcuts;
     plater_shortcuts.reserve(20);
 
-    plater_shortcuts.push_back(Shortcut("A",        L("Arrange")));
-    plater_shortcuts.push_back(Shortcut("Shift+A",  L("Arrange selection")));
+    // plater_shortcuts.push_back(Shortcut("A",        L("Arrange")));
+    // plater_shortcuts.push_back(Shortcut("Shift+A",  L("Arrange selection")));
     plater_shortcuts.push_back(Shortcut(ctrl+"A",   L("Select All objects")));
     plater_shortcuts.push_back(Shortcut("Del",      L("Delete selected")));
     plater_shortcuts.push_back(Shortcut(ctrl+"Del", L("Delete All")));
