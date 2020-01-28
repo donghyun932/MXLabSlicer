@@ -108,12 +108,12 @@ public:
     wxScrolledWindow*       scrolled_panel();
     wxPanel*                presets_panel();
 
-    ConfigOptionsGroup*     og_freq_chng_params(const bool is_fff);
-    wxButton*               get_wiping_dialog_button();
+    // ConfigOptionsGroup*     og_freq_chng_params(const bool is_fff);
+    // wxButton*               get_wiping_dialog_button();
     void                    update_objects_list_extruder_column(size_t extruders_count);
     void                    show_info_sizer();
-    void                    show_sliced_info_sizer(const bool show);
-    void                    update_sliced_info_sizer();
+    // void                    show_sliced_info_sizer(const bool show);
+    // void                    update_sliced_info_sizer();
     void                    enable_buttons(bool enable);
     void                    set_btn_label(const ActionButtonType btn_type, const wxString& label) const;
     bool                    show_reslice(bool show) const;

@@ -689,13 +689,13 @@ struct Sidebar::priv
     PresetComboBox *combo_printer;
 
     wxBoxSizer *sizer_params;
-    FreqChangedParams   *frequently_changed_parameters{ nullptr };
+    // FreqChangedParams   *frequently_changed_parameters{ nullptr };
     ObjectList          *object_list{ nullptr };
     ObjectManipulation  *object_manipulation{ nullptr };
     ObjectSettings      *object_settings{ nullptr };
     ObjectLayers        *object_layers{ nullptr };
     ObjectInfo *object_info;
-    SlicedInfo *sliced_info;
+    // SlicedInfo *sliced_info;
 
     wxButton *btn_export_gcode;
     wxButton *btn_reslice;
@@ -716,8 +716,8 @@ Sidebar::priv::~priv()
     if (object_settings != nullptr)
         delete object_settings;
 
-    if (frequently_changed_parameters != nullptr)
-        delete frequently_changed_parameters;
+    // if (frequently_changed_parameters != nullptr)
+    //     delete frequently_changed_parameters;
 
     if (object_layers != nullptr)
         delete object_layers;
@@ -735,7 +735,7 @@ void Sidebar::priv::show_preset_comboboxes()
             sizer_presets->Show(i, showSLA);
     }
 
-    frequently_changed_parameters->Show(!showSLA);
+    // frequently_changed_parameters->Show(!showSLA);
 
     scrolled->GetParent()->Layout();
     scrolled->Refresh();
@@ -803,17 +803,17 @@ Sidebar::Sidebar(Plater *parent)
     p->combos_filament.push_back(nullptr);
     init_combo(&p->combo_print,         _(L("Print settings")),     Preset::TYPE_PRINT,         false);
     init_combo(&p->combos_filament[0],  _(L("Filament")),           Preset::TYPE_FILAMENT,      true);
-    init_combo(&p->combo_sla_print,     _(L("SLA print settings")), Preset::TYPE_SLA_PRINT,     false);
-    init_combo(&p->combo_sla_material,  _(L("SLA material")),       Preset::TYPE_SLA_MATERIAL,  false);
-    init_combo(&p->combo_printer,       _(L("Printer")),            Preset::TYPE_PRINTER,       false);
+    // init_combo(&p->combo_sla_print,     _(L("SLA print settings")), Preset::TYPE_SLA_PRINT,     false);
+    // init_combo(&p->combo_sla_material,  _(L("SLA material")),       Preset::TYPE_SLA_MATERIAL,  false);
+    // init_combo(&p->combo_printer,       _(L("Printer")),            Preset::TYPE_PRINTER,       false);
 
     const int margin_5  = int(0.5*wxGetApp().em_unit());// 5;
 
     p->sizer_params = new wxBoxSizer(wxVERTICAL);
 
     // Frequently changed parameters
-    p->frequently_changed_parameters = new FreqChangedParams(p->scrolled);
-    p->sizer_params->Add(p->frequently_changed_parameters->get_sizer(), 0, wxEXPAND | wxTOP | wxBOTTOM, wxOSX ? 1 : margin_5);
+    // p->frequently_changed_parameters = new FreqChangedParams(p->scrolled);
+    // p->sizer_params->Add(p->frequently_changed_parameters->get_sizer(), 0, wxEXPAND | wxTOP | wxBOTTOM, wxOSX ? 1 : margin_5);
 
     // Object List
     p->object_list = new ObjectList(p->scrolled);
@@ -836,7 +836,7 @@ Sidebar::Sidebar(Plater *parent)
 
     // Info boxes
     p->object_info = new ObjectInfo(p->scrolled);
-    p->sliced_info = new SlicedInfo(p->scrolled);
+    // p->sliced_info = new SlicedInfo(p->scrolled);
 
     // Sizer in the scrolled area
     // scrolled_sizer->Add(p->mode_sizer, 0, wxALIGN_CENTER_HORIZONTAL/*RIGHT | wxBOTTOM | wxRIGHT, 5*/);
@@ -845,7 +845,7 @@ Sidebar::Sidebar(Plater *parent)
         scrolled_sizer->Add(p->sizer_presets, 0, wxEXPAND | wxLEFT, margin_5);
     scrolled_sizer->Add(p->sizer_params, 1, wxEXPAND | wxLEFT, margin_5);
     scrolled_sizer->Add(p->object_info, 0, wxEXPAND | wxTOP | wxLEFT, margin_5);
-    scrolled_sizer->Add(p->sliced_info, 0, wxEXPAND | wxTOP | wxLEFT, margin_5);
+    // scrolled_sizer->Add(p->sliced_info, 0, wxEXPAND | wxTOP | wxLEFT, margin_5);
 
     // Buttons underneath the scrolled area
 
@@ -1046,7 +1046,7 @@ void Sidebar::msw_rescale()
     // ... then refill them and set min size to correct layout of the sidebar
     update_all_preset_comboboxes();
 
-    p->frequently_changed_parameters->msw_rescale();
+    // p->frequently_changed_parameters->msw_rescale();
     p->object_list->msw_rescale();
     p->object_manipulation->msw_rescale();
     p->object_settings->msw_rescale();
@@ -1093,15 +1093,15 @@ wxPanel* Sidebar::presets_panel()
     return p->presets_panel;
 }
 
-ConfigOptionsGroup* Sidebar::og_freq_chng_params(const bool is_fff)
-{
-    return p->frequently_changed_parameters->get_og(is_fff);
-}
+// ConfigOptionsGroup* Sidebar::og_freq_chng_params(const bool is_fff)
+// {
+//     return p->frequently_changed_parameters->get_og(is_fff);
+// }
 
-wxButton* Sidebar::get_wiping_dialog_button()
-{
-    return p->frequently_changed_parameters->get_wiping_dialog_button();
-}
+// wxButton* Sidebar::get_wiping_dialog_button()
+// {
+//     return p->frequently_changed_parameters->get_wiping_dialog_button();
+// }
 
 void Sidebar::update_objects_list_extruder_column(size_t extruders_count)
 {
@@ -1165,123 +1165,123 @@ void Sidebar::show_info_sizer()
     }
 }
 
-void Sidebar::update_sliced_info_sizer()
-{
-    if (p->sliced_info->IsShown(size_t(0)))
-    {
-        if (p->plater->printer_technology() == ptSLA)
-        {
-            const SLAPrintStatistics& ps = p->plater->sla_print().print_statistics();
-            wxString new_label = _(L("Used Material (ml)")) + " :";
-            const bool is_supports = ps.support_used_material > 0.0;
-            if (is_supports)
-                new_label += wxString::Format("\n    - %s\n    - %s", _(L("object(s)")), _(L("supports and pad")));
+// void Sidebar::update_sliced_info_sizer()
+// {
+//     if (p->sliced_info->IsShown(size_t(0)))
+//     {
+//         if (p->plater->printer_technology() == ptSLA)
+//         {
+//             const SLAPrintStatistics& ps = p->plater->sla_print().print_statistics();
+//             wxString new_label = _(L("Used Material (ml)")) + " :";
+//             const bool is_supports = ps.support_used_material > 0.0;
+//             if (is_supports)
+//                 new_label += wxString::Format("\n    - %s\n    - %s", _(L("object(s)")), _(L("supports and pad")));
 
-            wxString info_text = is_supports ?
-                wxString::Format("%.2f \n%.2f \n%.2f", (ps.objects_used_material + ps.support_used_material) / 1000,
-                                                       ps.objects_used_material / 1000,
-                                                       ps.support_used_material / 1000) :
-                wxString::Format("%.2f", (ps.objects_used_material + ps.support_used_material) / 1000);
-            p->sliced_info->SetTextAndShow(siMateril_unit, info_text, new_label);
+//             wxString info_text = is_supports ?
+//                 wxString::Format("%.2f \n%.2f \n%.2f", (ps.objects_used_material + ps.support_used_material) / 1000,
+//                                                        ps.objects_used_material / 1000,
+//                                                        ps.support_used_material / 1000) :
+//                 wxString::Format("%.2f", (ps.objects_used_material + ps.support_used_material) / 1000);
+//             p->sliced_info->SetTextAndShow(siMateril_unit, info_text, new_label);
 
-            wxString str_total_cost = "N/A";
+//             wxString str_total_cost = "N/A";
 
-            DynamicPrintConfig* cfg = wxGetApp().get_tab(Preset::TYPE_SLA_MATERIAL)->get_config();
-            if (cfg->option("bottle_cost")->getFloat() > 0.0 &&
-                cfg->option("bottle_volume")->getFloat() > 0.0)
-            {
-                double material_cost = cfg->option("bottle_cost")->getFloat() / 
-                                       cfg->option("bottle_volume")->getFloat();
-                str_total_cost = wxString::Format("%.2f", material_cost*(ps.objects_used_material + ps.support_used_material) / 1000);                
-            }
-            p->sliced_info->SetTextAndShow(siCost, str_total_cost);
+//             DynamicPrintConfig* cfg = wxGetApp().get_tab(Preset::TYPE_SLA_MATERIAL)->get_config();
+//             if (cfg->option("bottle_cost")->getFloat() > 0.0 &&
+//                 cfg->option("bottle_volume")->getFloat() > 0.0)
+//             {
+//                 double material_cost = cfg->option("bottle_cost")->getFloat() / 
+//                                        cfg->option("bottle_volume")->getFloat();
+//                 str_total_cost = wxString::Format("%.2f", material_cost*(ps.objects_used_material + ps.support_used_material) / 1000);                
+//             }
+//             p->sliced_info->SetTextAndShow(siCost, str_total_cost);
 
-            wxString t_est = std::isnan(ps.estimated_print_time) ? "N/A" : get_time_dhms(float(ps.estimated_print_time));
-            p->sliced_info->SetTextAndShow(siEstimatedTime, t_est, _(L("Estimated printing time")) + " :");
+//             wxString t_est = std::isnan(ps.estimated_print_time) ? "N/A" : get_time_dhms(float(ps.estimated_print_time));
+//             p->sliced_info->SetTextAndShow(siEstimatedTime, t_est, _(L("Estimated printing time")) + " :");
 
-            // Hide non-SLA sliced info parameters
-            p->sliced_info->SetTextAndShow(siFilament_m, "N/A");
-            p->sliced_info->SetTextAndShow(siFilament_mm3, "N/A");
-            p->sliced_info->SetTextAndShow(siFilament_g, "N/A");
-            p->sliced_info->SetTextAndShow(siWTNumbetOfToolchanges, "N/A");
-        }
-        else
-        {
-            const PrintStatistics& ps = p->plater->fff_print().print_statistics();
-            const bool is_wipe_tower = ps.total_wipe_tower_filament > 0;
+//             // Hide non-SLA sliced info parameters
+//             p->sliced_info->SetTextAndShow(siFilament_m, "N/A");
+//             p->sliced_info->SetTextAndShow(siFilament_mm3, "N/A");
+//             p->sliced_info->SetTextAndShow(siFilament_g, "N/A");
+//             p->sliced_info->SetTextAndShow(siWTNumbetOfToolchanges, "N/A");
+//         }
+//         else
+//         {
+//             const PrintStatistics& ps = p->plater->fff_print().print_statistics();
+//             const bool is_wipe_tower = ps.total_wipe_tower_filament > 0;
 
-            wxString new_label = _(L("Used Filament (m)"));
-            if (is_wipe_tower)
-                new_label += wxString::Format(" :\n    - %s\n    - %s", _(L("objects")), _(L("wipe tower")));
+//             wxString new_label = _(L("Used Filament (m)"));
+//             if (is_wipe_tower)
+//                 new_label += wxString::Format(" :\n    - %s\n    - %s", _(L("objects")), _(L("wipe tower")));
 
-            wxString info_text = is_wipe_tower ?
-                                wxString::Format("%.2f \n%.2f \n%.2f", ps.total_used_filament / 1000,
-                                                (ps.total_used_filament - ps.total_wipe_tower_filament) / 1000,
-                                                ps.total_wipe_tower_filament / 1000) :
-                                wxString::Format("%.2f", ps.total_used_filament / 1000);
-            p->sliced_info->SetTextAndShow(siFilament_m,    info_text,      new_label);
+//             wxString info_text = is_wipe_tower ?
+//                                 wxString::Format("%.2f \n%.2f \n%.2f", ps.total_used_filament / 1000,
+//                                                 (ps.total_used_filament - ps.total_wipe_tower_filament) / 1000,
+//                                                 ps.total_wipe_tower_filament / 1000) :
+//                                 wxString::Format("%.2f", ps.total_used_filament / 1000);
+//             p->sliced_info->SetTextAndShow(siFilament_m,    info_text,      new_label);
 
-            p->sliced_info->SetTextAndShow(siFilament_mm3,  wxString::Format("%.2f", ps.total_extruded_volume));
-            p->sliced_info->SetTextAndShow(siFilament_g,    wxString::Format("%.2f", ps.total_weight));
+//             p->sliced_info->SetTextAndShow(siFilament_mm3,  wxString::Format("%.2f", ps.total_extruded_volume));
+//             p->sliced_info->SetTextAndShow(siFilament_g,    wxString::Format("%.2f", ps.total_weight));
 
 
-            new_label = _(L("Cost"));
-            if (is_wipe_tower)
-                new_label += wxString::Format(" :\n    - %s\n    - %s", _(L("objects")), _(L("wipe tower")));
+//             new_label = _(L("Cost"));
+//             if (is_wipe_tower)
+//                 new_label += wxString::Format(" :\n    - %s\n    - %s", _(L("objects")), _(L("wipe tower")));
 
-            info_text = is_wipe_tower ?
-                        wxString::Format("%.2f \n%.2f \n%.2f", ps.total_cost,
-                                            (ps.total_cost - ps.total_wipe_tower_cost),
-                                            ps.total_wipe_tower_cost) :
-                        wxString::Format("%.2f", ps.total_cost);
-            p->sliced_info->SetTextAndShow(siCost,       info_text,      new_label);
+//             info_text = is_wipe_tower ?
+//                         wxString::Format("%.2f \n%.2f \n%.2f", ps.total_cost,
+//                                             (ps.total_cost - ps.total_wipe_tower_cost),
+//                                             ps.total_wipe_tower_cost) :
+//                         wxString::Format("%.2f", ps.total_cost);
+//             p->sliced_info->SetTextAndShow(siCost,       info_text,      new_label);
 
-            if (ps.estimated_normal_print_time == "N/A" && ps.estimated_silent_print_time == "N/A")
-                p->sliced_info->SetTextAndShow(siEstimatedTime, "N/A");
-            else {
-                new_label = _(L("Estimated printing time")) +" :";
-                info_text = "";
-                if (ps.estimated_normal_print_time != "N/A") {
-                    new_label += wxString::Format("\n    - %s", _(L("normal mode")));
-                    info_text += wxString::Format("\n%s", ps.estimated_normal_print_time);
-                    for (int i = (int)ps.estimated_normal_color_print_times.size() - 1; i >= 0; --i)
-                    {
-                        new_label += wxString::Format("\n      - %s%d", _(L("Color")) + " ", i + 1);
-                        info_text += wxString::Format("\n%s", ps.estimated_normal_color_print_times[i]);
-                    }
-                }
-                if (ps.estimated_silent_print_time != "N/A") {
-                    new_label += wxString::Format("\n    - %s", _(L("stealth mode")));
-                    info_text += wxString::Format("\n%s", ps.estimated_silent_print_time);
-                    for (int i = (int)ps.estimated_silent_color_print_times.size() - 1; i >= 0; --i)
-                    {
-                        new_label += wxString::Format("\n      - %s%d", _(L("Color")) + " ", i + 1);
-                        info_text += wxString::Format("\n%s", ps.estimated_silent_color_print_times[i]);
-                    }
-                }
-                p->sliced_info->SetTextAndShow(siEstimatedTime,  info_text,      new_label);
-            }
+//             if (ps.estimated_normal_print_time == "N/A" && ps.estimated_silent_print_time == "N/A")
+//                 p->sliced_info->SetTextAndShow(siEstimatedTime, "N/A");
+//             else {
+//                 new_label = _(L("Estimated printing time")) +" :";
+//                 info_text = "";
+//                 if (ps.estimated_normal_print_time != "N/A") {
+//                     new_label += wxString::Format("\n    - %s", _(L("normal mode")));
+//                     info_text += wxString::Format("\n%s", ps.estimated_normal_print_time);
+//                     for (int i = (int)ps.estimated_normal_color_print_times.size() - 1; i >= 0; --i)
+//                     {
+//                         new_label += wxString::Format("\n      - %s%d", _(L("Color")) + " ", i + 1);
+//                         info_text += wxString::Format("\n%s", ps.estimated_normal_color_print_times[i]);
+//                     }
+//                 }
+//                 if (ps.estimated_silent_print_time != "N/A") {
+//                     new_label += wxString::Format("\n    - %s", _(L("stealth mode")));
+//                     info_text += wxString::Format("\n%s", ps.estimated_silent_print_time);
+//                     for (int i = (int)ps.estimated_silent_color_print_times.size() - 1; i >= 0; --i)
+//                     {
+//                         new_label += wxString::Format("\n      - %s%d", _(L("Color")) + " ", i + 1);
+//                         info_text += wxString::Format("\n%s", ps.estimated_silent_color_print_times[i]);
+//                     }
+//                 }
+//                 p->sliced_info->SetTextAndShow(siEstimatedTime,  info_text,      new_label);
+//             }
 
-            // if there is a wipe tower, insert number of toolchanges info into the array:
-            p->sliced_info->SetTextAndShow(siWTNumbetOfToolchanges, is_wipe_tower ? wxString::Format("%.d", ps.total_toolchanges) : "N/A");
+//             // if there is a wipe tower, insert number of toolchanges info into the array:
+//             p->sliced_info->SetTextAndShow(siWTNumbetOfToolchanges, is_wipe_tower ? wxString::Format("%.d", ps.total_toolchanges) : "N/A");
 
-            // Hide non-FFF sliced info parameters
-            p->sliced_info->SetTextAndShow(siMateril_unit, "N/A");
-        }
-    }
-}
+//             // Hide non-FFF sliced info parameters
+//             p->sliced_info->SetTextAndShow(siMateril_unit, "N/A");
+//         }
+//     }
+// }
 
-void Sidebar::show_sliced_info_sizer(const bool show)
-{
-    wxWindowUpdateLocker freeze_guard(this);
+// void Sidebar::show_sliced_info_sizer(const bool show)
+// {
+//     wxWindowUpdateLocker freeze_guard(this);
 
-    p->sliced_info->Show(show);
-    if (show)
-        update_sliced_info_sizer();
+//     p->sliced_info->Show(show);
+//     if (show)
+//         update_sliced_info_sizer();
 
-    Layout();
-    p->scrolled->Refresh();
-}
+//     Layout();
+//     p->scrolled->Refresh();
+// }
 
 void Sidebar::enable_buttons(bool enable)
 {
@@ -2787,7 +2787,7 @@ void Plater::priv::reset()
     object_list_changed();
 
     // The hiding of the slicing results, if shown, is not taken care by the background process, so we do it here
-    this->sidebar->show_sliced_info_sizer(false);
+    // this->sidebar->show_sliced_info_sizer(false);
 
     model.custom_gcode_per_print_z.clear();
 }
@@ -3030,7 +3030,7 @@ unsigned int Plater::priv::update_background_process(bool force_validation, bool
     if (invalidated == Print::APPLY_STATUS_INVALIDATED) {
         // Some previously calculated data on the Print was invalidated.
         // Hide the slicing results, as the current slicing status is no more valid.
-        this->sidebar->show_sliced_info_sizer(false);
+        // this->sidebar->show_sliced_info_sizer(false);
         // Reset preview canvases. If the print has been invalidated, the preview canvases will be cleared.
         // Otherwise they will be just refreshed.
         if (this->preview != nullptr)
@@ -3593,7 +3593,7 @@ void Plater::priv::on_process_completed(wxCommandEvent &evt)
     if (canceled)
         this->statusbar()->set_status_text(_(L("Cancelled")));
 
-    this->sidebar->show_sliced_info_sizer(success);
+    // this->sidebar->show_sliced_info_sizer(success);
 
     // This updates the "Slice now", "Export G-code", "Arrange" buttons status.
     // Namely, it refreshes the "Out of print bed" property of all the ModelObjects, and it enables

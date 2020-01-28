@@ -853,33 +853,33 @@ void Tab::on_value_change(const std::string& opt_key, const boost::any& value)
     }
 
     const bool is_fff = supports_printer_technology(ptFFF);
-    ConfigOptionsGroup* og_freq_chng_params = wxGetApp().sidebar().og_freq_chng_params(is_fff);
-    if (opt_key == "fill_density" || opt_key == "pad_enable")
-    {
-        boost::any val = og_freq_chng_params->get_config_value(*m_config, opt_key);
-        og_freq_chng_params->set_value(opt_key, val);
-    }
+    // ConfigOptionsGroup* og_freq_chng_params = wxGetApp().sidebar().og_freq_chng_params(is_fff);
+    // if (opt_key == "fill_density" || opt_key == "pad_enable")
+    // {
+    //     boost::any val = og_freq_chng_params->get_config_value(*m_config, opt_key);
+    //     og_freq_chng_params->set_value(opt_key, val);
+    // }
     
-    if (opt_key == "pad_around_object") {
-        for (PageShp &pg : m_pages) {
-            Field * fld = pg->get_field(opt_key);
-            if (fld) fld->set_value(value, false);
-        }
-    }
+    // if (opt_key == "pad_around_object") {
+    //     for (PageShp &pg : m_pages) {
+    //         Field * fld = pg->get_field(opt_key);
+    //         if (fld) fld->set_value(value, false);
+    //     }
+    // }
 
-    if (is_fff ?
-            (opt_key == "support_material" || opt_key == "support_material_auto" || opt_key == "support_material_buildplate_only") :
-            (opt_key == "supports_enable"  || opt_key == "support_buildplate_only"))
-        og_freq_chng_params->set_value("support", support_combo_value_for_config(*m_config, is_fff));
+    // if (is_fff ?
+    //         (opt_key == "support_material" || opt_key == "support_material_auto" || opt_key == "support_material_buildplate_only") :
+    //         (opt_key == "supports_enable"  || opt_key == "support_buildplate_only"))
+    //     og_freq_chng_params->set_value("support", support_combo_value_for_config(*m_config, is_fff));
 
-    if (! is_fff && (opt_key == "pad_enable" || opt_key == "pad_around_object"))
-        og_freq_chng_params->set_value("pad", pad_combo_value_for_config(*m_config));
+    // if (! is_fff && (opt_key == "pad_enable" || opt_key == "pad_around_object"))
+    //     og_freq_chng_params->set_value("pad", pad_combo_value_for_config(*m_config));
 
-    if (opt_key == "brim_width")
-    {
-        bool val = m_config->opt_float("brim_width") > 0.0 ? true : false;
-        og_freq_chng_params->set_value("brim", val);
-    }
+    // if (opt_key == "brim_width")
+    // {
+    //     bool val = m_config->opt_float("brim_width") > 0.0 ? true : false;
+    //     og_freq_chng_params->set_value("brim", val);
+    // }
 
     if (opt_key == "wipe_tower" || opt_key == "single_extruder_multi_material" || opt_key == "extruders_count" )
         update_wiping_button_visibility();
@@ -897,11 +897,11 @@ void Tab::update_wiping_button_visibility() {
     bool wipe_tower_enabled = dynamic_cast<ConfigOptionBool*>(  (m_preset_bundle->prints.get_edited_preset().config  ).option("wipe_tower"))->value;
     bool multiple_extruders = dynamic_cast<ConfigOptionFloats*>((m_preset_bundle->printers.get_edited_preset().config).option("nozzle_diameter"))->values.size() > 1;
 
-    auto wiping_dialog_button = wxGetApp().sidebar().get_wiping_dialog_button();
-    if (wiping_dialog_button) {
-        wiping_dialog_button->Show(wipe_tower_enabled && multiple_extruders);
-        wiping_dialog_button->GetParent()->Layout();
-    }
+    // auto wiping_dialog_button = wxGetApp().sidebar().get_wiping_dialog_button();
+    // if (wiping_dialog_button) {
+    //     wiping_dialog_button->Show(wipe_tower_enabled && multiple_extruders);
+    //     wiping_dialog_button->GetParent()->Layout();
+    // }
 }
 
 
@@ -1008,27 +1008,27 @@ void Tab::update_preset_description_line()
     m_parent_preset_description_line->SetText(description_line, false);
 }
 
-void Tab::update_frequently_changed_parameters()
-{
-    const bool is_fff = supports_printer_technology(ptFFF);
-    auto og_freq_chng_params = wxGetApp().sidebar().og_freq_chng_params(is_fff);
-    if (!og_freq_chng_params) return;
+// void Tab::update_frequently_changed_parameters()
+// {
+//     const bool is_fff = supports_printer_technology(ptFFF);
+//     auto og_freq_chng_params = wxGetApp().sidebar().og_freq_chng_params(is_fff);
+//     if (!og_freq_chng_params) return;
 
-    og_freq_chng_params->set_value("support", support_combo_value_for_config(*m_config, is_fff));
-    if (! is_fff)
-        og_freq_chng_params->set_value("pad", pad_combo_value_for_config(*m_config));
+//     og_freq_chng_params->set_value("support", support_combo_value_for_config(*m_config, is_fff));
+//     if (! is_fff)
+//         og_freq_chng_params->set_value("pad", pad_combo_value_for_config(*m_config));
 
-    const std::string updated_value_key = is_fff ? "fill_density" : "pad_enable";
+//     const std::string updated_value_key = is_fff ? "fill_density" : "pad_enable";
 
-    const boost::any val = og_freq_chng_params->get_config_value(*m_config, updated_value_key);
-    og_freq_chng_params->set_value(updated_value_key, val);
+//     const boost::any val = og_freq_chng_params->get_config_value(*m_config, updated_value_key);
+//     og_freq_chng_params->set_value(updated_value_key, val);
 
-    if (is_fff)
-    {
-        og_freq_chng_params->set_value("brim", bool(m_config->opt_float("brim_width") > 0.0));
-        update_wiping_button_visibility();
-    }
-}
+//     if (is_fff)
+//     {
+//         og_freq_chng_params->set_value("brim", bool(m_config->opt_float("brim_width") > 0.0));
+//         update_wiping_button_visibility();
+//     }
+// }
 
 void TabPrint::build()
 {
@@ -2653,8 +2653,8 @@ void Tab::load_current_preset()
         }
         else {
             on_presets_changed();
-            if (m_type == Preset::TYPE_SLA_PRINT || m_type == Preset::TYPE_PRINT)
-                update_frequently_changed_parameters();
+            // if (m_type == Preset::TYPE_SLA_PRINT || m_type == Preset::TYPE_PRINT)
+            //     update_frequently_changed_parameters();
         }
 
         m_opt_status_value = (m_presets->get_selected_preset_parent() ? osSystemValue : 0) | osInitValue;
@@ -3471,7 +3471,7 @@ void TabSLAMaterial::build()
         on_value_change(opt_key, value);
 
         if (opt_key == "bottle_volume" || opt_key == "bottle_cost") {
-            wxGetApp().sidebar().update_sliced_info_sizer();
+            // wxGetApp().sidebar().update_sliced_info_sizer();
             wxGetApp().sidebar().Layout();
         }
     };
