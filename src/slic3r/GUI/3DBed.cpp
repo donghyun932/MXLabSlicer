@@ -271,8 +271,8 @@ void Bed3D::render(GLCanvas3D& canvas, float theta, float scale_factor, bool sho
 
     glsafe(::glEnable(GL_DEPTH_TEST));
 
-    render_model(resources_dir() + "/models/" + "mk2_bed.stl");
-    render_texture(resources_dir() + "/icons/bed/" + "mk2_bed.svg", theta > 90.0f, canvas);
+    render_model(resources_dir() + "/models/" + "mxlab_bed.stl");
+    render_texture(resources_dir() + "/icons/bed/" + "mxlab.svg", theta > 90.0f, canvas);
 
     glsafe(::glDisable(GL_DEPTH_TEST));
 }
