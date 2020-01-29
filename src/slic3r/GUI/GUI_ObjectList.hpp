@@ -236,6 +236,7 @@ public:
     wxMenuItem*         append_menu_item_change_type(wxMenu* menu);
     wxMenuItem*         append_menu_item_instance_to_object(wxMenu* menu, wxWindow* parent);
     wxMenuItem*         append_menu_item_printable(wxMenu* menu, wxWindow* parent);
+    wxMenuItem*         append_menu_item_checkbox(wxMenu* menu, wxWindow* parent);
     void                append_menu_items_osx(wxMenu* menu);
     wxMenuItem*         append_menu_item_fix_through_netfabb(wxMenu* menu);
     void                append_menu_item_export_stl(wxMenu* menu) const;
@@ -364,7 +365,9 @@ public:
     void update_after_undo_redo();
     //update printable state for item from objects model
     void update_printable_state(int obj_idx, int instance_idx);
+    void update_checkbox_state(int obj_idx, int instance_idx);
     void toggle_printable_state(wxDataViewItem item);
+    void toggle_checkbox_state(wxDataViewItem item);
 
     void show_multi_selection_menu();
 

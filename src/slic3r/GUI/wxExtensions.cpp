@@ -689,6 +689,13 @@ void ObjectDataViewModelNode::set_printable_icon(PrintIndicator printable)
                        create_scaled_bitmap(nullptr, m_printable == piPrintable ? "eye_open.png" : "eye_closed.png");
 }
 
+void ObjectDataViewModelNode::set_checkbox_icon(CheckboxIndicator checked)
+{
+    m_checked = checked;
+    m_checkbox_icon = m_checked == ciUndef ? m_empty_bmp :
+                       create_scaled_bitmap(nullptr, m_checked == ciChecked ? "checked_box.png" : "none_checked_box.png");
+}
+
 void ObjectDataViewModelNode::update_settings_digest_bitmaps()
 {
     m_bmp = m_empty_bmp;
@@ -736,6 +743,9 @@ void ObjectDataViewModelNode::msw_rescale()
     if (m_printable != piUndef)
         m_printable_icon = create_scaled_bitmap(nullptr, m_printable == piPrintable ? "eye_open.png" : "eye_closed.png");
 
+    if (m_checked != ciUndef)
+        m_checkbox_icon = create_scaled_bitmap(nullptr, m_checked == ciChecked ? "checked_box.png" : "none_checked_box.png");
+
     if (!m_opt_categories.empty())
         update_settings_digest_bitmaps();
 }
@@ -761,6 +771,9 @@ bool ObjectDataViewModelNode::SetValue(const wxVariant& variant, unsigned col)
         return true; }
     case colEditing:
         m_action_icon << variant;
+        return true;
+    case colCheckbox:
+        m_checkbox_icon << variant;
         return true;
     default:
         printf("MyObjectTreeModel::SetValue: wrong column");
@@ -1025,6 +1038,49 @@ void ObjectDataViewModel::UpdateInstancesPrintable(wxDataViewItem parent_item)
     }
 }
 
+void ObjectDataViewModel::UpdateObjectCheckbox(wxDataViewItem parent_item)
+{
+    const wxDataViewItem inst_root_item = GetInstanceRootItem(parent_item);
+    if (!inst_root_item) 
+        return;
+
+    ObjectDataViewModelNode* inst_root_node = (ObjectDataViewModelNode*)inst_root_item.GetID();
+
+    const size_t child_cnt = inst_root_node->GetChildren().Count();
+    CheckboxIndicator obj_pi = ciUnchecked;
+    for (size_t i=0; i < child_cnt; i++)
+        if (inst_root_node->GetNthChild(i)->IsChecked() & ciChecked) {
+            obj_pi = ciChecked;
+            break;
+        }
+    // and set checkbox state for object_node to piUndef
+    ObjectDataViewModelNode* obj_node = (ObjectDataViewModelNode*)parent_item.GetID();
+    obj_node->set_checkbox_icon(obj_pi);
+    ItemChanged(parent_item);
+}
+
+// update checkbox property for all instances from object
+void ObjectDataViewModel::UpdateInstancesCheckbox(wxDataViewItem parent_item)
+{
+    const wxDataViewItem inst_root_item = GetInstanceRootItem(parent_item);
+    if (!inst_root_item) 
+        return;
+
+    ObjectDataViewModelNode* obj_node = (ObjectDataViewModelNode*)parent_item.GetID();
+    const CheckboxIndicator obj_pi = obj_node->IsChecked();
+
+    ObjectDataViewModelNode* inst_root_node = (ObjectDataViewModelNode*)inst_root_item.GetID();
+    const size_t child_cnt = inst_root_node->GetChildren().Count();
+
+    for (size_t i=0; i < child_cnt; i++)
+    {
+        ObjectDataViewModelNode* inst_node = inst_root_node->GetNthChild(i);
+        // and set checkbox state for object_node to piUndef
+        inst_node->set_checkbox_icon(obj_pi);
+        ItemChanged(wxDataViewItem((void*)inst_node));
+    }
+}
+
 bool ObjectDataViewModel::IsPrintable(const wxDataViewItem& item) const
 {
     ObjectDataViewModelNode* node = (ObjectDataViewModelNode*)item.GetID();
@@ -1032,6 +1088,15 @@ bool ObjectDataViewModel::IsPrintable(const wxDataViewItem& item) const
         return false;
 
     return node->IsPrintable() == piPrintable;
+}
+
+bool ObjectDataViewModel::IsChecked(const wxDataViewItem& item) const
+{
+    ObjectDataViewModelNode* node = (ObjectDataViewModelNode*)item.GetID();
+    if (!node)
+        return false;
+
+    return node->IsChecked() == ciChecked;
 }
 
 wxDataViewItem ObjectDataViewModel::AddLayersRoot(const wxDataViewItem &parent_item)
@@ -1708,6 +1773,8 @@ void ObjectDataViewModel::GetValue(wxVariant &variant, const wxDataViewItem &ite
 	case colEditing:
 		variant << node->m_action_icon;
 		break;
+  case colCheckbox:
+    variant << node->m_checkbox_icon;
 	default:
 		;
 	}
@@ -1985,6 +2052,46 @@ wxDataViewItem ObjectDataViewModel::SetObjectPrintableState(
     ItemChanged(obj_item);
 
     UpdateInstancesPrintable(obj_item);
+
+    return obj_item;
+}
+
+wxDataViewItem ObjectDataViewModel::SetCheckboxState(
+    CheckboxIndicator  checked,
+    int             obj_idx,
+    int             subobj_idx /* = -1*/,
+    ItemType        subobj_type/* = itInstance*/)
+{
+    wxDataViewItem item = wxDataViewItem(0);
+    if (subobj_idx < 0)
+        item = GetItemById(obj_idx);
+    else
+        item =  subobj_type&itInstance ? GetItemByInstanceId(obj_idx, subobj_idx) :
+                GetItemByVolumeId(obj_idx, subobj_idx);
+
+    ObjectDataViewModelNode* node = (ObjectDataViewModelNode*)item.GetID();
+    if (!node)
+        return wxDataViewItem(0);
+    node->set_checkbox_icon(checked);
+    ItemChanged(item);
+
+    if (subobj_idx >= 0)
+        UpdateObjectCheckbox(GetItemById(obj_idx));
+
+    return item;
+}
+
+wxDataViewItem ObjectDataViewModel::SetObjectCheckboxState(
+    CheckboxIndicator  checked,
+    wxDataViewItem  obj_item)
+{
+    ObjectDataViewModelNode* node = (ObjectDataViewModelNode*)obj_item.GetID();
+    if (!node)
+        return wxDataViewItem(0);
+    node->set_checkbox_icon(checked);
+    ItemChanged(obj_item);
+
+    UpdateInstancesCheckbox(obj_item);
 
     return obj_item;
 }

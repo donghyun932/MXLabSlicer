@@ -279,6 +279,9 @@ void ObjectList::create_objects_ctrl()
     AppendBitmapColumn(_(L("Editing")), colEditing, wxDATAVIEW_CELL_INERT, 3*em,
         wxALIGN_CENTER_HORIZONTAL, wxDATAVIEW_COL_RESIZABLE);
 
+    AppendBitmapColumn("V", colCheckbox, wxDATAVIEW_CELL_INERT, 3*em,
+        wxALIGN_CENTER_HORIZONTAL, wxDATAVIEW_COL_RESIZABLE);
+
     // For some reason under OSX on 4K(5K) monitors in wxDataViewColumn constructor doesn't set width of column.
     // Therefore, force set column width.
     if (wxOSX)
@@ -286,6 +289,7 @@ void ObjectList::create_objects_ctrl()
         GetColumn(colName)->SetWidth(20*em);
         GetColumn(colPrint)->SetWidth(3*em);
         GetColumn(colExtruder)->SetWidth(8*em);
+        GetColumn(colCheckbox)->SetWidth(3*em);
     }
 }
 
@@ -840,6 +844,8 @@ void ObjectList::list_manipulation(bool evt_context_menu/* = false*/)
 
     if (title == " ")
         toggle_printable_state(item);
+    else if (title == "V")
+        toggle_checkbox_state(item);
     else if (title == _("Editing"))
         show_context_menu(evt_context_menu);
     else if (title == _("Name"))
@@ -1589,6 +1595,21 @@ wxMenuItem* ObjectList::append_menu_item_printable(wxMenu* menu, wxWindow* /*par
 
         if (item)
             toggle_printable_state(item);
+    }, menu);
+}
+
+wxMenuItem* ObjectList::append_menu_item_checkbox(wxMenu* menu, wxWindow* /*parent*/)
+{
+    return append_menu_check_item(menu, wxID_ANY, _(L("Checkbox")), "", [this](wxCommandEvent&) {
+        const Selection& selection = wxGetApp().plater()->canvas3D()->get_selection();
+        wxDataViewItem item;
+        if (GetSelectedItemsCount() > 1 && selection.is_single_full_object())
+            item = m_objects_model->GetItemById(selection.get_object_idx());
+        else
+            item = GetSelection();
+
+        if (item)
+            toggle_checkbox_state(item);
     }, menu);
 }
 
@@ -2586,8 +2607,10 @@ void ObjectList::add_object_to_list(size_t obj_idx, bool call_selection_changed)
         m_objects_model->AddInstanceChild(object_item, print_idicator);
         Expand(m_objects_model->GetInstanceRootItem(object_item));
     }
-    else
+    else {
         m_objects_model->SetPrintableState(model_object->instances[0]->printable ? piPrintable : piUnprintable, obj_idx);
+        m_objects_model->SetCheckboxState(model_object->instances[0]->checked ? ciChecked : ciUnchecked, obj_idx);
+    }
 
     // add settings to the object, if it has those
     add_settings_item(item, &model_object->config);
@@ -4012,6 +4035,17 @@ void ObjectList::update_printable_state(int obj_idx, int instance_idx)
     m_objects_model->SetPrintableState(printable, obj_idx, instance_idx);
 }
 
+void ObjectList::update_checkbox_state(int obj_idx, int instance_idx)
+{
+    ModelObject* object = (*m_objects)[obj_idx];
+
+    const CheckboxIndicator checked = object->instances[instance_idx]->checked ? ciChecked : ciUnchecked;
+    if (object->instances.size() == 1)
+        instance_idx = -1;
+
+    m_objects_model->SetCheckboxState(checked, obj_idx, instance_idx);
+}
+
 void ObjectList::toggle_printable_state(wxDataViewItem item)
 {
     const ItemType type = m_objects_model->GetItemType(item);
@@ -4043,6 +4077,39 @@ void ObjectList::toggle_printable_state(wxDataViewItem item)
     }
     else
         wxGetApp().plater()->canvas3D()->get_selection().toggle_instance_printable_state(); 
+
+    // update scene
+    wxGetApp().plater()->update();
+}
+
+void ObjectList::toggle_checkbox_state(wxDataViewItem item)
+{
+    const ItemType type = m_objects_model->GetItemType(item);
+    if (!(type&(itObject|itInstance/*|itVolume*/)))
+        return;
+
+    if (type & itObject)
+    {
+        const int obj_idx = m_objects_model->GetObjectIdByItem(item);
+        ModelObject* object = (*m_objects)[obj_idx];
+
+        // get object's checked and change it
+        const bool checked = !m_objects_model->IsChecked(item);
+
+        const wxString snapshot_text = wxString::Format("%s %s", 
+                                                        checked ? _(L("Set Checked")) : _(L("Set Unchecked")), 
+                                                        object->name);
+        take_snapshot(snapshot_text);
+
+        // set checked value for all instances in object
+        for (auto inst : object->instances)
+            inst->checked = checked;
+
+        // update checked state in ObjectList
+        m_objects_model->SetObjectCheckboxState(checked ? ciChecked : ciUnchecked , item);
+    }
+    // else
+    //     wxGetApp().plater()->canvas3D()->get_selection().toggle_instance_checkbox_state(); 
 
     // update scene
     wxGetApp().plater()->update();

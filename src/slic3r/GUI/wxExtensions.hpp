@@ -194,6 +194,7 @@ enum ColumnNumber
     colPrint           ,    // printable property
     colExtruder        ,    // extruder selection
     colEditing         ,    // item editing
+    colCheckbox        ,    // checkbox
 };
 
 enum PrintIndicator
@@ -201,6 +202,13 @@ enum PrintIndicator
     piUndef         = 0,    // no print indicator
     piPrintable        ,    // printable
     piUnprintable      ,    // unprintable
+};
+
+enum CheckboxIndicator
+{
+    ciUndef         = 0,    // no checkbox indicator
+    ciChecked          ,    // checked
+    ciUnchecked        ,    // unchecked
 };
 
 class ObjectDataViewModelNode;
@@ -224,7 +232,9 @@ class ObjectDataViewModelNode
     wxBitmap                        m_extruder_bmp;
     wxBitmap				        m_action_icon;
     PrintIndicator                  m_printable {piUndef};
+    CheckboxIndicator               m_checked {ciUndef};
     wxBitmap				        m_printable_icon;
+    wxBitmap                m_checkbox_icon;
 
     std::string                     m_action_icon_name = "";
     Slic3r::ModelVolumeType         m_volume_type;
@@ -339,6 +349,7 @@ public:
 	int             GetIdx() const                  { return m_idx; }
 	t_layer_height_range    GetLayerRange() const   { return m_layer_range; }
     PrintIndicator  IsPrintable() const             { return m_printable; }
+    CheckboxIndicator  IsChecked() const             { return m_checked; }
 
     // use this function only for childrens
     void AssignAllVal(ObjectDataViewModelNode& from_node)
@@ -372,6 +383,7 @@ public:
     void        set_action_and_extruder_icons();
 	// Set printable icon for node
     void        set_printable_icon(PrintIndicator printable);
+    void        set_checkbox_icon(CheckboxIndicator checked);
 
     void        update_settings_digest_bitmaps();
     bool        update_settings_digest(const std::vector<std::string>& categories);
@@ -501,8 +513,11 @@ public:
                                     const std::vector<std::string>& categories);
 
     bool    IsPrintable(const wxDataViewItem &item) const;
+    bool    IsChecked(const wxDataViewItem &item) const;
     void    UpdateObjectPrintable(wxDataViewItem parent_item);
     void    UpdateInstancesPrintable(wxDataViewItem parent_item);
+    void    UpdateObjectCheckbox(wxDataViewItem parent_item);
+    void    UpdateInstancesCheckbox(wxDataViewItem parent_item);
 
     void    SetVolumeBitmaps(const std::vector<wxBitmap*>& volume_bmps) { m_volume_bmps = volume_bmps; }
     void    SetWarningBitmap(wxBitmap* bitmap)                          { m_warning_bmp = bitmap; }
@@ -511,6 +526,10 @@ public:
                                       int subobj_idx = -1, 
                                       ItemType subobj_type = itInstance);
     wxDataViewItem SetObjectPrintableState(PrintIndicator printable, wxDataViewItem obj_item);
+    wxDataViewItem SetCheckboxState( CheckboxIndicator checked, int obj_idx,
+                                      int subobj_idx = -1, 
+                                      ItemType subobj_type = itInstance);
+    wxDataViewItem SetObjectCheckboxState(CheckboxIndicator checked, wxDataViewItem obj_item);
 
     void    SetAssociatedControl(wxDataViewCtrl* ctrl) { m_ctrl = ctrl; }
     // Rescale bitmaps for existing Items
