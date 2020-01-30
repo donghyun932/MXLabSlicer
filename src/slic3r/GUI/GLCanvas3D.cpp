@@ -1610,6 +1610,27 @@ void GLCanvas3D::update_instance_printable_state_for_objects(std::vector<size_t>
         update_instance_printable_state_for_object(obj_idx);
 }
 
+void GLCanvas3D::update_instance_object_color_for_object(const size_t obj_idx)
+{
+    ModelObject* model_object = m_model->objects[obj_idx];
+    for (int inst_idx = 0; inst_idx < (int)model_object->instances.size(); ++inst_idx)
+    {
+        ModelInstance* instance = model_object->instances[inst_idx];
+
+        for (GLVolume* volume : m_volumes.volumes)
+        {
+            if ((volume->object_idx() == (int)obj_idx) && (volume->instance_idx() == inst_idx))
+                volume->object_color = instance->object_color;
+        }
+    }
+}
+
+void GLCanvas3D::update_instance_object_color_for_objects(std::vector<size_t>& object_idxs)
+{
+    for (size_t obj_idx : object_idxs)
+        update_instance_object_color_for_object(obj_idx);
+}
+
 void GLCanvas3D::set_config(const DynamicPrintConfig* config)
 {
     m_config = config;

@@ -320,6 +320,8 @@ public:
     bool                disabled;
     // Is this object printable?
     bool                printable;
+    // custom object color from sidebar object list
+    std::string         object_color;
     // Whether or not this volume is active for rendering
     bool                is_active;
     // Whether or not to use this volume when applying zoom_to_volumes()

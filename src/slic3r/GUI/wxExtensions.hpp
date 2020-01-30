@@ -195,6 +195,7 @@ enum ColumnNumber
     colExtruder        ,    // extruder selection
     colEditing         ,    // item editing
     colCheckbox        ,    // checkbox
+    colObjectColor     ,    // object color
 };
 
 enum PrintIndicator
@@ -233,6 +234,8 @@ class ObjectDataViewModelNode
     wxBitmap				        m_action_icon;
     PrintIndicator                  m_printable {piUndef};
     CheckboxIndicator               m_checked {ciUndef};
+    std::string                     m_object_color = "#004101";
+    wxBitmap                m_object_color_bmp;
     wxBitmap				        m_printable_icon;
     wxBitmap                m_checkbox_icon;
 
@@ -350,6 +353,7 @@ public:
 	t_layer_height_range    GetLayerRange() const   { return m_layer_range; }
     PrintIndicator  IsPrintable() const             { return m_printable; }
     CheckboxIndicator  IsChecked() const             { return m_checked; }
+    std::string        GetObjectColor() const        { return m_object_color; }
 
     // use this function only for childrens
     void AssignAllVal(ObjectDataViewModelNode& from_node)
@@ -384,6 +388,7 @@ public:
 	// Set printable icon for node
     void        set_printable_icon(PrintIndicator printable);
     void        set_checkbox_icon(CheckboxIndicator checked);
+    void        set_object_color_bitmap(std::string object_color);
 
     void        update_settings_digest_bitmaps();
     bool        update_settings_digest(const std::vector<std::string>& categories);
@@ -514,10 +519,13 @@ public:
 
     bool    IsPrintable(const wxDataViewItem &item) const;
     bool    IsChecked(const wxDataViewItem &item) const;
+    std::string GetObjectColor(const wxDataViewItem &item) const;
     void    UpdateObjectPrintable(wxDataViewItem parent_item);
     void    UpdateInstancesPrintable(wxDataViewItem parent_item);
     void    UpdateObjectCheckbox(wxDataViewItem parent_item);
     void    UpdateInstancesCheckbox(wxDataViewItem parent_item);
+    void    UpdateInstancesObjectColor(wxDataViewItem parent_item);
+    void    UpdateObjectObjectColor(wxDataViewItem parent_item);
 
     void    SetVolumeBitmaps(const std::vector<wxBitmap*>& volume_bmps) { m_volume_bmps = volume_bmps; }
     void    SetWarningBitmap(wxBitmap* bitmap)                          { m_warning_bmp = bitmap; }
@@ -530,6 +538,10 @@ public:
                                       int subobj_idx = -1, 
                                       ItemType subobj_type = itInstance);
     wxDataViewItem SetObjectCheckboxState(CheckboxIndicator checked, wxDataViewItem obj_item);
+    wxDataViewItem SetObjectObjectColor(std::string object_color, wxDataViewItem obj_item);
+    wxDataViewItem SetObjectColor( std::string object_color, int obj_idx,
+                                      int subobj_idx = -1, 
+                                      ItemType subobj_type = itInstance);
 
     void    SetAssociatedControl(wxDataViewCtrl* ctrl) { m_ctrl = ctrl; }
     // Rescale bitmaps for existing Items

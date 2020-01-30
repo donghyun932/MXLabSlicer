@@ -265,7 +265,7 @@ void ObjectList::create_objects_ctrl()
     // column ItemName(Icon+Text) of the view control: 
     // And Icon can be consisting of several bitmaps
     AppendColumn(new wxDataViewColumn(_(L("Name")), new BitmapTextRenderer(),
-        colName, 20*em, wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE));
+        colName, 15*em, wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE));
 
     // column PrintableProperty (Icon) of the view control:
     AppendBitmapColumn(" ", colPrint, wxDATAVIEW_CELL_INERT, 3*em,
@@ -282,14 +282,18 @@ void ObjectList::create_objects_ctrl()
     AppendBitmapColumn("V", colCheckbox, wxDATAVIEW_CELL_INERT, 3*em,
         wxALIGN_CENTER_HORIZONTAL, wxDATAVIEW_COL_RESIZABLE);
 
+    AppendBitmapColumn("color", colObjectColor, wxDATAVIEW_CELL_INERT, 4*em,
+        wxALIGN_CENTER_HORIZONTAL, wxDATAVIEW_COL_RESIZABLE);
+
     // For some reason under OSX on 4K(5K) monitors in wxDataViewColumn constructor doesn't set width of column.
     // Therefore, force set column width.
     if (wxOSX)
     {
-        GetColumn(colName)->SetWidth(20*em);
+        GetColumn(colName)->SetWidth(15*em);
         GetColumn(colPrint)->SetWidth(3*em);
         GetColumn(colExtruder)->SetWidth(8*em);
         GetColumn(colCheckbox)->SetWidth(3*em);
+        GetColumn(colObjectColor)->SetWidth(4*em);
     }
 }
 
@@ -848,6 +852,8 @@ void ObjectList::list_manipulation(bool evt_context_menu/* = false*/)
         toggle_checkbox_state(item);
     else if (title == _("Editing"))
         show_context_menu(evt_context_menu);
+    else if (title == "color")
+        toggle_object_color(item);
     else if (title == _("Name"))
     {
         if (wxOSX)
@@ -1610,6 +1616,21 @@ wxMenuItem* ObjectList::append_menu_item_checkbox(wxMenu* menu, wxWindow* /*pare
 
         if (item)
             toggle_checkbox_state(item);
+    }, menu);
+}
+
+wxMenuItem* ObjectList::append_menu_item_object_color(wxMenu* menu, wxWindow* /*parent*/)
+{
+    return append_menu_check_item(menu, wxID_ANY, _(L("CustomObjColor")), "", [this](wxCommandEvent&) {
+        const Selection& selection = wxGetApp().plater()->canvas3D()->get_selection();
+        wxDataViewItem item;
+        if (GetSelectedItemsCount() > 1 && selection.is_single_full_object())
+            item = m_objects_model->GetItemById(selection.get_object_idx());
+        else
+            item = GetSelection();
+
+        if (item)
+            toggle_object_color(item);
     }, menu);
 }
 
@@ -2609,7 +2630,8 @@ void ObjectList::add_object_to_list(size_t obj_idx, bool call_selection_changed)
     }
     else {
         m_objects_model->SetPrintableState(model_object->instances[0]->printable ? piPrintable : piUnprintable, obj_idx);
-        m_objects_model->SetCheckboxState(model_object->instances[0]->checked ? ciChecked : ciUnchecked, obj_idx);
+        m_objects_model->SetCheckboxState(ciUnchecked, obj_idx);
+        m_objects_model->SetObjectColor("#004101", obj_idx);
     }
 
     // add settings to the object, if it has those
@@ -4110,6 +4132,33 @@ void ObjectList::toggle_checkbox_state(wxDataViewItem item)
     }
     // else
     //     wxGetApp().plater()->canvas3D()->get_selection().toggle_instance_checkbox_state(); 
+
+    // update scene
+    wxGetApp().plater()->update();
+}
+
+void ObjectList::toggle_object_color(wxDataViewItem item)
+{
+    const ItemType type = m_objects_model->GetItemType(item);
+    if (!(type&(itObject|itInstance/*|itVolume*/)))
+        return;
+
+    const int obj_idx = m_objects_model->GetObjectIdByItem(item);
+    ModelObject* object = (*m_objects)[obj_idx];
+
+    // get object's color and change it
+    // const std::string object_color = m_objects_model->GetObjectColor(item);
+    const std::string object_color = "#ffffff";
+
+    // set object color value for all instances in object
+    for (auto inst : object->instances)
+        inst->object_color = object_color;
+
+    // update object color on canvas
+    wxGetApp().plater()->canvas3D()->update_instance_object_color_for_object((size_t)obj_idx);
+
+    // update object color in ObjectList
+    m_objects_model->SetObjectObjectColor(object_color , item);
 
     // update scene
     wxGetApp().plater()->update();
