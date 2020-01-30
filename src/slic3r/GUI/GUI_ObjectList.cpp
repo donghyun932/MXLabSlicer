@@ -4147,8 +4147,7 @@ void ObjectList::toggle_object_color(wxDataViewItem item)
     ModelObject* object = (*m_objects)[obj_idx];
 
     // get object's color and change it
-    // const std::string object_color = m_objects_model->GetObjectColor(item);
-    const std::string object_color = "#ffffff";
+    const std::string object_color = m_objects_model->GetNewObjectColor(item);
 
     // set object color value for all instances in object
     for (auto inst : object->instances)

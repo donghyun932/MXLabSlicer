@@ -1170,6 +1170,28 @@ std::string ObjectDataViewModel::GetObjectColor(const wxDataViewItem& item) cons
     return node->GetObjectColor();
 }
 
+std::string ObjectDataViewModel::GetNewObjectColor(const wxDataViewItem& item) const
+{
+    ObjectDataViewModelNode* node = (ObjectDataViewModelNode*)item.GetID();
+    if (!node)
+        return "#004101";
+
+    const std::string& color = node->GetObjectColor();
+    wxColour clr(color);
+    if (!clr.IsOk())
+        clr = wxColour(0, 0, 0); // Don't set alfa to transparence
+
+    auto data = new wxColourData();
+    data->SetChooseFull(1);
+    data->SetColour(clr);
+
+    wxColourDialog dialog(nullptr, data);
+    dialog.CenterOnParent();
+    if (dialog.ShowModal() == wxID_OK)
+        return dialog.GetColourData().GetColour().GetAsString(wxC2S_HTML_SYNTAX).ToStdString();
+    return "";
+}
+
 wxDataViewItem ObjectDataViewModel::AddLayersRoot(const wxDataViewItem &parent_item)
 {
     return AddRoot(parent_item, itLayerRoot);

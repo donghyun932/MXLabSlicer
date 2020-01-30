@@ -520,6 +520,7 @@ public:
     bool    IsPrintable(const wxDataViewItem &item) const;
     bool    IsChecked(const wxDataViewItem &item) const;
     std::string GetObjectColor(const wxDataViewItem &item) const;
+    std::string GetNewObjectColor(const wxDataViewItem &item) const;
     void    UpdateObjectPrintable(wxDataViewItem parent_item);
     void    UpdateInstancesPrintable(wxDataViewItem parent_item);
     void    UpdateObjectCheckbox(wxDataViewItem parent_item);
