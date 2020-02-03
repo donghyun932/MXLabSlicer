@@ -192,8 +192,6 @@ enum ColumnNumber
 {
     colName         = 0,    // item name
     colPrint           ,    // printable property
-    colExtruder        ,    // extruder selection
-    colEditing         ,    // item editing
     colCheckbox        ,    // checkbox
     colObjectColor     ,    // object color
 };

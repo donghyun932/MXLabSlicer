@@ -796,15 +796,6 @@ bool ObjectDataViewModelNode::SetValue(const wxVariant& variant, unsigned col)
         m_bmp = data.GetBitmap();
         m_name = data.GetText();
         return true; }
-    case colExtruder: {
-        DataViewBitmapText data;
-        data << variant;
-        m_extruder_bmp = data.GetBitmap();
-        m_extruder = data.GetText() == "0" ? _(L("default")) : data.GetText();
-        return true; }
-    case colEditing:
-        m_action_icon << variant;
-        return true;
     case colCheckbox:
         m_checkbox_icon << variant;
         return true;
@@ -1694,43 +1685,13 @@ bool ObjectDataViewModel::UpdateColumValues(unsigned col)
     {
     case colPrint:
     case colName:
-    case colEditing:
+    case colCheckbox:
+    case colObjectColor:
         return true;
-    case colExtruder:
-    {
-        wxDataViewItemArray items;
-        GetAllChildren(wxDataViewItem(nullptr), items);
-
-        if (items.IsEmpty()) return false;
-
-        for (auto item : items)
-            UpdateExtruderBitmap(item);
-
-        return true;
-    }
     default:
         printf("MyObjectTreeModel::SetValue: wrong column");
     }
     return false;
-}
-
-
-void ObjectDataViewModel::UpdateExtruderBitmap(wxDataViewItem item)
-{
-    wxString extruder = GetExtruder(item);
-    if (extruder.IsEmpty())
-        return;
-
-    // set extruder bitmap
-    int extruder_idx = atoi(extruder.c_str());
-    if (extruder_idx > 0) --extruder_idx;
-
-    const DataViewBitmapText extruder_val(extruder, get_extruder_color_icon(extruder_idx));
-
-    wxVariant value;
-    value << extruder_val;
-
-    SetValue(value, item, colExtruder);
 }
 
 void ObjectDataViewModel::GetItemInfo(const wxDataViewItem& item, ItemType& type, int& obj_idx, int& idx)
@@ -1860,12 +1821,6 @@ void ObjectDataViewModel::GetValue(wxVariant &variant, const wxDataViewItem &ite
 	case colName:
         variant << DataViewBitmapText(node->m_name, node->m_bmp);
 		break;
-	case colExtruder:
-		variant << DataViewBitmapText(node->m_extruder, node->m_extruder_bmp);
-		break;
-	case colEditing:
-		variant << node->m_action_icon;
-		break;
   case colCheckbox:
     variant << node->m_checkbox_icon;
     break;
@@ -1891,22 +1846,6 @@ bool ObjectDataViewModel::SetValue(const wxVariant &variant, const int item_idx,
 		return false;
 
 	return m_objects[item_idx]->SetValue(variant, col);
-}
-
-void ObjectDataViewModel::SetExtruder(const wxString& extruder, wxDataViewItem item)
-{
-    DataViewBitmapText extruder_val;
-    extruder_val.SetText(extruder);
-
-    // set extruder bitmap
-    int extruder_idx = atoi(extruder.c_str());
-    if (extruder_idx > 0) --extruder_idx;
-    extruder_val.SetBitmap(get_extruder_color_icon(extruder_idx));
-
-    wxVariant value;
-    value << extruder_val;
-    
-    SetValue(value, item, colExtruder);
 }
 
 wxDataViewItem ObjectDataViewModel::ReorganizeChildren( const int current_volume_id, 
@@ -1948,7 +1887,7 @@ bool ObjectDataViewModel::IsEnabled(const wxDataViewItem &item, unsigned int col
     ObjectDataViewModelNode *node = (ObjectDataViewModelNode*)item.GetID();
 
     // disable extruder selection for the non "itObject|itVolume" item
-    return !(col == colExtruder && node->m_extruder.IsEmpty());
+    return !(node->m_extruder.IsEmpty());
 }
 
 wxDataViewItem ObjectDataViewModel::GetParent(const wxDataViewItem &item) const

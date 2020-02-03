@@ -1105,7 +1105,7 @@ wxPanel* Sidebar::presets_panel()
 
 void Sidebar::update_objects_list_extruder_column(size_t extruders_count)
 {
-    p->object_list->update_objects_list_extruder_column(extruders_count);
+    // p->object_list->update_objects_list_extruder_column(extruders_count);
 }
 
 void Sidebar::show_info_sizer()
@@ -3704,8 +3704,8 @@ void Plater::priv::on_right_click(RBtnEvent& evt)
 
         sidebar->obj_list()->append_menu_item_settings(menu);
 
-        if (printer_technology != ptSLA)
-            sidebar->obj_list()->append_menu_item_change_extruder(menu);
+        // if (printer_technology != ptSLA)
+        //     sidebar->obj_list()->append_menu_item_change_extruder(menu);
 
         if (menu != &part_menu)
         {
@@ -5189,7 +5189,7 @@ void Plater::on_config_change(const DynamicPrintConfig &config)
                     filament_colors.push_back(filaments.find_preset(filament_preset, true)->config.opt_string("filament_colour", (unsigned)0));
 
                 p->config->option<ConfigOptionStrings>(opt_key)->values = filament_colors;
-                p->sidebar->obj_list()->update_extruder_colors();
+                // p->sidebar->obj_list()->update_extruder_colors();
                 continue;
             }
         }
@@ -5215,7 +5215,7 @@ void Plater::on_config_change(const DynamicPrintConfig &config)
         else if(opt_key == "extruder_colour") {
             update_scheduled = true;
             p->preview->set_number_extruders(p->config->option<ConfigOptionStrings>(opt_key)->values.size());
-            p->sidebar->obj_list()->update_extruder_colors();
+            // p->sidebar->obj_list()->update_extruder_colors();
         } else if(opt_key == "max_print_height") {
             update_scheduled = true;
         }
@@ -5266,7 +5266,7 @@ void Plater::force_filament_colors_update()
 
     if (update_scheduled) {
         update();
-        p->sidebar->obj_list()->update_extruder_colors();
+        // p->sidebar->obj_list()->update_extruder_colors();
     }
 
     if (p->main_frame->is_loaded())
