@@ -291,10 +291,6 @@ void ObjectList::create_objects_ctrl()
 void ObjectList::create_popup_menus()
 {
     // create popup menus for object and part
-    create_object_popupmenu(&m_menu_object);
-    create_part_popupmenu(&m_menu_part);
-    create_sla_object_popupmenu(&m_menu_sla_object);
-    create_instance_popupmenu(&m_menu_instance);
     create_default_popupmenu(&m_menu_default);
 }
 
@@ -804,11 +800,7 @@ void ObjectList::show_context_menu(const bool evt_context_menu)
 {
     if (multiple_selection())
     {
-        if (selected_instances_of_same_object())
-            wxGetApp().plater()->PopupMenu(&m_menu_instance);
-        else
-            show_multi_selection_menu();
-
+        show_multi_selection_menu();
         return;
     }
 
@@ -820,10 +812,7 @@ void ObjectList::show_context_menu(const bool evt_context_menu)
         if (!(type & (itObject | itVolume | itLayer | itInstance)))
             return;
 
-        menu = type & itInstance ? &m_menu_instance :
-                       type & itLayer ? &m_menu_layer :
-                       m_objects_model->GetParent(item) != wxDataViewItem(nullptr) ? &m_menu_part :
-                       printer_technology() == ptFFF ? &m_menu_object : &m_menu_sla_object;
+        menu = &m_menu_default;
 
         if (!(type & itInstance))
             append_menu_item_settings(menu);
@@ -1215,63 +1204,6 @@ void ObjectList::get_settings_choice(const wxString& category_name)
     show_settings(add_settings_item(item, m_config));
 }
 
-void ObjectList::get_freq_settings_choice(const wxString& bundle_name)
-{
-    std::vector<std::string> options = get_options_for_bundle(bundle_name);
-    const Selection& selection = scene_selection();
-    const wxDataViewItem sel_item = // when all instances in object are selected
-                                    GetSelectedItemsCount() > 1 && selection.is_single_full_object() ? 
-                                    m_objects_model->GetItemById(selection.get_object_idx()) : 
-                                    GetSelection();
-
-    /* If we try to add settings for object/part from 3Dscene,
-     * for the second try there is selected ItemSettings in ObjectList.
-     * So, check if selected item isn't SettingsItem. And get a SettingsItem's parent item, if yes
-     */
-    wxDataViewItem item = m_objects_model->GetItemType(sel_item) & itSettings ? m_objects_model->GetParent(sel_item) : sel_item;
-    const ItemType item_type = m_objects_model->GetItemType(item);
-
-    /* Because of we couldn't edited layer_height for ItVolume from settings list,
-     * correct options according to the selected item type :
-     * remove "layer_height" option
-     */
-    if ((item_type & itVolume) && bundle_name == _("Layers and Perimeters")) {
-        const auto layer_height_it = std::find(options.begin(), options.end(), "layer_height");
-        if (layer_height_it != options.end())
-            options.erase(layer_height_it);
-    }
-
-    if (!m_config)
-        m_config = &get_item_config(item);
-
-    assert(m_config);
-    auto opt_keys = m_config->keys();
-
-    const wxString snapshot_text = item_type & itLayer  ? _(L("Add Settings Bundle for Height range")) :
-                                   item_type & itVolume ? _(L("Add Settings Bundle for Sub-object")) :
-                                                          _(L("Add Settings Bundle for Object"));
-    take_snapshot(snapshot_text);
-
-    const DynamicPrintConfig& from_config = wxGetApp().preset_bundle->prints.get_edited_preset().config;
-    for (auto& opt_key : options)
-    {
-        if (find(opt_keys.begin(), opt_keys.end(), opt_key) == opt_keys.end()) {
-            const ConfigOption* option = from_config.option(opt_key);
-            if (!option) {
-                // if current option doesn't exist in prints.get_edited_preset(),
-                // get it from default config values
-                option = DynamicPrintConfig::new_from_defaults_keys({ opt_key })->option(opt_key);
-            }
-            m_config->set_key_value(opt_key, option->clone());
-        }
-    }
-
-    // Add settings item for object/sub-object and show them 
-    if (!(item_type & (itObject | itVolume | itLayer)))
-        item = m_objects_model->GetTopParent(item);
-    show_settings(add_settings_item(item, m_config));
-}
-
 void ObjectList::show_settings(const wxDataViewItem settings_item)
 {
     if (!settings_item)
@@ -1424,11 +1356,6 @@ wxMenuItem* ObjectList::append_menu_item_settings(wxMenu* menu_)
        (menu->GetMenuItems().size() > 0 && !menu->GetMenuItems().back()->IsSeparator()))
         menu->SetFirstSeparator();
 
-    // Add frequently settings
-    const ItemType item_type = m_objects_model->GetItemType(GetSelection());
-    const bool is_object_settings = item_type & itObject || item_type & itInstance || selection.is_single_full_object();
-    create_freq_settings_popupmenu(menu, is_object_settings);
-
     if (mode == comAdvanced)
         return nullptr;
 
@@ -1564,72 +1491,101 @@ void ObjectList::append_menu_item_scale_selection_to_fit_print_volume(wxMenu* me
         [](wxCommandEvent&) { wxGetApp().plater()->scale_selection_to_fit_print_volume(); }, "", menu);
 }
 
-void ObjectList::create_object_popupmenu(wxMenu *menu)
-{
-#ifdef __WXOSX__  
-    append_menu_items_osx(menu);
-#endif // __WXOSX__
-
-    append_menu_item_reload_from_disk(menu);
-    append_menu_item_export_stl(menu);
-    append_menu_item_fix_through_netfabb(menu);
-    append_menu_item_scale_selection_to_fit_print_volume(menu);
-
-    // Split object to parts
-    append_menu_item_split(menu);
-    menu->AppendSeparator();
-
-    // Layers Editing for object
-    append_menu_item_layers_editing(menu, wxGetApp().plater());
-    menu->AppendSeparator();
-
-    // rest of a object_menu will be added later in:
-    // - append_menu_items_add_volume() -> for "Add (volumes)"
-    // - append_menu_item_settings() -> for "Add (settings)"
-}
-
-void ObjectList::create_sla_object_popupmenu(wxMenu *menu)
-{
-#ifdef __WXOSX__  
-    append_menu_items_osx(menu);
-#endif // __WXOSX__
-
-    append_menu_item_reload_from_disk(menu);
-    append_menu_item_export_stl(menu);
-    append_menu_item_fix_through_netfabb(menu);
-    // rest of a object_sla_menu will be added later in:
-    // - append_menu_item_settings() -> for "Add (settings)"
-}
-
-void ObjectList::create_part_popupmenu(wxMenu *menu)
-{
-#ifdef __WXOSX__  
-    append_menu_items_osx(menu);
-#endif // __WXOSX__
-
-    append_menu_item_reload_from_disk(menu);
-    append_menu_item_export_stl(menu);
-    append_menu_item_fix_through_netfabb(menu);
-
-    append_menu_item_split(menu);
-
-    // Append change part type
-    menu->AppendSeparator();
-    append_menu_item_change_type(menu);
-
-    // rest of a object_sla_menu will be added later in:
-    // - append_menu_item_settings() -> for "Add (settings)"
-}
-
-void ObjectList::create_instance_popupmenu(wxMenu*menu)
-{
-    m_menu_item_split_instances = append_menu_item_instance_to_object(menu, wxGetApp().plater());
-}
-
 void ObjectList::create_default_popupmenu(wxMenu*menu)
 {
-    wxMenu* sub_menu = append_submenu_add_generic(menu, ModelVolumeType::INVALID);
-    append_submenu(menu, sub_menu, wxID_ANY, _(L("Add Shape")), "", "add_part");
+    append_menu_item(menu, wxID_ANY, _(L("Select All")), _(L("Select All")),
+        [this](wxCommandEvent&) {
+
+            const wxString snapshot_text = wxString::Format("%s",  _(L("Select ALL")));
+            take_snapshot(snapshot_text);
+
+            for (size_t obj_idx=0; obj_idx < m_objects->size(); obj_idx++){
+                wxDataViewItem item = m_objects_model->GetItemById(obj_idx);
+                ModelObject* object = (*m_objects)[obj_idx];
+
+                // set checked value for all instances in object
+                for (auto inst : object->instances)
+                    inst->checked = true;
+
+                // update checkbox state in ObjectList
+                m_objects_model->SetObjectCheckboxState(ciChecked , item);
+
+            }
+            // update scene
+            wxGetApp().plater()->update();
+
+        }, "", menu);
+
+    append_menu_item(menu, wxID_ANY, _(L("Invert Selection")), _(L("Invert Selection")),
+        [this](wxCommandEvent&) { 
+
+            const wxString snapshot_text = wxString::Format("%s",  _(L("Invert Selection")));
+            take_snapshot(snapshot_text);
+
+            for (size_t obj_idx=0; obj_idx < m_objects->size(); obj_idx++){
+                wxDataViewItem item = m_objects_model->GetItemById(obj_idx);
+                ModelObject* object = (*m_objects)[obj_idx];
+                bool checked = m_objects_model->IsChecked(item);
+
+                for (auto inst : object->instances)
+                    inst->checked = !checked;
+
+                m_objects_model->SetObjectCheckboxState(checked ? ciUnchecked : ciChecked , item);
+
+            }
+            // update scene
+            wxGetApp().plater()->update();
+
+        }, "", menu);
+
+    append_menu_item(menu, wxID_ANY, _(L("Show All")), _(L("Show All")),
+        [this](wxCommandEvent&) {
+
+            const wxString snapshot_text = wxString::Format("%s",  _(L("Show All")));
+            take_snapshot(snapshot_text);
+
+            for (size_t obj_idx=0; obj_idx < m_objects->size(); obj_idx++){
+                wxDataViewItem item = m_objects_model->GetItemById(obj_idx);
+                ModelObject* object = (*m_objects)[obj_idx];
+
+                for (auto inst : object->instances)
+                    inst->printable = true;
+
+                wxGetApp().plater()->canvas3D()->update_instance_printable_state_for_object((size_t)obj_idx);
+
+                m_objects_model->SetObjectPrintableState(piPrintable , item);
+
+            }
+            // update scene
+            wxGetApp().plater()->update();
+
+        }, "", menu);
+
+    append_menu_item(menu, wxID_ANY, _(L("Hide Unselected")), _(L("Hide Unselected")),
+        [this](wxCommandEvent&) { 
+
+            const wxString snapshot_text = wxString::Format("%s",  _(L("Show All")));
+            take_snapshot(snapshot_text);
+
+            for (size_t obj_idx=0; obj_idx < m_objects->size(); obj_idx++){
+                wxDataViewItem item = m_objects_model->GetItemById(obj_idx);
+                ModelObject* object = (*m_objects)[obj_idx];
+                bool checked = m_objects_model->IsChecked(item);
+
+                for (auto inst : object->instances)
+                    inst->printable = checked ? inst->printable : false;
+
+                wxGetApp().plater()->canvas3D()->update_instance_printable_state_for_object((size_t)obj_idx);
+
+                m_objects_model->SetObjectPrintableState(object->instances[0]->printable ? piPrintable : piUnprintable , item);
+
+            }
+            // update scene
+            wxGetApp().plater()->update();
+
+        }, "", menu);
+
+    menu->AppendSeparator();
 }
 
 wxMenu* ObjectList::create_settings_popupmenu(wxMenu *parent_menu)
@@ -1656,40 +1612,6 @@ wxMenu* ObjectList::create_settings_popupmenu(wxMenu *parent_menu)
     }
 
     return menu;
-}
-
-void ObjectList::create_freq_settings_popupmenu(wxMenu *menu, const bool is_object_settings/* = true*/)
-{
-    // Add default settings bundles
-    const SettingsBundle& bundle = printer_technology() == ptFFF ?
-                                     FREQ_SETTINGS_BUNDLE_FFF : FREQ_SETTINGS_BUNDLE_SLA;
-
-    const int extruders_cnt = extruders_count();
-
-    for (auto& it : bundle) {
-        if (improper_category(it.first, extruders_cnt, is_object_settings)) 
-            continue;
-
-        append_menu_item(menu, wxID_ANY, _(it.first), "",
-                        [menu, this](wxCommandEvent& event) { get_freq_settings_choice(menu->GetLabel(event.GetId())); }, 
-                        CATEGORY_ICON.find(it.first) == CATEGORY_ICON.end() ? wxNullBitmap : CATEGORY_ICON.at(it.first), menu,
-                        [this]() { return true; }, wxGetApp().plater());
-    }
-#if 0
-    // Add "Quick" settings bundles
-    const SettingsBundle& bundle_quick = printer_technology() == ptFFF ?
-                                             m_freq_settings_fff : m_freq_settings_sla;
-
-    for (auto& it : bundle_quick) {
-        if (improper_category(it.first, extruders_cnt))
-            continue;
-
-        append_menu_item(menu, wxID_ANY, wxString::Format(_(L("Quick Add Settings (%s)")), _(it.first)), "",
-                        [menu, this](wxCommandEvent& event) { get_freq_settings_choice(menu->GetLabel(event.GetId())); }, 
-                        CATEGORY_ICON.find(it.first) == CATEGORY_ICON.end() ? wxNullBitmap : CATEGORY_ICON.at(it.first), menu,
-                        [this]() { return true; }, wxGetApp().plater());
-    }
-#endif
 }
 
 void ObjectList::update_opt_keys(t_config_option_keys& opt_keys, const bool is_object)
@@ -2481,7 +2403,7 @@ void ObjectList::add_object_to_list(size_t obj_idx, bool call_selection_changed)
         Expand(m_objects_model->GetInstanceRootItem(object_item));
     }
     else {
-        m_objects_model->SetPrintableState(model_object->instances[0]->printable ? piPrintable : piUnprintable, obj_idx);
+        m_objects_model->SetPrintableState(piPrintable, obj_idx);
         m_objects_model->SetCheckboxState(ciUnchecked, obj_idx);
         m_objects_model->SetObjectColor("#004101", obj_idx);
     }
@@ -3531,11 +3453,6 @@ void ObjectList::update_object_list_by_printer_technology()
     m_prevent_canvas_selection_update = false;
 }
 
-void ObjectList::update_object_menu()
-{
-    append_menu_items_add_volume(&m_menu_object);
-}
-
 void ObjectList::instances_to_separated_object(const int obj_idx, const std::set<int>& inst_idxs)
 {
     if ((*m_objects)[obj_idx]->instances.size() == inst_idxs.size())
@@ -3715,12 +3632,7 @@ void ObjectList::msw_rescale()
     m_objects_model->Rescale();
 
     // rescale menus
-    for (MenuWithSeparators* menu : { &m_menu_object, 
-                                      &m_menu_part, 
-                                      &m_menu_sla_object, 
-                                      &m_menu_instance, 
-                                      &m_menu_layer,
-                                      &m_menu_default})
+    for (MenuWithSeparators* menu : { &m_menu_default})
         msw_rescale_menu(menu);
 
     Layout();
@@ -3952,6 +3864,11 @@ void ObjectList::toggle_object_color(wxDataViewItem item)
 
     // get object's color and change it
     const std::string object_color = m_objects_model->GetNewObjectColor(item);
+
+    const wxString snapshot_text = wxString::Format("%s %s", 
+                                                    _(L("Change Object Color")), 
+                                                    object->name);
+    take_snapshot(snapshot_text);
 
     // set object color value for all instances in object
     for (auto inst : object->instances)

@@ -1315,7 +1315,6 @@ void Sidebar::update_mode()
 
     p->object_list->unselect_objects();
     p->object_list->update_selections();
-    p->object_list->update_object_menu();
 
     Layout();
 }
@@ -3671,81 +3670,6 @@ void Plater::priv::on_object_select(SimpleEvent& evt)
 
 void Plater::priv::on_right_click(RBtnEvent& evt)
 {
-    int obj_idx = get_selected_object_idx();
-
-    wxMenu* menu = nullptr;
-
-    if (obj_idx == -1) // no one or several object are selected
-    { 
-        if (evt.data.second) // right button was clicked on empty space
-            menu = &default_menu;
-        else
-        {
-            sidebar->obj_list()->show_multi_selection_menu();
-            return;
-        }
-    }
-    else
-    {
-        // If in 3DScene is(are) selected volume(s), but right button was clicked on empty space
-        if (evt.data.second)
-            return; 
-
-        if (printer_technology == ptSLA)
-            menu = &sla_object_menu;
-        else
-        {
-            // show "Object menu" for each one or several FullInstance instead of FullObject
-            const bool is_some_full_instances = get_selection().is_single_full_instance() || 
-                                                get_selection().is_single_full_object() || 
-                                                get_selection().is_multiple_full_instance();
-            menu = is_some_full_instances ? &object_menu : &part_menu;
-        }
-
-        sidebar->obj_list()->append_menu_item_settings(menu);
-
-        // if (printer_technology != ptSLA)
-        //     sidebar->obj_list()->append_menu_item_change_extruder(menu);
-
-        if (menu != &part_menu)
-        {
-            /* Remove/Prepend "increase/decrease instances" menu items according to the view mode.
-             * Suppress to show those items for a Simple mode
-             */
-            const MenuIdentifier id = printer_technology == ptSLA ? miObjectSLA : miObjectFFF;
-            if (wxGetApp().get_mode() == comSimple) {
-                if (menu->FindItem(_(L("Add instance"))) != wxNOT_FOUND)
-                {
-                    /* Detach an items from the menu, but don't delete them
-                     * so that they can be added back later
-                     * (after switching to the Advanced/Expert mode)
-                     */
-                    menu->Remove(items_increase[id]);
-                    menu->Remove(items_decrease[id]);
-                    menu->Remove(items_set_number_of_copies[id]);
-                }
-            }
-            else {
-                if (menu->FindItem(_(L("Add instance"))) == wxNOT_FOUND)
-                {
-                    // Prepend items to the menu, if those aren't not there
-                    menu->Prepend(items_set_number_of_copies[id]);
-                    menu->Prepend(items_decrease[id]);
-                    menu->Prepend(items_increase[id]);
-                }
-            }
-        }
-    }
-
-    if (q != nullptr && menu) {
-#ifdef __linux__
-        // For some reason on Linux the menu isn't displayed if position is specified
-        // (even though the position is sane).
-        q->PopupMenu(menu);
-#else
-        q->PopupMenu(menu, (int)evt.data.first.x(), (int)evt.data.first.y());
-#endif
-    }
 }
 
 void Plater::priv::on_wipetower_moved(Vec3dEvent &evt)
@@ -3856,80 +3780,80 @@ void Plater::priv::set_project_filename(const wxString& filename)
 
 bool Plater::priv::init_common_menu(wxMenu* menu, const bool is_part/* = false*/)
 {
-    if (is_part) {
-        append_menu_item(menu, wxID_ANY, _(L("Delete")) + "\tDel", _(L("Remove the selected object")),
-            [this](wxCommandEvent&) { q->remove_selected();         }, "delete",            nullptr, [this]() { return can_delete(); }, q);
+    // if (is_part) {
+    //     append_menu_item(menu, wxID_ANY, _(L("Delete")) + "\tDel", _(L("Remove the selected object")),
+    //         [this](wxCommandEvent&) { q->remove_selected();         }, "delete",            nullptr, [this]() { return can_delete(); }, q);
 
-        append_menu_item(menu, wxID_ANY, _(L("Reload from disk")), _(L("Reload the selected volumes from disk")),
-            [this](wxCommandEvent&) { q->reload_from_disk(); }, "", menu, [this]() { return can_reload_from_disk(); }, q);
+    //     append_menu_item(menu, wxID_ANY, _(L("Reload from disk")), _(L("Reload the selected volumes from disk")),
+    //         [this](wxCommandEvent&) { q->reload_from_disk(); }, "", menu, [this]() { return can_reload_from_disk(); }, q);
 
-        sidebar->obj_list()->append_menu_item_export_stl(menu);
-    }
-    else {
-        wxMenuItem* item_increase = append_menu_item(menu, wxID_ANY, _(L("Add instance")) + "\t+", _(L("Add one more instance of the selected object")),
-            [this](wxCommandEvent&) { q->increase_instances();      }, "add_copies",        nullptr, [this]() { return can_increase_instances(); }, q);
-        wxMenuItem* item_decrease = append_menu_item(menu, wxID_ANY, _(L("Remove instance")) + "\t-", _(L("Remove one instance of the selected object")),
-            [this](wxCommandEvent&) { q->decrease_instances();      }, "remove_copies",     nullptr, [this]() { return can_decrease_instances(); }, q);
-        wxMenuItem* item_set_number_of_copies = append_menu_item(menu, wxID_ANY, _(L("Set number of instances")) + dots, _(L("Change the number of instances of the selected object")),
-            [this](wxCommandEvent&) { q->set_number_of_copies();    }, "number_of_copies",  nullptr, [this]() { return can_increase_instances(); }, q);
+    //     sidebar->obj_list()->append_menu_item_export_stl(menu);
+    // }
+    // else {
+    //     wxMenuItem* item_increase = append_menu_item(menu, wxID_ANY, _(L("Add instance")) + "\t+", _(L("Add one more instance of the selected object")),
+    //         [this](wxCommandEvent&) { q->increase_instances();      }, "add_copies",        nullptr, [this]() { return can_increase_instances(); }, q);
+    //     wxMenuItem* item_decrease = append_menu_item(menu, wxID_ANY, _(L("Remove instance")) + "\t-", _(L("Remove one instance of the selected object")),
+    //         [this](wxCommandEvent&) { q->decrease_instances();      }, "remove_copies",     nullptr, [this]() { return can_decrease_instances(); }, q);
+    //     wxMenuItem* item_set_number_of_copies = append_menu_item(menu, wxID_ANY, _(L("Set number of instances")) + dots, _(L("Change the number of instances of the selected object")),
+    //         [this](wxCommandEvent&) { q->set_number_of_copies();    }, "number_of_copies",  nullptr, [this]() { return can_increase_instances(); }, q);
 
 
-        items_increase.push_back(item_increase);
-        items_decrease.push_back(item_decrease);
-        items_set_number_of_copies.push_back(item_set_number_of_copies);
+    //     items_increase.push_back(item_increase);
+    //     items_decrease.push_back(item_decrease);
+    //     items_set_number_of_copies.push_back(item_set_number_of_copies);
 
-        // Delete menu was moved to be after +/- instace to make it more difficult to be selected by mistake.
-        append_menu_item(menu, wxID_ANY, _(L("Delete")) + "\tDel", _(L("Remove the selected object")),
-            [this](wxCommandEvent&) { q->remove_selected(); }, "delete",            nullptr, [this]() { return can_delete(); }, q);
+    //     // Delete menu was moved to be after +/- instace to make it more difficult to be selected by mistake.
+    //     append_menu_item(menu, wxID_ANY, _(L("Delete")) + "\tDel", _(L("Remove the selected object")),
+    //         [this](wxCommandEvent&) { q->remove_selected(); }, "delete",            nullptr, [this]() { return can_delete(); }, q);
 
-        menu->AppendSeparator();
-        sidebar->obj_list()->append_menu_item_instance_to_object(menu, q);
-        menu->AppendSeparator();
+    //     menu->AppendSeparator();
+    //     sidebar->obj_list()->append_menu_item_instance_to_object(menu, q);
+    //     menu->AppendSeparator();
 
-        wxMenuItem* menu_item_printable = sidebar->obj_list()->append_menu_item_printable(menu, q);
-        menu->AppendSeparator();
+    //     wxMenuItem* menu_item_printable = sidebar->obj_list()->append_menu_item_printable(menu, q);
+    //     menu->AppendSeparator();
 
-        append_menu_item(menu, wxID_ANY, _(L("Reload from disk")), _(L("Reload the selected object from disk")),
-            [this](wxCommandEvent&) { reload_from_disk(); }, "", nullptr, [this]() { return can_reload_from_disk(); }, q);
+    //     append_menu_item(menu, wxID_ANY, _(L("Reload from disk")), _(L("Reload the selected object from disk")),
+    //         [this](wxCommandEvent&) { reload_from_disk(); }, "", nullptr, [this]() { return can_reload_from_disk(); }, q);
 
-        append_menu_item(menu, wxID_ANY, _(L("Export as STL")) + dots, _(L("Export the selected object as STL file")),
-            [this](wxCommandEvent&) { q->export_stl(false, true); }, "", nullptr, 
-            [this]() {
-                const Selection& selection = get_selection();
-                return selection.is_single_full_instance() || selection.is_single_full_object();
-            }, q);
+    //     append_menu_item(menu, wxID_ANY, _(L("Export as STL")) + dots, _(L("Export the selected object as STL file")),
+    //         [this](wxCommandEvent&) { q->export_stl(false, true); }, "", nullptr, 
+    //         [this]() {
+    //             const Selection& selection = get_selection();
+    //             return selection.is_single_full_instance() || selection.is_single_full_object();
+    //         }, q);
 
-        menu->AppendSeparator();
+    //     menu->AppendSeparator();
 
-        q->Bind(wxEVT_UPDATE_UI, [this](wxUpdateUIEvent& evt) {
-            const Selection& selection = get_selection();
-            int instance_idx = selection.get_instance_idx();
-            evt.Enable(selection.is_single_full_instance() || selection.is_single_full_object());
-            if (instance_idx != -1)
-            {
-                evt.Check(model.objects[selection.get_object_idx()]->instances[instance_idx]->printable);
-                view3D->set_as_dirty();
-            }
-            }, menu_item_printable->GetId());
-    }
+    //     q->Bind(wxEVT_UPDATE_UI, [this](wxUpdateUIEvent& evt) {
+    //         const Selection& selection = get_selection();
+    //         int instance_idx = selection.get_instance_idx();
+    //         evt.Enable(selection.is_single_full_instance() || selection.is_single_full_object());
+    //         if (instance_idx != -1)
+    //         {
+    //             evt.Check(model.objects[selection.get_object_idx()]->instances[instance_idx]->printable);
+    //             view3D->set_as_dirty();
+    //         }
+    //         }, menu_item_printable->GetId());
+    // }
 
-    sidebar->obj_list()->append_menu_item_fix_through_netfabb(menu);
+    // sidebar->obj_list()->append_menu_item_fix_through_netfabb(menu);
 
-    sidebar->obj_list()->append_menu_item_scale_selection_to_fit_print_volume(menu);
+    // sidebar->obj_list()->append_menu_item_scale_selection_to_fit_print_volume(menu);
 
-    wxMenu* mirror_menu = new wxMenu();
-    if (mirror_menu == nullptr)
-        return false;
+    // wxMenu* mirror_menu = new wxMenu();
+    // if (mirror_menu == nullptr)
+    //     return false;
 
-    append_menu_item(mirror_menu, wxID_ANY, _(L("Along X axis")), _(L("Mirror the selected object along the X axis")),
-        [this](wxCommandEvent&) { mirror(X); }, "mark_X", menu);
-    append_menu_item(mirror_menu, wxID_ANY, _(L("Along Y axis")), _(L("Mirror the selected object along the Y axis")),
-        [this](wxCommandEvent&) { mirror(Y); }, "mark_Y", menu);
-    append_menu_item(mirror_menu, wxID_ANY, _(L("Along Z axis")), _(L("Mirror the selected object along the Z axis")),
-        [this](wxCommandEvent&) { mirror(Z); }, "mark_Z", menu);
+    // append_menu_item(mirror_menu, wxID_ANY, _(L("Along X axis")), _(L("Mirror the selected object along the X axis")),
+    //     [this](wxCommandEvent&) { mirror(X); }, "mark_X", menu);
+    // append_menu_item(mirror_menu, wxID_ANY, _(L("Along Y axis")), _(L("Mirror the selected object along the Y axis")),
+    //     [this](wxCommandEvent&) { mirror(Y); }, "mark_Y", menu);
+    // append_menu_item(mirror_menu, wxID_ANY, _(L("Along Z axis")), _(L("Mirror the selected object along the Z axis")),
+    //     [this](wxCommandEvent&) { mirror(Z); }, "mark_Z", menu);
 
-    append_submenu(menu, mirror_menu, wxID_ANY, _(L("Mirror")), _(L("Mirror the selected object")), "",
-        [this]() { return can_mirror(); }, q);
+    // append_submenu(menu, mirror_menu, wxID_ANY, _(L("Mirror")), _(L("Mirror the selected object")), "",
+    //     [this]() { return can_mirror(); }, q);
 
     return true;
 }

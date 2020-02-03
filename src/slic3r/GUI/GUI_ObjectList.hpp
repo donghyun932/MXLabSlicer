@@ -128,11 +128,6 @@ private:
     ScalableBitmap	    m_bmp_manifold_warning;
     ScalableBitmap	    m_bmp_cog;
 
-    MenuWithSeparators  m_menu_object;
-    MenuWithSeparators  m_menu_part;
-    MenuWithSeparators  m_menu_sla_object;
-    MenuWithSeparators  m_menu_instance;
-    MenuWithSeparators  m_menu_layer;
     MenuWithSeparators  m_menu_default;
     wxMenuItem* m_menu_item_settings { nullptr };
     wxMenuItem* m_menu_item_split_instances { nullptr };
@@ -245,10 +240,10 @@ public:
     void                append_menu_item_change_extruder(wxMenu* menu) const;
     void                append_menu_item_delete(wxMenu* menu);
     void                append_menu_item_scale_selection_to_fit_print_volume(wxMenu* menu);
-    void                create_object_popupmenu(wxMenu *menu);
-    void                create_sla_object_popupmenu(wxMenu*menu);
-    void                create_part_popupmenu(wxMenu*menu);
-    void                create_instance_popupmenu(wxMenu*menu);
+    // void                create_object_popupmenu(wxMenu *menu);
+    // void                create_sla_object_popupmenu(wxMenu*menu);
+    // void                create_part_popupmenu(wxMenu*menu);
+    // void                create_instance_popupmenu(wxMenu*menu);
     void                create_default_popupmenu(wxMenu *menu);
     wxMenu*             create_settings_popupmenu(wxMenu *parent_menu);
     void                create_freq_settings_popupmenu(wxMenu *parent_menu, const bool is_object_settings = true);
