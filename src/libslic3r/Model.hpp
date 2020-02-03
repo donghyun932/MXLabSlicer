@@ -194,6 +194,8 @@ public:
     std::vector<coordf_t>   layer_height_profile;
     // Whether or not this object is printable
     bool                    printable;
+    bool                    checked;
+    std::string             object_color;
 
     // This vector holds position of selected support points for SLA. The data are
     // saved in mesh coordinates to allow using them for several instances.
@@ -617,6 +619,8 @@ public:
     EPrintVolumeState print_volume_state;
     // Whether or not this instance is printable
     bool printable;
+    bool checked;
+    std::string object_color;
 
     ModelObject* get_object() const { return this->object; }
 
