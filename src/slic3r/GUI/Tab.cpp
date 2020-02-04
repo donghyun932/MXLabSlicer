@@ -1035,7 +1035,7 @@ void TabPrint::build()
     m_presets = &m_preset_bundle->prints;
     load_initial_data();
 
-    auto page = add_options_page(_(L("General")), "layers");
+    auto page = add_options_page(_(L("Slicing setting")), "layers");
         auto optgroup = page->new_optgroup(_(L("Slicing")));
         optgroup->append_single_option_line("layer_height");
         optgroup->append_single_option_line("fill_density");
