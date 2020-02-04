@@ -975,6 +975,15 @@ boost::any& Choice::get_value()
 	if (m_opt.type == coEnum)
 	{
 		int ret_enum = field->GetSelection(); 
+    if (m_opt_id.compare("orientation") == 0)
+      m_value = static_cast<OrientationEnum>(ret_enum);
+    else if (m_opt_id.compare("start_point_dislocation") == 0)
+      m_value = static_cast<StartPointDislocationEnum>(ret_enum);
+    else if (m_opt_id.compare("method") == 0)
+      m_value = static_cast<MethodEnum>(ret_enum);
+    else if (m_opt_id.compare("fixed_for_all_layers") == 0)
+      m_value = static_cast<FixedForAllLayersEnum>(ret_enum);
+
 		if (m_opt_id == "top_fill_pattern" || m_opt_id == "bottom_fill_pattern")
 		{
 			if (!m_opt.enum_values.empty()) {

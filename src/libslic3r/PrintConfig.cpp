@@ -120,9 +120,9 @@ void PrintConfigDef::init_fff_params()
     def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
                    "TODO 설명 적고 po 파일에 번역본 저장");
     def->sidetext = L("sec");
-    def->min = 0;
+    def->min = 1;
     def->mode = comSimple;
-    def->set_default_value(new ConfigOptionFloat(1));
+    def->set_default_value(new ConfigOptionFloat(3.5));
 
     def = this->add("shield_gas_applied", coBool);
     def->label = L("Shield Gas Applied");
@@ -656,6 +656,92 @@ void PrintConfigDef::init_fff_params()
     def->sidetext = L("s");
     def->min = 0;
     def->set_default_value(new ConfigOptionFloats { 0.0f });
+
+    def = this->add("orientation", coEnum);
+    def->label = L("Orientation");
+    def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
+                   "TODO 설명 적고 po 파일에 번역본 저장");
+    def->enum_keys_map = &ConfigOptionEnum<OrientationEnum>::get_enum_values();
+    def->enum_values.push_back("alternating");
+    def->enum_values.push_back("clockwise");
+    def->enum_values.push_back("counterclockwise");
+    def->enum_labels.push_back(L("Alternating"));
+    def->enum_labels.push_back(L("Clockwise"));
+    def->enum_labels.push_back(L("Counterclockwise"));
+    def->mode = comSimple;
+    def->set_default_value(new ConfigOptionEnum<OrientationEnum>(oeAlternating));
+
+    def = this->add("start_point_dislocation", coEnum);
+    def->label = L("Start Point Dislocation");
+    def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
+                   "TODO 설명 적고 po 파일에 번역본 저장");
+    def->enum_keys_map = &ConfigOptionEnum<StartPointDislocationEnum>::get_enum_values();
+    def->enum_values.push_back("clockwise");
+    def->enum_values.push_back("counterclockwise");
+    def->enum_labels.push_back(L("Clockwise"));
+    def->enum_labels.push_back(L("Counterclockwise"));
+    def->mode = comSimple;
+    def->set_default_value(new ConfigOptionEnum<StartPointDislocationEnum>(spdClockwise));
+
+    def = this->add("method", coEnum);
+    def->label = L("Method");
+    def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
+                   "TODO 설명 적고 po 파일에 번역본 저장");
+    def->enum_keys_map = &ConfigOptionEnum<MethodEnum>::get_enum_values();
+    def->enum_values.push_back("zig");
+    def->enum_values.push_back("zigzag");
+    def->enum_values.push_back("spiral");
+    def->enum_labels.push_back(L("Zig"));
+    def->enum_labels.push_back(L("Zigzag"));
+    def->enum_labels.push_back(L("Spiral"));
+    def->mode = comSimple;
+    def->set_default_value(new ConfigOptionEnum<MethodEnum>(meZigzag));
+
+    def = this->add("start_angle", coFloat);
+    def->label = L("Start Angle");
+    def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
+                   "TODO 설명 적고 po 파일에 번역본 저장");
+    def->sidetext = L("degree");
+    def->mode = comSimple;
+    def->set_default_value(new ConfigOptionFloat(0.0f));
+
+    def = this->add("rotation_increment", coFloat);
+    def->label = L("Rotation Increment");
+    def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
+                   "TODO 설명 적고 po 파일에 번역본 저장");
+    def->sidetext = L("degree");
+    def->mode = comSimple;
+    def->set_default_value(new ConfigOptionFloat(90.0f));
+
+    def = this->add("fixed_for_all_layers", coEnum);
+    def->label = L("Fixed For All Layers");
+    def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
+                   "TODO 설명 적고 po 파일에 번역본 저장");
+    def->enum_keys_map = &ConfigOptionEnum<FixedForAllLayersEnum>::get_enum_values();
+    def->enum_values.push_back("c");
+    def->enum_values.push_back("f");
+    def->enum_values.push_back("cf");
+    def->enum_values.push_back("cfc");
+    def->enum_labels.push_back(L("C"));
+    def->enum_labels.push_back(L("F"));
+    def->enum_labels.push_back(L("CF"));
+    def->enum_labels.push_back(L("CFC"));
+    def->mode = comSimple;
+    def->set_default_value(new ConfigOptionEnum<FixedForAllLayersEnum>(ffalCfc));
+
+    def = this->add("user_edit", coString);
+    def->label = L("User Edit");
+    def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
+                   "TODO 설명 적고 po 파일에 번역본 저장");
+    def->set_default_value(new ConfigOptionString(""));
+
+    def = this->add("shield_gas_applied", coBool);
+    def->label = L("Shield Gas Applied");
+    def->tooltip = L("... "
+                   "... "
+                   "...");
+    def->mode = comSimple;
+    def->set_default_value(new ConfigOptionBool(false));
 
     def = this->add("filament_diameter", coFloats);
     def->label = L("Diameter");
@@ -2896,6 +2982,22 @@ std::string FullPrintConfig::validate()
         for (unsigned char wipe : this->wipe.values)
              if (wipe)
                 return "--use-firmware-retraction is not compatible with --wipe";
+
+    // --orientation
+    if (! print_config_def.get("orientation")->has_enum_value(this->orientation.serialize()))
+        return "Invalid value for --orientation";
+
+    // --start_point_dislocation
+    if (! print_config_def.get("start_point_dislocation")->has_enum_value(this->start_point_dislocation.serialize()))
+        return "Invalid value for --start-point-dislocation";
+
+    // --method
+    if (! print_config_def.get("method")->has_enum_value(this->method.serialize()))
+        return "Invalid value for --method";
+
+    // --fixed_for_all_layers
+    if (! print_config_def.get("fixed_for_all_layers")->has_enum_value(this->fixed_for_all_layers.serialize()))
+        return "Invalid value for --fixed-for-all-layers";
 
     // --gcode-flavor
     if (! print_config_def.get("gcode_flavor")->has_enum_value(this->gcode_flavor.serialize()))
