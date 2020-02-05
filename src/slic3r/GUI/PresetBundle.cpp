@@ -1643,7 +1643,7 @@ void PresetBundle::update_platter_filament_ui(unsigned int idx_extruder, GUI::Pr
         const std::string name = preset.alias.empty() ? preset.name : preset.alias;
         if (preset.is_default || preset.is_system) {
 			ui->Append(wxString::FromUTF8((/*preset.*/name + (preset.is_dirty ? Preset::suffix_modified() : "")).c_str()), 
-				(bitmap == 0) ? wxNullBitmap : *bitmap);
+				(bitmap == 0) ? wxNullBitmap : create_scaled_bitmap(nullptr, "cog"));
 			if (selected ||
                 // just in case: mark selected_preset_item as a first added element
                 selected_preset_item == INT_MAX ) {
