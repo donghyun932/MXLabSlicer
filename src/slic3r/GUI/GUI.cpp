@@ -184,7 +184,16 @@ void change_opt_value(DynamicPrintConfig& config, const t_config_option_key& opt
 			}
 			break;
 		case coEnum:{
-			if (opt_key == "top_fill_pattern" ||
+      if (opt_key.compare("orientation") == 0)
+        config.set_key_value(opt_key, new ConfigOptionEnum<OrientationEnum>(boost::any_cast<OrientationEnum>(value))); 
+      else if (opt_key.compare("start_point_dislocation") == 0)
+        config.set_key_value(opt_key, new ConfigOptionEnum<StartPointDislocationEnum>(boost::any_cast<StartPointDislocationEnum>(value))); 
+      else if (opt_key.compare("method") == 0)
+        config.set_key_value(opt_key, new ConfigOptionEnum<MethodEnum>(boost::any_cast<MethodEnum>(value))); 
+      else if (opt_key.compare("fixed_for_all_layers") == 0)
+        config.set_key_value(opt_key, new ConfigOptionEnum<FixedForAllLayersEnum>(boost::any_cast<FixedForAllLayersEnum>(value))); 
+
+			else if (opt_key == "top_fill_pattern" ||
 				opt_key == "bottom_fill_pattern" ||
 				opt_key == "fill_pattern")
 				config.set_key_value(opt_key, new ConfigOptionEnum<InfillPattern>(boost::any_cast<InfillPattern>(value))); 

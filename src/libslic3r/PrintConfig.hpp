@@ -24,6 +24,22 @@
 
 namespace Slic3r {
 
+enum OrientationEnum {
+    oeAlternating, oeClockwise, oeCounterclockwise,
+};
+
+enum StartPointDislocationEnum {
+    spdClockwise, spdCounterclockwise,
+};
+
+enum MethodEnum {
+    meZig, meZigzag, meSpiral,
+};
+
+enum FixedForAllLayersEnum {
+    ffalC, ffalF, ffalCf, ffalCfc,
+};
+
 enum GCodeFlavor : unsigned char {
     gcfRepRap, gcfRepetier, gcfTeacup, gcfMakerWare, gcfMarlin, gcfSailfish, gcfMach3, gcfMachinekit,
     gcfSmoothie, gcfNoExtrusion,
@@ -144,6 +160,46 @@ template<> inline const t_config_enum_values& ConfigOptionEnum<SeamPosition>::ge
         keys_map["nearest"]             = spNearest;
         keys_map["aligned"]             = spAligned;
         keys_map["rear"]                = spRear;
+    }
+    return keys_map;
+}
+
+template<> inline const t_config_enum_values& ConfigOptionEnum<OrientationEnum>::get_enum_values() {
+    static t_config_enum_values keys_map;
+    if (keys_map.empty()) {
+        keys_map["alternating"]              = oeAlternating;
+        keys_map["clockwise"]                = oeClockwise;
+        keys_map["counterclockwise"]         = oeCounterclockwise;
+    }
+    return keys_map;
+}
+
+template<> inline const t_config_enum_values& ConfigOptionEnum<StartPointDislocationEnum>::get_enum_values() {
+    static t_config_enum_values keys_map;
+    if (keys_map.empty()) {
+        keys_map["clockwise"]                = spdClockwise;
+        keys_map["counterclockwise"]         = spdCounterclockwise;
+    }
+    return keys_map;
+}
+
+template<> inline const t_config_enum_values& ConfigOptionEnum<MethodEnum>::get_enum_values() {
+    static t_config_enum_values keys_map;
+    if (keys_map.empty()) {
+        keys_map["zig"]              = meZig;
+        keys_map["zigzag"]           = meZigzag;
+        keys_map["spiral"]           = meSpiral;
+    }
+    return keys_map;
+}
+
+template<> inline const t_config_enum_values& ConfigOptionEnum<FixedForAllLayersEnum>::get_enum_values() {
+    static t_config_enum_values keys_map;
+    if (keys_map.empty()) {
+        keys_map["c"]              = ffalC;
+        keys_map["f"]              = ffalF;
+        keys_map["cf"]             = ffalCf;
+        keys_map["cfc"]            = ffalCfc;
     }
     return keys_map;
 }
@@ -621,6 +677,14 @@ class GCodeConfig : public StaticPrintConfig
 {
     STATIC_PRINT_CONFIG_CACHE(GCodeConfig)
 public:
+    ConfigOptionEnum<OrientationEnum>                    orientation;
+    ConfigOptionEnum<StartPointDislocationEnum>          start_point_dislocation;
+    ConfigOptionEnum<MethodEnum>                         method;
+    ConfigOptionFloat               start_angle;
+    ConfigOptionFloat               rotation_increment;
+    ConfigOptionEnum<FixedForAllLayersEnum>              fixed_for_all_layers;
+    ConfigOptionString              user_edit;
+
     ConfigOptionString              before_layer_gcode;
     ConfigOptionString              between_objects_gcode;
     ConfigOptionFloats              deretract_speed;
@@ -694,6 +758,14 @@ public:
 protected:
     void initialize(StaticCacheBase &cache, const char *base_ptr)
     {
+        OPT_PTR(orientation);
+        OPT_PTR(start_point_dislocation);
+        OPT_PTR(method);
+        OPT_PTR(start_angle);
+        OPT_PTR(rotation_increment);
+        OPT_PTR(fixed_for_all_layers);
+        OPT_PTR(user_edit);
+
         OPT_PTR(before_layer_gcode);
         OPT_PTR(between_objects_gcode);
         OPT_PTR(deretract_speed);

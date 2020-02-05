@@ -1035,7 +1035,7 @@ void TabPrint::build()
     m_presets = &m_preset_bundle->prints;
     load_initial_data();
 
-    auto page = add_options_page(_(L("General")), "wrench");
+    auto page = add_options_page(_(L("Slicing setting")), "layers");
         auto optgroup = page->new_optgroup(_(L("Slicing")));
         optgroup->append_single_option_line("layer_height");
         optgroup->append_single_option_line("fill_density");
@@ -1411,8 +1411,24 @@ void TabFilament::build()
     m_presets = &m_preset_bundle->filaments;
     load_initial_data();
 
-    auto page = add_options_page(_(L("Filament")), "spool.png");
-        auto optgroup = page->new_optgroup(_(L("Filament")));
+    auto page = add_options_page(_(L("Tool path")), "infill");
+        auto optgroup = page->new_optgroup(_(L("Contour")));
+        optgroup->append_single_option_line("orientation");
+        optgroup->append_single_option_line("start_point_dislocation");
+
+        optgroup = page->new_optgroup(_(L("Filling")));
+        optgroup->append_single_option_line("method");
+        Line line = { _(L("Rotation")), "" };
+        line.append_option(optgroup->get_option("start_angle"));
+        line.append_option(optgroup->get_option("rotation_increment"));
+        optgroup->append_line(line);
+        line = { _(L("Ordering Definition")), "" };
+        line.append_option(optgroup->get_option("fixed_for_all_layers"));
+        line.append_option(optgroup->get_option("user_edit"));
+        optgroup->append_line(line);
+
+    page = add_options_page(_(L("Filament")), "spool.png");
+        optgroup = page->new_optgroup(_(L("Filament")));
         optgroup->append_single_option_line("filament_colour");
         optgroup->append_single_option_line("filament_diameter");
         optgroup->append_single_option_line("extrusion_multiplier");
@@ -1420,7 +1436,7 @@ void TabFilament::build()
         optgroup->append_single_option_line("filament_cost");
 
         optgroup = page->new_optgroup(_(L("Temperature")) + wxString(" °C", wxConvUTF8));
-        Line line = { _(L("Extruder")), "" };
+        line = { _(L("Extruder")), "" };
         line.append_option(optgroup->get_option("first_layer_temperature"));
         line.append_option(optgroup->get_option("temperature"));
         optgroup->append_line(line);
