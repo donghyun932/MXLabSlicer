@@ -166,36 +166,55 @@ void PresetBundle::reset(bool delete_files)
     this->obsolete_presets.printers.clear();
 }
 
+static void recursive_copy(const boost::filesystem::path &src, const boost::filesystem::path &dst)
+{
+    if (boost::filesystem::exists(dst)){
+        return ;
+    }
+
+    if (boost::filesystem::is_directory(src)) {
+        boost::filesystem::create_directories(dst);
+        for (boost::filesystem::directory_entry& item : boost::filesystem::directory_iterator(src)) {
+            recursive_copy(item.path(), dst/item.path().filename());
+        }
+    }
+    else if (boost::filesystem::is_regular_file(src)) {
+        boost::filesystem::copy(src, dst);
+    }
+    else {
+        throw std::runtime_error(dst.generic_string() + " not dir or file");
+    }
+}
+
 void PresetBundle::setup_directories()
 {
     boost::filesystem::path data_dir = boost::filesystem::path(Slic3r::data_dir());
-    std::initializer_list<boost::filesystem::path> paths = { 
-        data_dir,
-		data_dir / "vendor",
-        data_dir / "cache",
+    boost::filesystem::path resource_dir = boost::filesystem::path(Slic3r::resources_dir());
+    std::initializer_list<std::pair<boost::filesystem::path, boost::filesystem::path> > paths = {
+        {data_dir           ,  resource_dir / "profiles" / SLIC3R_APP_NAME},
+        {data_dir / "vendor",  resource_dir / "profiles" / SLIC3R_APP_NAME / "vendor"},
+        {data_dir / "cache" ,  resource_dir / "profiles" / SLIC3R_APP_NAME / "cache"},
 #ifdef SLIC3R_PROFILE_USE_PRESETS_SUBDIR
         // Store the print/filament/printer presets into a "presets" directory.
-        data_dir / "presets", 
-        data_dir / "presets" / "print", 
-        data_dir / "presets" / "filament", 
-        data_dir / "presets" / "sla_print",  
-        data_dir / "presets" / "sla_material", 
-        data_dir / "presets" / "printer" 
+        {data_dir / "presets"                 ,  resource_dir / "profiles" / SLIC3R_APP_NAME / "presets"},
+        {data_dir / "presets" / "print"       ,  resource_dir / "profiles" / SLIC3R_APP_NAME / "presets" / "print"},
+        {data_dir / "presets" / "filament"    ,  resource_dir / "profiles" / SLIC3R_APP_NAME / "presets" / "filament"},
+        {data_dir / "presets" / "sla_print"   ,  resource_dir / "profiles" / SLIC3R_APP_NAME / "presets" / "sla_print"},
+        {data_dir / "presets" / "sla_material",  resource_dir / "profiles" / SLIC3R_APP_NAME / "presets" / "sla_material"},
+        {data_dir / "presets" / "printer"     ,  resource_dir / "profiles" / SLIC3R_APP_NAME / "presets" / "printer"},
 #else
         // Store the print/filament/printer presets at the same location as the upstream Slic3r.
-        data_dir / "print", 
-        data_dir / "filament", 
-        data_dir / "sla_print", 
-        data_dir / "sla_material", 
-        data_dir / "printer" 
+        {data_dir / "print"       ,  resource_dir / "profiles" / SLIC3R_APP_NAME / "print"},
+        {data_dir / "filament"    ,  resource_dir / "profiles" / SLIC3R_APP_NAME / "filament"},
+        {data_dir / "sla_print"   ,  resource_dir / "profiles" / SLIC3R_APP_NAME / "sla_print"},
+        {data_dir / "sla_material",  resource_dir / "profiles" / SLIC3R_APP_NAME / "sla_material"},
+        {data_dir / "printer"     ,  resource_dir / "profiles" / SLIC3R_APP_NAME / "printer" },
 #endif
     };
-    for (const boost::filesystem::path &path : paths) {
-		boost::filesystem::path subdir = path;
+    for (const std::pair<boost::filesystem::path, boost::filesystem::path> &path_pair : paths) {
+		boost::filesystem::path subdir = path_pair.first;
         subdir.make_preferred();
-        if (! boost::filesystem::is_directory(subdir) && 
-            ! boost::filesystem::create_directory(subdir))
-            throw std::runtime_error(std::string("Slic3r was unable to create its data directory at ") + subdir.string());
+        recursive_copy(path_pair.second, subdir);
     }
 }
 

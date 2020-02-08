@@ -1094,7 +1094,6 @@ bool GUI_App::run_wizard(ConfigWizard::RunReason reason, ConfigWizard::StartPage
                 _(L("Attention!")));
         }
     }
-
     return res;
 }
 
