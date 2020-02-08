@@ -1081,21 +1081,20 @@ bool GUI_App::run_wizard(ConfigWizard::RunReason reason, ConfigWizard::StartPage
         m_wizard = new ConfigWizard(mainframe);
     }
 
-    // const bool res = m_wizard->run(reason, start_page);
+    const bool res = m_wizard->run(reason, start_page);
 
-    // if (res) {
-    //     load_current_presets();
+    if (res) {
+        load_current_presets();
 
-    //     if (preset_bundle->printers.get_edited_preset().printer_technology() == ptSLA
-    //         && Slic3r::model_has_multi_part_objects(wxGetApp().model())) {
-    //         GUI::show_info(nullptr,
-    //             _(L("It's impossible to print multi-part object(s) with SLA technology.")) + "\n\n" +
-    //             _(L("Please check and fix your object list.")),
-    //             _(L("Attention!")));
-    //     }
-    // }
-
-    return true;
+        if (preset_bundle->printers.get_edited_preset().printer_technology() == ptSLA
+            && Slic3r::model_has_multi_part_objects(wxGetApp().model())) {
+            GUI::show_info(nullptr,
+                _(L("It's impossible to print multi-part object(s) with SLA technology.")) + "\n\n" +
+                _(L("Please check and fix your object list.")),
+                _(L("Attention!")));
+        }
+    }
+    return res;
 }
 
 #if ENABLE_THUMBNAIL_GENERATOR_DEBUG

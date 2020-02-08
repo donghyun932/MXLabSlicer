@@ -57,9 +57,9 @@ void AppConfig::set_defaults()
         set("show_incompatible_presets", "0");
 
     if (get("version_check").empty())
-        set("version_check", "1");
+        set("version_check", "0");
     if (get("preset_update").empty())
-        set("preset_update", "1");
+        set("preset_update", "0");
 
     // remove old 'use_legacy_opengl' parameter from this config, if present
     if (!get("use_legacy_opengl").empty())
