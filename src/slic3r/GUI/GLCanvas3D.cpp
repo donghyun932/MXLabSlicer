@@ -4643,8 +4643,10 @@ void GLCanvas3D::_picking_pass() const
         }
         if ((0 <= volume_id) && (volume_id < (int)m_volumes.volumes.size()))
         {
-            m_hover_volume_idxs.push_back(volume_id);
-            m_gizmos.set_hover_id(-1);
+            if (m_volumes.volumes[volume_id]->printable){
+                m_hover_volume_idxs.push_back(volume_id);
+                m_gizmos.set_hover_id(-1);
+            }
         }
         else
             m_gizmos.set_hover_id(inside && (unsigned int)volume_id <= GLGizmoBase::BASE_ID ? ((int)GLGizmoBase::BASE_ID - volume_id) : -1);
