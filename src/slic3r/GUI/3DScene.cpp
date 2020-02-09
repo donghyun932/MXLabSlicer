@@ -677,8 +677,10 @@ void GLVolumeCollection::render(GLVolumeCollection::ERenderType type, bool disab
 
     GLVolumeWithIdAndZList to_render = volumes_to_render(this->volumes, type, view_matrix, filter_func);
     for (GLVolumeWithIdAndZ& volume : to_render) {
-        volume.first->set_render_color();
-        volume.first->render(color_id, print_box_detection_id, print_box_worldmatrix_id);
+        if (volume.first->printable) {
+            volume.first->set_render_color();
+            volume.first->render(color_id, print_box_detection_id, print_box_worldmatrix_id);
+        }
     }
 
     glsafe(::glBindBuffer(GL_ARRAY_BUFFER, 0));
