@@ -16,7 +16,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/operations.hpp>
 
-static const float GROUND_Z = -0.02f;
+static const float GROUND_Z = 0.0f;
 
 namespace Slic3r {
 namespace GUI {
@@ -245,7 +245,7 @@ bool Bed3D::set_shape(const Pointfs& shape, const std::string& custom_texture, c
     m_model.reset();
 
     // Set the origin and size for painting of the coordinate system axes.
-    m_axes.origin = Vec3d(0.0, 0.0, (double)GROUND_Z);
+    m_axes.origin = Vec3d(87.5, 87.5, (double)GROUND_Z);
     m_axes.length = 0.1 * m_bounding_box.max_size() * Vec3d::Ones();
 
     // Let the calee to update the UI.
@@ -271,7 +271,8 @@ void Bed3D::render(GLCanvas3D& canvas, float theta, float scale_factor, bool sho
 
     glsafe(::glEnable(GL_DEPTH_TEST));
 
-    render_model(resources_dir() + "/models/" + "mxlab_bed.stl");
+    if (theta <= 90.f)
+        render_model(resources_dir() + "/models/" + "mxlab_bed.stl");
     render_texture(resources_dir() + "/icons/bed/" + "mxlab.svg", theta > 90.0f, canvas);
 
     glsafe(::glDisable(GL_DEPTH_TEST));
@@ -307,20 +308,36 @@ void Bed3D::calc_triangles(const ExPolygon& poly)
 void Bed3D::calc_gridlines(const ExPolygon& poly, const BoundingBox& bed_bbox)
 {
     Polylines axes_lines;
-    for (coord_t x = bed_bbox.min(0); x <= bed_bbox.max(0); x += scale_(10.0))
-    {
-        Polyline line;
-        line.append(Point(x, bed_bbox.min(1)));
-        line.append(Point(x, bed_bbox.max(1)));
-        axes_lines.push_back(line);
-    }
-    for (coord_t y = bed_bbox.min(1); y <= bed_bbox.max(1); y += scale_(10.0))
-    {
-        Polyline line;
-        line.append(Point(bed_bbox.min(0), y));
-        line.append(Point(bed_bbox.max(0), y));
-        axes_lines.push_back(line);
-    }
+    // for (coord_t x = bed_bbox.min(0); x <= bed_bbox.max(0); x += scale_(10.0))
+    // {
+    //     Polyline line;
+    //     line.append(Point(x, bed_bbox.min(1)));
+    //     line.append(Point(x, bed_bbox.max(1)));
+    //     axes_lines.push_back(line);
+    // }
+    // for (coord_t y = bed_bbox.min(1); y <= bed_bbox.max(1); y += scale_(10.0))
+    // {
+    //     Polyline line;
+    //     line.append(Point(bed_bbox.min(0), y));
+    //     line.append(Point(bed_bbox.max(0), y));
+    //     axes_lines.push_back(line);
+    // }
+    Polyline l1,l2,l3,l4;
+    l1.append(Point(bed_bbox.min(0), bed_bbox.min(1)));
+    l1.append(Point(bed_bbox.min(0), bed_bbox.max(1)));
+
+    l2.append(Point(bed_bbox.max(0), bed_bbox.min(1)));
+    l2.append(Point(bed_bbox.max(0), bed_bbox.max(1)));
+
+    l3.append(Point(bed_bbox.min(0), bed_bbox.min(1)));
+    l3.append(Point(bed_bbox.max(0), bed_bbox.min(1)));
+
+    l4.append(Point(bed_bbox.min(0), bed_bbox.max(1)));
+    l4.append(Point(bed_bbox.max(0), bed_bbox.max(1)));
+    axes_lines.push_back(l1);
+    axes_lines.push_back(l2);
+    axes_lines.push_back(l3);
+    axes_lines.push_back(l4);
 
     // clip with a slightly grown expolygon because our lines lay on the contours and may get erroneously clipped
     Lines gridlines = to_lines(intersection_pl(axes_lines, offset(poly, (float)SCALED_EPSILON)));
@@ -335,7 +352,7 @@ void Bed3D::calc_gridlines(const ExPolygon& poly, const BoundingBox& bed_bbox)
 
 Bed3D::EType Bed3D::detect_type(const Pointfs& shape) const
 {
-    EType type = Custom;
+    EType type = MINI;
 
     auto bundle = wxGetApp().preset_bundle;
     if (bundle != nullptr)
@@ -551,7 +568,7 @@ void Bed3D::render_model(const std::string& filename) const
     {
         // move the model so that its origin (0.0, 0.0, 0.0) goes into the bed shape center and a bit down to avoid z-fighting with the texture quad
         Vec3d shift = m_bounding_box.center();
-        shift(2) = -0.03;
+        shift(2) = -15.01;
         m_model.set_offset(shift);
 
         // update extended bounding box
