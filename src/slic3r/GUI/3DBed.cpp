@@ -273,7 +273,7 @@ void Bed3D::render(GLCanvas3D& canvas, float theta, float scale_factor, bool sho
 
     if (theta <= 90.f)
         render_model(resources_dir() + "/models/" + "mxlab_bed.stl");
-    render_texture(resources_dir() + "/icons/bed/" + "mxlab.svg", theta > 90.0f, canvas);
+    render_texture(resources_dir() + "/icons/bed/" + "mxlab.png", theta > 90.0f, canvas);
 
     glsafe(::glDisable(GL_DEPTH_TEST));
 }
@@ -307,46 +307,13 @@ void Bed3D::calc_triangles(const ExPolygon& poly)
 
 void Bed3D::calc_gridlines(const ExPolygon& poly, const BoundingBox& bed_bbox)
 {
-    Polylines axes_lines;
-    // for (coord_t x = bed_bbox.min(0); x <= bed_bbox.max(0); x += scale_(10.0))
-    // {
-    //     Polyline line;
-    //     line.append(Point(x, bed_bbox.min(1)));
-    //     line.append(Point(x, bed_bbox.max(1)));
-    //     axes_lines.push_back(line);
-    // }
-    // for (coord_t y = bed_bbox.min(1); y <= bed_bbox.max(1); y += scale_(10.0))
-    // {
-    //     Polyline line;
-    //     line.append(Point(bed_bbox.min(0), y));
-    //     line.append(Point(bed_bbox.max(0), y));
-    //     axes_lines.push_back(line);
-    // }
-    Polyline l1,l2,l3,l4;
-    l1.append(Point(bed_bbox.min(0), bed_bbox.min(1)));
-    l1.append(Point(bed_bbox.min(0), bed_bbox.max(1)));
-
-    l2.append(Point(bed_bbox.max(0), bed_bbox.min(1)));
-    l2.append(Point(bed_bbox.max(0), bed_bbox.max(1)));
-
-    l3.append(Point(bed_bbox.min(0), bed_bbox.min(1)));
-    l3.append(Point(bed_bbox.max(0), bed_bbox.min(1)));
-
-    l4.append(Point(bed_bbox.min(0), bed_bbox.max(1)));
-    l4.append(Point(bed_bbox.max(0), bed_bbox.max(1)));
-    axes_lines.push_back(l1);
-    axes_lines.push_back(l2);
-    axes_lines.push_back(l3);
-    axes_lines.push_back(l4);
-
-    // clip with a slightly grown expolygon because our lines lay on the contours and may get erroneously clipped
-    Lines gridlines = to_lines(intersection_pl(axes_lines, offset(poly, (float)SCALED_EPSILON)));
+    Lines grid_lines;
 
     // append bed contours
     Lines contour_lines = to_lines(poly);
-    std::copy(contour_lines.begin(), contour_lines.end(), std::back_inserter(gridlines));
+    std::copy(contour_lines.begin(), contour_lines.end(), std::back_inserter(grid_lines));
 
-    if (!m_gridlines.set_from_lines(gridlines, GROUND_Z))
+    if (!m_gridlines.set_from_lines(grid_lines, GROUND_Z))
         printf("Unable to create bed grid lines\n");
 }
 
