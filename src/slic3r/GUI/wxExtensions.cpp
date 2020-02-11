@@ -1156,7 +1156,7 @@ std::string ObjectDataViewModel::GetObjectColor(const wxDataViewItem& item) cons
 {
     ObjectDataViewModelNode* node = (ObjectDataViewModelNode*)item.GetID();
     if (!node)
-        return "#004101";
+        return "#950918";
 
     return node->GetObjectColor();
 }
@@ -1165,7 +1165,7 @@ std::string ObjectDataViewModel::GetNewObjectColor(const wxDataViewItem& item) c
 {
     ObjectDataViewModelNode* node = (ObjectDataViewModelNode*)item.GetID();
     if (!node)
-        return "#004101";
+        return "#950918";
 
     const std::string& color = node->GetObjectColor();
     wxColour clr(color);

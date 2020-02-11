@@ -191,6 +191,7 @@ void GLIndexedVertexArray::render(
     glsafe(::glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
+const float GLVolume::BASE_DMT_COLOR[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
 const float GLVolume::SELECTED_COLOR[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
 const float GLVolume::HOVER_SELECT_COLOR[4] = { 0.4f, 0.9f, 0.1f, 1.0f };
 const float GLVolume::HOVER_DESELECT_COLOR[4] = { 1.0f, 0.75f, 0.75f, 1.0f };
@@ -216,7 +217,7 @@ GLVolume::GLVolume(float r, float g, float b, float a)
     , selected(false)
     , disabled(false)
     , printable(true)
-    , object_color("#004101")
+    , object_color("#950918")
     , is_active(true)
     , zoom_to_volumes(true)
     , shader_outside_printer_detection_enabled(false)
@@ -260,7 +261,10 @@ void GLVolume::set_render_color()
             set_render_color(color, 4);
     }
     else {
-        if (hover == HS_Select)
+        if (base_dmt) {
+            set_render_color(BASE_DMT_COLOR, 4);
+        }
+        else if (hover == HS_Select)
             set_render_color(HOVER_SELECT_COLOR, 4);
         else if (hover == HS_Deselect)
             set_render_color(HOVER_DESELECT_COLOR, 4);
@@ -272,13 +276,6 @@ void GLVolume::set_render_color()
             set_render_color(OUTSIDE_COLOR, 4);
         else
             set_render_color(color, 4);
-    }
-
-    if (!printable)
-    {
-        render_color[0] /= 4;
-        render_color[1] /= 4;
-        render_color[2] /= 4;
     }
 
     if (force_transparent)

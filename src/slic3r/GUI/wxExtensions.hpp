@@ -232,7 +232,7 @@ class ObjectDataViewModelNode
     wxBitmap				        m_action_icon;
     PrintIndicator                  m_printable {piUndef};
     CheckboxIndicator               m_checked {ciUndef};
-    std::string                     m_object_color = "#004101";
+    std::string                     m_object_color = "#950918";
     wxBitmap                m_object_color_bmp;
     wxBitmap				        m_printable_icon;
     wxBitmap                m_checkbox_icon;
