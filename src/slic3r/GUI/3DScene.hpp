@@ -247,6 +247,7 @@ private:
 
 class GLVolume {
 public:
+    static const float BASE_DMT_COLOR[4];
     static const float SELECTED_COLOR[4];
     static const float HOVER_SELECT_COLOR[4];
     static const float HOVER_DESELECT_COLOR[4];
@@ -322,6 +323,10 @@ public:
     bool                printable;
     // custom object color from sidebar object list
     std::string         object_color;
+    // custom check box
+    bool                checked;
+    // true : base,   false: dmt
+    bool                base_dmt;
     // Whether or not this volume is active for rendering
     bool                is_active;
     // Whether or not to use this volume when applying zoom_to_volumes()

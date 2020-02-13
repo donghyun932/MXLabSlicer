@@ -195,7 +195,8 @@ public:
     // Whether or not this object is printable
     bool                    printable;
     bool                    checked;
-    std::string             object_color;
+    bool                    base_dmt;  // true : base,   false: dmt
+    std::string             object_color="#950918";
 
     // This vector holds position of selected support points for SLA. The data are
     // saved in mesh coordinates to allow using them for several instances.
@@ -620,7 +621,8 @@ public:
     // Whether or not this instance is printable
     bool printable;
     bool checked;
-    std::string object_color;
+    bool base_dmt;  // true : base,   false: dmt
+    std::string object_color="#950918";
 
     ModelObject* get_object() const { return this->object; }
 
@@ -665,7 +667,7 @@ public:
 
     const Transform3d& get_matrix(bool dont_translate = false, bool dont_rotate = false, bool dont_scale = false, bool dont_mirror = false) const { return m_transformation.get_matrix(dont_translate, dont_rotate, dont_scale, dont_mirror); }
 
-    bool is_printable() const { return object->printable && printable && (print_volume_state == PVS_Inside); }
+    bool is_printable() const { return checked && (object->printable && printable) && (!object->base_dmt && !base_dmt) && (print_volume_state == PVS_Inside); }
 
     // Getting the input polygon for arrange
     arrangement::ArrangePolygon get_arrange_polygon() const;

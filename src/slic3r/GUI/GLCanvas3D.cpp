@@ -1610,6 +1610,27 @@ void GLCanvas3D::update_instance_printable_state_for_objects(std::vector<size_t>
         update_instance_printable_state_for_object(obj_idx);
 }
 
+void GLCanvas3D::update_instance_checked_state_for_object(const size_t obj_idx)
+{
+    ModelObject* model_object = m_model->objects[obj_idx];
+    for (int inst_idx = 0; inst_idx < (int)model_object->instances.size(); ++inst_idx)
+    {
+        ModelInstance* instance = model_object->instances[inst_idx];
+
+        for (GLVolume* volume : m_volumes.volumes)
+        {
+            if ((volume->object_idx() == (int)obj_idx) && (volume->instance_idx() == inst_idx))
+                volume->checked = instance->checked;
+        }
+    }
+}
+
+void GLCanvas3D::update_instance_checked_state_for_objects(std::vector<size_t>& object_idxs)
+{
+    for (size_t obj_idx : object_idxs)
+        update_instance_checked_state_for_object(obj_idx);
+}
+
 void GLCanvas3D::update_instance_object_color_for_object(const size_t obj_idx)
 {
     ModelObject* model_object = m_model->objects[obj_idx];
@@ -1629,6 +1650,27 @@ void GLCanvas3D::update_instance_object_color_for_objects(std::vector<size_t>& o
 {
     for (size_t obj_idx : object_idxs)
         update_instance_object_color_for_object(obj_idx);
+}
+
+void GLCanvas3D::update_instance_base_dmt_for_object(const size_t obj_idx)
+{
+    ModelObject* model_object = m_model->objects[obj_idx];
+    for (int inst_idx = 0; inst_idx < (int)model_object->instances.size(); ++inst_idx)
+    {
+        ModelInstance* instance = model_object->instances[inst_idx];
+
+        for (GLVolume* volume : m_volumes.volumes)
+        {
+            if ((volume->object_idx() == (int)obj_idx) && (volume->instance_idx() == inst_idx))
+                volume->base_dmt = instance->base_dmt;
+        }
+    }
+}
+
+void GLCanvas3D::update_instance_base_dmt_for_objects(std::vector<size_t>& object_idxs)
+{
+    for (size_t obj_idx : object_idxs)
+        update_instance_base_dmt_for_object(obj_idx);
 }
 
 void GLCanvas3D::set_config(const DynamicPrintConfig* config)
@@ -2138,33 +2180,7 @@ void GLCanvas3D::reload_scene(bool refresh_immediately, bool force_full_scene_re
             }
         }
     }
-    if (printer_technology == ptSLA) {
-        const SLAPrint* sla_print = this->sla_print();
-#ifndef NDEBUG
-        // Verify that the SLAPrint object is synchronized with m_model.
-        check_model_ids_equal(*m_model, sla_print->model());
-#endif /* NDEBUG */
-        sla_support_state.reserve(sla_print->objects().size());
-        for (const SLAPrintObject* print_object : sla_print->objects()) {
-            SLASupportState state;
-            for (size_t istep = 0; istep < sla_steps.size(); ++istep) {
-                state.step[istep] = print_object->step_state_with_timestamp(sla_steps[istep]);
-                if (state.step[istep].state == PrintStateBase::DONE) {
-                    if (!print_object->has_mesh(sla_steps[istep]))
-                        // Consider the DONE step without a valid mesh as invalid for the purpose
-                        // of mesh visualization.
-                        state.step[istep].state = PrintStateBase::INVALID;
-                    else
-                        for (const ModelInstance* model_instance : print_object->model_object()->instances)
-                            // Only the instances, which are currently printable, will have the SLA support structures kept.
-                            // The instances outside the print bed will have the GLVolumes of their support structures released.
-                            if (model_instance->is_printable())
-                                aux_volume_state.emplace_back(state.step[istep].timestamp, model_instance->id());
-                }
-            }
-            sla_support_state.emplace_back(state);
-        }
-    }
+
     std::sort(model_volume_state.begin(), model_volume_state.end(), model_volume_state_lower);
     std::sort(aux_volume_state.begin(), aux_volume_state.end(), model_volume_state_lower);
     // Release all ModelVolume based GLVolumes not found in the current Model.
@@ -2264,71 +2280,6 @@ void GLCanvas3D::reload_scene(bool refresh_immediately, bool force_full_scene_re
                 }
             }
         }
-    }
-    if (printer_technology == ptSLA) {
-        size_t idx = 0;
-        const SLAPrint *sla_print = this->sla_print();
-		std::vector<double> shift_zs(m_model->objects.size(), 0);
-        double relative_correction_z = sla_print->relative_correction().z();
-        if (relative_correction_z <= EPSILON)
-            relative_correction_z = 1.;
-		for (const SLAPrintObject *print_object : sla_print->objects()) {
-            SLASupportState   &state        = sla_support_state[idx ++];
-            const ModelObject *model_object = print_object->model_object();
-            // Find an index of the ModelObject
-            int object_idx;
-			if (std::all_of(state.step.begin(), state.step.end(), [](const PrintStateBase::StateWithTimeStamp &state){ return state.state != PrintStateBase::DONE; }))
-				continue;
-            // There may be new SLA volumes added to the scene for this print_object.
-            // Find the object index of this print_object in the Model::objects list.
-            auto it = std::find(sla_print->model().objects.begin(), sla_print->model().objects.end(), model_object);
-            assert(it != sla_print->model().objects.end());
-			object_idx = it - sla_print->model().objects.begin();
-			// Cache the Z offset to be applied to all volumes with this object_idx.
-			shift_zs[object_idx] = print_object->get_current_elevation() / relative_correction_z;
-            // Collect indices of this print_object's instances, for which the SLA support meshes are to be added to the scene.
-            // pairs of <instance_idx, print_instance_idx>
-			std::vector<std::pair<size_t, size_t>> instances[std::tuple_size<SLASteps>::value];
-            for (size_t print_instance_idx = 0; print_instance_idx < print_object->instances().size(); ++ print_instance_idx) {
-                const SLAPrintObject::Instance &instance = print_object->instances()[print_instance_idx];
-                // Find index of ModelInstance corresponding to this SLAPrintObject::Instance.
-				auto it = std::find_if(model_object->instances.begin(), model_object->instances.end(), 
-                    [&instance](const ModelInstance *mi) { return mi->id() == instance.instance_id; });
-                assert(it != model_object->instances.end());
-                int instance_idx = it - model_object->instances.begin();
-                for (size_t istep = 0; istep < sla_steps.size(); ++ istep)
-                    if (state.step[istep].state == PrintStateBase::DONE) {
-                        ModelVolumeState key(state.step[istep].timestamp, instance.instance_id.id);
-                        auto it = std::lower_bound(aux_volume_state.begin(), aux_volume_state.end(), key, model_volume_state_lower);
-                        assert(it != aux_volume_state.end() && it->geometry_id == key.geometry_id);
-                        if (it->new_geometry()) {
-                            // This can be an SLA support structure that should not be rendered (in case someone used undo
-                            // to revert to before it was generated). If that's the case, we should not generate anything.
-                            if (model_object->sla_points_status != sla::PointsStatus::NoPoints)
-                                instances[istep].emplace_back(std::pair<size_t, size_t>(instance_idx, print_instance_idx));
-                            else
-                                shift_zs[object_idx] = 0.;
-                        }
-						else {
-							// Recycling an old GLVolume. Update the Object/Instance indices into the current Model.
-							m_volumes.volumes[it->volume_idx]->composite_id = GLVolume::CompositeID(object_idx, m_volumes.volumes[it->volume_idx]->volume_idx(), instance_idx);
-							m_volumes.volumes[it->volume_idx]->set_instance_transformation(model_object->instances[instance_idx]->get_transformation());
-						}
-                    }
-            }
-
-//            // stores the current volumes count
-//            size_t volumes_count = m_volumes.volumes.size();
-
-            for (size_t istep = 0; istep < sla_steps.size(); ++istep)
-                if (!instances[istep].empty())
-                    m_volumes.load_object_auxiliary(print_object, object_idx, instances[istep], sla_steps[istep], state.step[istep].timestamp, m_initialized);
-        }
-
-		// Shift-up all volumes of the object so that it has the right elevation with respect to the print bed
-		for (GLVolume* volume : m_volumes.volumes)
-			if (volume->object_idx() < (int)m_model->objects.size() && m_model->objects[volume->object_idx()]->instances[volume->instance_idx()]->is_printable())
-				volume->set_sla_shift_z(shift_zs[volume->object_idx()]);
     }
 
     if (printer_technology == ptFFF && m_config->has("nozzle_diameter"))

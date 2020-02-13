@@ -504,8 +504,12 @@ public:
     void toggle_model_objects_visibility(bool visible, const ModelObject* mo = nullptr, int instance_idx = -1);
     void update_instance_printable_state_for_object(size_t obj_idx);
     void update_instance_printable_state_for_objects(std::vector<size_t>& object_idxs);
+    void update_instance_checked_state_for_object(size_t obj_idx);
+    void update_instance_checked_state_for_objects(std::vector<size_t>& object_idxs);
     void update_instance_object_color_for_object(size_t obj_idx);
     void update_instance_object_color_for_objects(std::vector<size_t>& object_idxs);
+    void update_instance_base_dmt_for_object(size_t obj_idx);
+    void update_instance_base_dmt_for_objects(std::vector<size_t>& object_idxs);
 
     void set_config(const DynamicPrintConfig* config);
     void set_process(BackgroundSlicingProcess* process);

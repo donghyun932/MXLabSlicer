@@ -2478,6 +2478,9 @@ std::vector<size_t> Plater::priv::load_files(const std::vector<fs::path>& input_
     {
         // update printable state for new volumes on canvas3D
         wxGetApp().plater()->canvas3D()->update_instance_printable_state_for_objects(obj_idxs);
+        wxGetApp().plater()->canvas3D()->update_instance_object_color_for_objects(obj_idxs);
+        wxGetApp().plater()->canvas3D()->update_instance_base_dmt_for_objects(obj_idxs);
+        wxGetApp().plater()->canvas3D()->update_instance_checked_state_for_objects(obj_idxs);
 
         Selection& selection = view3D->get_canvas3d()->get_selection();
         selection.clear();
@@ -3386,6 +3389,9 @@ void Plater::priv::reload_from_disk()
     for (size_t i = 0; i < model.objects.size(); ++i)
     {
         view3D->get_canvas3d()->update_instance_printable_state_for_object(i);
+        view3D->get_canvas3d()->update_instance_object_color_for_object(i);
+        view3D->get_canvas3d()->update_instance_base_dmt_for_object(i);
+        view3D->get_canvas3d()->update_instance_checked_state_for_object(i);
     }
 }
 
