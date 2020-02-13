@@ -719,7 +719,7 @@ bool GLVolumeCollection::check_outside_state(const DynamicPrintConfig* config, M
         bool contained = print_volume.contains(bb);
 
         volume->is_outside = !contained;
-        if (!volume->printable)
+        if (!volume->printable || volume->base_dmt)
             continue;
 
         if (contained)

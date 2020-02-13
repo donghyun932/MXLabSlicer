@@ -1065,6 +1065,27 @@ void ObjectDataViewModel::UpdateInstancesPrintable(wxDataViewItem parent_item)
     }
 }
 
+void ObjectDataViewModel::UpdateObjectBaseDMT(wxDataViewItem parent_item)
+{
+    ItemChanged(parent_item);
+}
+
+void ObjectDataViewModel::UpdateInstancesBaseDMT(wxDataViewItem parent_item)
+{
+    const wxDataViewItem inst_root_item = GetInstanceRootItem(parent_item);
+    if (!inst_root_item) 
+        return;
+
+    ObjectDataViewModelNode* inst_root_node = (ObjectDataViewModelNode*)inst_root_item.GetID();
+    const size_t child_cnt = inst_root_node->GetChildren().Count();
+
+    for (size_t i=0; i < child_cnt; i++)
+    {
+        ObjectDataViewModelNode* inst_node = inst_root_node->GetNthChild(i);
+        ItemChanged(wxDataViewItem((void*)inst_node));
+    }
+}
+
 void ObjectDataViewModel::UpdateObjectCheckbox(wxDataViewItem parent_item)
 {
     const wxDataViewItem inst_root_item = GetInstanceRootItem(parent_item);
@@ -2167,6 +2188,42 @@ wxDataViewItem ObjectDataViewModel::SetObjectObjectColor(
     ItemChanged(obj_item);
 
     UpdateInstancesObjectColor(obj_item);
+
+    return obj_item;
+}
+
+wxDataViewItem ObjectDataViewModel::SetBaseDMTState(
+    int             obj_idx,
+    int             subobj_idx /* = -1*/,
+    ItemType        subobj_type/* = itInstance*/)
+{
+    wxDataViewItem item = wxDataViewItem(0);
+    if (subobj_idx < 0)
+        item = GetItemById(obj_idx);
+    else
+        item =  subobj_type&itInstance ? GetItemByInstanceId(obj_idx, subobj_idx) :
+                GetItemByVolumeId(obj_idx, subobj_idx);
+
+    ObjectDataViewModelNode* node = (ObjectDataViewModelNode*)item.GetID();
+    if (!node)
+        return wxDataViewItem(0);
+    ItemChanged(item);
+
+    if (subobj_idx >= 0)
+        UpdateObjectBaseDMT(GetItemById(obj_idx));
+
+    return item;
+}
+
+wxDataViewItem ObjectDataViewModel::SetObjectBaseDMTState(
+    wxDataViewItem  obj_item)
+{
+    ObjectDataViewModelNode* node = (ObjectDataViewModelNode*)obj_item.GetID();
+    if (!node)
+        return wxDataViewItem(0);
+    ItemChanged(obj_item);
+
+    UpdateInstancesBaseDMT(obj_item);
 
     return obj_item;
 }

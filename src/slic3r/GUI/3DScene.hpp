@@ -323,6 +323,8 @@ public:
     bool                printable;
     // custom object color from sidebar object list
     std::string         object_color;
+    // custom check box
+    bool                checked;
     // true : base,   false: dmt
     bool                base_dmt;
     // Whether or not this volume is active for rendering

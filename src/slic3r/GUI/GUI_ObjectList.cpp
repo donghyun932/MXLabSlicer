@@ -1503,10 +1503,12 @@ void ObjectList::create_default_popupmenu(wxMenu*menu)
                 wxDataViewItem item = m_objects_model->GetItemById(obj_idx);
                 ModelObject* object = (*m_objects)[obj_idx];
 
+                object->checked = true;
                 // set checked value for all instances in object
                 for (auto inst : object->instances)
                     inst->checked = true;
 
+                wxGetApp().plater()->canvas3D()->update_instance_checked_state_for_object((size_t)obj_idx);
                 // update checkbox state in ObjectList
                 m_objects_model->SetObjectCheckboxState(ciChecked , item);
 
@@ -1527,8 +1529,10 @@ void ObjectList::create_default_popupmenu(wxMenu*menu)
                 ModelObject* object = (*m_objects)[obj_idx];
                 bool checked = m_objects_model->IsChecked(item);
 
+                object->checked = !checked;
                 for (auto inst : object->instances)
                     inst->checked = !checked;
+                wxGetApp().plater()->canvas3D()->update_instance_checked_state_for_object((size_t)obj_idx);
 
                 m_objects_model->SetObjectCheckboxState(checked ? ciUnchecked : ciChecked , item);
 
@@ -1548,6 +1552,7 @@ void ObjectList::create_default_popupmenu(wxMenu*menu)
                 wxDataViewItem item = m_objects_model->GetItemById(obj_idx);
                 ModelObject* object = (*m_objects)[obj_idx];
 
+                object->printable = true;
                 for (auto inst : object->instances)
                     inst->printable = true;
 
@@ -1572,6 +1577,7 @@ void ObjectList::create_default_popupmenu(wxMenu*menu)
                 ModelObject* object = (*m_objects)[obj_idx];
                 bool checked = m_objects_model->IsChecked(item);
 
+                object->printable = checked ? object->printable : false;
                 for (auto inst : object->instances)
                     inst->printable = checked ? inst->printable : false;
 
@@ -1593,20 +1599,20 @@ void ObjectList::create_default_popupmenu(wxMenu*menu)
             const wxString snapshot_text = wxString::Format("%s",  _(L("Base Part(s)")));
             take_snapshot(snapshot_text);
 
-            std::vector<size_t> obj_idxs;
             for (size_t obj_idx=0; obj_idx < m_objects->size(); obj_idx++){
                 wxDataViewItem item = m_objects_model->GetItemById(obj_idx);
                 ModelObject* object = (*m_objects)[obj_idx];
                 bool checked = m_objects_model->IsChecked(item);
 
                 if (checked) {
-                    obj_idxs.push_back(obj_idx);
                     object->base_dmt = true;
                     for (auto inst : object->instances)
                         inst->base_dmt = true;
                 }
+
+                wxGetApp().plater()->canvas3D()->update_instance_base_dmt_for_object(obj_idx);
+                m_objects_model->SetObjectBaseDMTState(item);
             }
-            wxGetApp().plater()->canvas3D()->update_instance_base_dmt_for_objects(obj_idxs);
             // update scene
             wxGetApp().plater()->update();
 
@@ -1618,20 +1624,20 @@ void ObjectList::create_default_popupmenu(wxMenu*menu)
             const wxString snapshot_text = wxString::Format("%s",  _(L("DMT Part(s)")));
             take_snapshot(snapshot_text);
 
-            std::vector<size_t> obj_idxs;
             for (size_t obj_idx=0; obj_idx < m_objects->size(); obj_idx++){
                 wxDataViewItem item = m_objects_model->GetItemById(obj_idx);
                 ModelObject* object = (*m_objects)[obj_idx];
                 bool checked = m_objects_model->IsChecked(item);
 
                 if (checked) {
-                    obj_idxs.push_back(obj_idx);
                     object->base_dmt = false;
                     for (auto inst : object->instances)
                         inst->base_dmt = false;
                 }
+
+                wxGetApp().plater()->canvas3D()->update_instance_base_dmt_for_object(obj_idx);
+                m_objects_model->SetObjectBaseDMTState(item);
             }
-            wxGetApp().plater()->canvas3D()->update_instance_base_dmt_for_objects(obj_idxs);
             // update scene
             wxGetApp().plater()->update();
 
@@ -3869,8 +3875,10 @@ void ObjectList::toggle_printable_state(wxDataViewItem item)
         // update printable state in ObjectList
         m_objects_model->SetObjectPrintableState(printable ? piPrintable : piUnprintable , item);
     }
-    else
+    else {
+        printf("\n\n\nfucking\n\n\n");
         wxGetApp().plater()->canvas3D()->get_selection().toggle_instance_printable_state(); 
+    }
 
     // update scene
     wxGetApp().plater()->update();
@@ -3898,6 +3906,9 @@ void ObjectList::toggle_checkbox_state(wxDataViewItem item)
         // set checked value for all instances in object
         for (auto inst : object->instances)
             inst->checked = checked;
+
+        // update checked state on canvas
+        wxGetApp().plater()->canvas3D()->update_instance_checked_state_for_object((size_t)obj_idx);
 
         // update checked state in ObjectList
         m_objects_model->SetObjectCheckboxState(checked ? ciChecked : ciUnchecked , item);
