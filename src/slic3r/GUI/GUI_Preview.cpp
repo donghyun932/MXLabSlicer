@@ -217,14 +217,14 @@ bool Preview::init(wxWindow* parent, Bed3D& bed, Camera& camera, GLToolbar& view
     m_label_view_type = new wxStaticText(this, wxID_ANY, _(L("View")));
 
     m_choice_view_type = new wxChoice(this, wxID_ANY);
-    m_choice_view_type->Append(_(L("Feature type")));
-    m_choice_view_type->Append(_(L("Height")));
-    m_choice_view_type->Append(_(L("Width")));
-    m_choice_view_type->Append(_(L("Speed")));
-    m_choice_view_type->Append(_(L("Fan speed")));
-    m_choice_view_type->Append(_(L("Volumetric flow rate")));
+    // m_choice_view_type->Append(_(L("Feature type")));
+    // m_choice_view_type->Append(_(L("Height")));
+    // m_choice_view_type->Append(_(L("Width")));
+    // m_choice_view_type->Append(_(L("Speed")));
+    // m_choice_view_type->Append(_(L("Fan speed")));
+    // m_choice_view_type->Append(_(L("Volumetric flow rate")));
     m_choice_view_type->Append(_(L("Tool")));
-    m_choice_view_type->Append(_(L("Color Print")));
+    // m_choice_view_type->Append(_(L("Color Print")));
     m_choice_view_type->SetSelection(0);
 
     m_label_show_features = new wxStaticText(this, wxID_ANY, _(L("Show")));
@@ -288,22 +288,22 @@ bool Preview::init(wxWindow* parent, Bed3D& bed, Camera& camera, GLToolbar& view
     bind_event_handlers();
     
     // sets colors for gcode preview extrusion roles
-    std::vector<std::string> extrusion_roles_colors = {
-        "Perimeter", "FFFF66",
-        "External perimeter", "FFA500",
-        "Overhang perimeter", "0000FF",
-        "Internal infill", "B1302A",
-        "Solid infill", "D732D7",
-        "Top solid infill", "FF1A1A",
-        "Bridge infill", "9999FF",
-        "Gap fill", "FFFFFF",
-        "Skirt", "845321",
-        "Support material", "00FF00",
-        "Support material interface", "008000",
-        "Wipe tower", "B3E3AB",
-        "Custom", "28CC94"
-    };
-    m_gcode_preview_data->set_extrusion_paths_colors(extrusion_roles_colors);
+    // std::vector<std::string> extrusion_roles_colors = {
+    //     "Perimeter", "FFFF66",
+    //     "External perimeter", "FFA500",
+    //     "Overhang perimeter", "0000FF",
+    //     "Internal infill", "B1302A",
+    //     "Solid infill", "D732D7",
+    //     "Top solid infill", "FF1A1A",
+    //     "Bridge infill", "9999FF",
+    //     "Gap fill", "FFFFFF",
+    //     "Skirt", "845321",
+    //     "Support material", "00FF00",
+    //     "Support material interface", "008000",
+    //     "Wipe tower", "B3E3AB",
+    //     "Custom", "28CC94"
+    // };
+    // m_gcode_preview_data->set_extrusion_paths_colors(extrusion_roles_colors);
 
     return true;
 }
@@ -334,8 +334,8 @@ void Preview::set_number_extruders(unsigned int number_extruders)
         int tool_idx = m_choice_view_type->FindString(_(L("Tool")));
         int type = (number_extruders > 1) ? tool_idx /* color by a tool number */  : 0; // color by a feature type
         m_choice_view_type->SetSelection(type);
-        if ((0 <= type) && (type < (int)GCodePreviewData::Extrusion::Num_View_Types))
-            m_gcode_preview_data->extrusion.view_type = (GCodePreviewData::Extrusion::EViewType)type;
+        // if ((0 <= type) && (type < (int)GCodePreviewData::Extrusion::Num_View_Types))
+        m_gcode_preview_data->extrusion.view_type = (GCodePreviewData::Extrusion::EViewType)type;
 
         m_preferred_color_mode = (type == tool_idx) ? "tool_or_feature" : "feature";
     }
@@ -522,8 +522,8 @@ void Preview::on_choice_view_type(wxCommandEvent& evt)
 {
     m_preferred_color_mode = (m_choice_view_type->GetStringSelection() == L("Tool")) ? "tool" : "feature";
     int selection = m_choice_view_type->GetCurrentSelection();
-    if ((0 <= selection) && (selection < (int)GCodePreviewData::Extrusion::Num_View_Types))
-        m_gcode_preview_data->extrusion.view_type = (GCodePreviewData::Extrusion::EViewType)selection;
+    // if ((0 <= selection) && (selection < (int)GCodePreviewData::Extrusion::Num_View_Types))
+    m_gcode_preview_data->extrusion.view_type = (GCodePreviewData::Extrusion::EViewType)selection;
 
     reload_print();
 }
@@ -569,18 +569,19 @@ void Preview::update_view_type(bool slice_completed)
 {
     const DynamicPrintConfig& config = wxGetApp().preset_bundle->project_config;
 
-    const wxString& choice = !wxGetApp().plater()->model().custom_gcode_per_print_z.empty() /*&&
-                             (wxGetApp().extruders_edited_cnt()==1 || !slice_completed) */? 
-                                _(L("Color Print")) :
-                                config.option<ConfigOptionFloats>("wiping_volumes_matrix")->values.size() > 1 ?
-                                    _(L("Tool")) : 
-                                    _(L("Feature type"));
+    // const wxString& choice = !wxGetApp().plater()->model().custom_gcode_per_print_z.empty() /*&&
+    //                          (wxGetApp().extruders_edited_cnt()==1 || !slice_completed) */? 
+    //                             _(L("Color Print")) :
+    //                             config.option<ConfigOptionFloats>("wiping_volumes_matrix")->values.size() > 1 ?
+    //                                 _(L("Tool")) : 
+    //                                 _(L("Feature type"));
+    const wxString& choice = _(L("Tool"));
 
     int type = m_choice_view_type->FindString(choice);
     if (m_choice_view_type->GetSelection() != type) {
         m_choice_view_type->SetSelection(type);
-        if (0 <= type && type < (int)GCodePreviewData::Extrusion::Num_View_Types)
-            m_gcode_preview_data->extrusion.view_type = (GCodePreviewData::Extrusion::EViewType)type;
+        // if (0 <= type && type < (int)GCodePreviewData::Extrusion::Num_View_Types)
+        m_gcode_preview_data->extrusion.view_type = (GCodePreviewData::Extrusion::EViewType)type;
         m_preferred_color_mode = "feature";
     }
 }
@@ -772,8 +773,8 @@ void Preview::load_print_as_fff(bool keep_z_range)
         int tool_idx = m_choice_view_type->FindString(_(L("Tool")));
         int type = (number_extruders > 1) ? tool_idx /* color by a tool number */ : 0; // color by a feature type
         m_choice_view_type->SetSelection(type);
-        if ((0 <= type) && (type < (int)GCodePreviewData::Extrusion::Num_View_Types))
-            m_gcode_preview_data->extrusion.view_type = (GCodePreviewData::Extrusion::EViewType)type;
+        // if ((0 <= type) && (type < (int)GCodePreviewData::Extrusion::Num_View_Types))
+        m_gcode_preview_data->extrusion.view_type = (GCodePreviewData::Extrusion::EViewType)type;
         // If the->SetSelection changed the following line, revert it to "decide yourself".
         m_preferred_color_mode = "tool_or_feature";
     }
@@ -783,15 +784,15 @@ void Preview::load_print_as_fff(bool keep_z_range)
     std::vector<std::string> colors;
     std::vector<Model::CustomGCode> color_print_values = {};
     // set color print values, if it si selected "ColorPrint" view type
-    if (m_gcode_preview_data->extrusion.view_type == GCodePreviewData::Extrusion::ColorPrint)
-    {
-        colors = wxGetApp().plater()->get_colors_for_color_print();
-        colors.push_back("#808080"); // gray color for pause print or custom G-code 
+    // if (m_gcode_preview_data->extrusion.view_type == GCodePreviewData::Extrusion::ColorPrint)
+    // {
+    //     colors = wxGetApp().plater()->get_colors_for_color_print();
+    //     colors.push_back("#808080"); // gray color for pause print or custom G-code 
 
-        if (!gcode_preview_data_valid)
-            color_print_values = wxGetApp().plater()->model().custom_gcode_per_print_z;
-    }
-    else if (gcode_preview_data_valid || (m_gcode_preview_data->extrusion.view_type == GCodePreviewData::Extrusion::Tool) )
+    //     if (!gcode_preview_data_valid)
+    //         color_print_values = wxGetApp().plater()->model().custom_gcode_per_print_z;
+    // }
+    if (gcode_preview_data_valid || (m_gcode_preview_data->extrusion.view_type == GCodePreviewData::Extrusion::Tool) )
     {
         colors = wxGetApp().plater()->get_extruder_colors_from_plater_config();
         color_print_values.clear();

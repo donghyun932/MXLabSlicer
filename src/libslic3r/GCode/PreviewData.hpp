@@ -72,15 +72,15 @@ public:
     {
         enum EViewType : unsigned char
         {
-            FeatureType,
-            Height,
-            Width,
-            Feedrate,
-            FanSpeed,
-            VolumetricRate,
+            // FeatureType,
+            // Height,
+            // Width,
+            // Feedrate,
+            // FanSpeed,
+            // VolumetricRate,
             Tool,
-            ColorPrint,
-            Num_View_Types
+            // ColorPrint,
+            // Num_View_Types
         };
 
         static const Color Default_Extrusion_Role_Colors[erCount];
