@@ -1108,7 +1108,7 @@ void GLCanvas3D::LegendTexture::fill_color_print_legend_items(  const GLCanvas3D
     }
 }
 
-bool GLCanvas3D::LegendTexture::generate(const GCodePreviewData& preview_data, const std::vector<float>& tool_colors_in, const GLCanvas3D& canvas, bool compress)
+bool GLCanvas3D::LegendTexture::generate(const GCodePreviewData& preview_data, const std::vector<float>& tool_colors_in, const GLCanvas3D& canvas, bool compress, const std::vector<std::string>& object_names)
 {
     reset();
 
@@ -1126,7 +1126,7 @@ bool GLCanvas3D::LegendTexture::generate(const GCodePreviewData& preview_data, c
 
     // const std::vector<float>& tool_colors = preview_data.extrusion.view_type == GCodePreviewData::Extrusion::ColorPrint ? cp_colors : tool_colors_in;
     const std::vector<float>& tool_colors = tool_colors_in;
-    const GCodePreviewData::LegendItemsList& items = preview_data.get_legend_items(tool_colors, cp_legend_items);
+    const GCodePreviewData::LegendItemsList& items = preview_data.get_legend_items(tool_colors, cp_legend_items, object_names);
 
     unsigned int items_count = (unsigned int)items.size();
     if (items_count == 0)
@@ -2417,21 +2417,21 @@ static void load_gcode_retractions(const GCodePreviewData::Retraction& retractio
 	volume->indexed_vertex_array.finalize_geometry(gl_initialized);
 }
 
-void GLCanvas3D::load_gcode_preview(const GCodePreviewData& preview_data, const std::vector<std::string>& str_tool_colors)
+void GLCanvas3D::load_gcode_preview(const GCodePreviewData& preview_data, const std::vector<std::string>& str_object_colors, const std::vector<std::string>& str_object_names)
 {
     const Print *print = this->fff_print();
     if ((m_canvas != nullptr) && (print != nullptr))
     {
         _set_current();
 
-        std::vector<float> tool_colors = _parse_colors(str_tool_colors);
+        std::vector<float> object_colors = _parse_colors(str_object_colors);
 
         if (m_volumes.empty())
         {
             m_gcode_preview_volume_index.reset();
             
-            _load_gcode_extrusion_paths(preview_data, tool_colors);
-            _load_gcode_travel_paths(preview_data, tool_colors);
+            _load_gcode_extrusion_paths(preview_data, object_colors);
+            _load_gcode_travel_paths(preview_data, object_colors);
 			load_gcode_retractions(preview_data.retraction,   GCodePreviewVolumeIndex::Retraction,   m_volumes, m_gcode_preview_volume_index, m_initialized);
 			load_gcode_retractions(preview_data.unretraction, GCodePreviewVolumeIndex::Unretraction, m_volumes, m_gcode_preview_volume_index, m_initialized);
             
@@ -2482,7 +2482,7 @@ void GLCanvas3D::load_gcode_preview(const GCodePreviewData& preview_data, const 
         if (m_volumes.empty())
             reset_legend_texture();
         else
-            _generate_legend_texture(preview_data, tool_colors);
+            _generate_legend_texture(preview_data, object_colors, str_object_names);
     }
 }
 
@@ -6311,9 +6311,9 @@ std::vector<float> GLCanvas3D::_parse_colors(const std::vector<std::string>& col
     return output;
 }
 
-void GLCanvas3D::_generate_legend_texture(const GCodePreviewData& preview_data, const std::vector<float>& tool_colors)
+void GLCanvas3D::_generate_legend_texture(const GCodePreviewData& preview_data, const std::vector<float>& tool_colors, const std::vector<std::string>& object_names)
 {
-    m_legend_texture.generate(preview_data, tool_colors, *this, true);
+    m_legend_texture.generate(preview_data, tool_colors, *this, true, object_names);
 }
 
 void GLCanvas3D::_set_warning_texture(WarningTexture::Warning warning, bool state)

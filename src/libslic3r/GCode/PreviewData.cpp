@@ -382,7 +382,8 @@ std::string GCodePreviewData::get_legend_title() const
 }
 
 GCodePreviewData::LegendItemsList GCodePreviewData::get_legend_items(const std::vector<float>& tool_colors, 
-                                                                     const std::vector<std::string>& cp_items) const
+                                                                     const std::vector<std::string>& cp_items,
+                                                                     const std::vector<std::string>& object_names) const
 {
     struct Helper
     {
@@ -450,7 +451,7 @@ GCodePreviewData::LegendItemsList GCodePreviewData::get_legend_items(const std::
             {
                 GCodePreviewData::Color color;
                 ::memcpy((void*)color.rgba, (const void*)(tool_colors.data() + i * 4), 4 * sizeof(float));
-                items.emplace_back((boost::format(Slic3r::I18N::translate(L("Extruder %d"))) % (i + 1)).str(), color);
+                items.emplace_back((boost::format(Slic3r::I18N::translate(L(object_names[i])))).str(), color);
             }
 
             break;

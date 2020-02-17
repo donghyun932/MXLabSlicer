@@ -782,6 +782,7 @@ void Preview::load_print_as_fff(bool keep_z_range)
     bool gcode_preview_data_valid = print->is_step_done(psGCodeExport) && ! m_gcode_preview_data->empty();
     // Collect colors per extruder.
     std::vector<std::string> colors;
+    std::vector<std::string> names;
     std::vector<Model::CustomGCode> color_print_values = {};
     // set color print values, if it si selected "ColorPrint" view type
     // if (m_gcode_preview_data->extrusion.view_type == GCodePreviewData::Extrusion::ColorPrint)
@@ -794,7 +795,14 @@ void Preview::load_print_as_fff(bool keep_z_range)
     // }
     if (gcode_preview_data_valid || (m_gcode_preview_data->extrusion.view_type == GCodePreviewData::Extrusion::Tool) )
     {
-        colors = wxGetApp().plater()->get_extruder_colors_from_plater_config();
+        // colors = wxGetApp().plater()->get_extruder_colors_from_plater_config();
+        auto objects = wxGetApp().model().objects;
+        for (auto object : objects){
+            if (object->instances[0]->is_printable()){
+                colors.push_back(object->instances[0]->object_color);
+                names.push_back(object->name);
+            }
+        }
         color_print_values.clear();
     }
 
@@ -803,7 +811,7 @@ void Preview::load_print_as_fff(bool keep_z_range)
         m_canvas->set_selected_extruder(0);
         if (gcode_preview_data_valid) {
             // Load the real G-code preview.
-            m_canvas->load_gcode_preview(*m_gcode_preview_data, colors);
+            m_canvas->load_gcode_preview(*m_gcode_preview_data, colors, names);
             m_loaded = true;
         } else {
             // Load the initial preview based on slices, not the final G-code.
