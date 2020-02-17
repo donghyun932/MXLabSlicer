@@ -443,20 +443,20 @@ void MainFrame::init_menubar()
         fileMenu->AppendSeparator();
 
         wxMenu* import_menu = new wxMenu();
-        append_menu_item(import_menu, wxID_ANY, _(L("Import STL/OBJ/AM&F/3MF")) + dots + "\tCtrl+I", _(L("Load a model")),
-            [this](wxCommandEvent&) { if (m_plater) m_plater->add_model(); }, "import_plater", nullptr,
-            [this](){return m_plater != nullptr; }, this);
-        import_menu->AppendSeparator();
+        // append_menu_item(import_menu, wxID_ANY, _(L("Import STL/OBJ/AM&F/3MF")) + dots + "\tCtrl+I", _(L("Load a model")),
+        //     [this](wxCommandEvent&) { if (m_plater) m_plater->add_model(); }, "import_plater", nullptr,
+        //     [this](){return m_plater != nullptr; }, this);
+        // import_menu->AppendSeparator();
         append_menu_item(import_menu, wxID_ANY, _(L("Import &Config")) + dots + "\tCtrl+L", _(L("Load exported configuration file")),
             [this](wxCommandEvent&) { load_config_file(); }, "import_config", nullptr,
             [this]() {return true; }, this);
-        append_menu_item(import_menu, wxID_ANY, _(L("Import Config from &project")) + dots +"\tCtrl+Alt+L", _(L("Load configuration from project file")),
-            [this](wxCommandEvent&) { if (m_plater) m_plater->extract_config_from_project(); }, "import_config", nullptr,
-            [this]() {return true; }, this);
-        import_menu->AppendSeparator();
-        append_menu_item(import_menu, wxID_ANY, _(L("Import Config &Bundle")) + dots, _(L("Load presets from a bundle")),
-            [this](wxCommandEvent&) { load_configbundle(); }, "import_config_bundle", nullptr,
-            [this]() {return true; }, this);
+        // append_menu_item(import_menu, wxID_ANY, _(L("Import Config from &project")) + dots +"\tCtrl+Alt+L", _(L("Load configuration from project file")),
+        //     [this](wxCommandEvent&) { if (m_plater) m_plater->extract_config_from_project(); }, "import_config", nullptr,
+        //     [this]() {return true; }, this);
+        // import_menu->AppendSeparator();
+        // append_menu_item(import_menu, wxID_ANY, _(L("Import Config &Bundle")) + dots, _(L("Load presets from a bundle")),
+        //     [this](wxCommandEvent&) { load_configbundle(); }, "import_config_bundle", nullptr,
+        //     [this]() {return true; }, this);
         append_submenu(fileMenu, import_menu, wxID_ANY, _(L("&Import")), "");
 
         wxMenu* export_menu = new wxMenu();
@@ -464,31 +464,31 @@ void MainFrame::init_menubar()
             [this](wxCommandEvent&) { if (m_plater) m_plater->export_gcode(); }, "export_gcode", nullptr,
             [this](){return can_export_gcode(); }, this);
         m_changeable_menu_items.push_back(item_export_gcode);
-        wxMenuItem* item_send_gcode = append_menu_item(export_menu, wxID_ANY, _(L("S&end G-code")) + dots +"\tCtrl+Shift+G", _(L("Send to print current plate as G-code")),
-            [this](wxCommandEvent&) { if (m_plater) m_plater->send_gcode(); }, "export_gcode", nullptr,
-            [this](){return can_send_gcode(); }, this);
-        m_changeable_menu_items.push_back(item_send_gcode);
+        // wxMenuItem* item_send_gcode = append_menu_item(export_menu, wxID_ANY, _(L("S&end G-code")) + dots +"\tCtrl+Shift+G", _(L("Send to print current plate as G-code")),
+        //     [this](wxCommandEvent&) { if (m_plater) m_plater->send_gcode(); }, "export_gcode", nullptr,
+        //     [this](){return can_send_gcode(); }, this);
+        // m_changeable_menu_items.push_back(item_send_gcode);
         export_menu->AppendSeparator();
         append_menu_item(export_menu, wxID_ANY, _(L("Export plate as &STL")) + dots, _(L("Export current plate as STL")),
             [this](wxCommandEvent&) { if (m_plater) m_plater->export_stl(); }, "export_plater", nullptr,
             [this](){return can_export_model(); }, this);
-        append_menu_item(export_menu, wxID_ANY, _(L("Export plate as STL &including supports")) + dots, _(L("Export current plate as STL including supports")),
-            [this](wxCommandEvent&) { if (m_plater) m_plater->export_stl(true); }, "export_plater", nullptr,
-            [this](){return can_export_supports(); }, this);
-        append_menu_item(export_menu, wxID_ANY, _(L("Export plate as &AMF")) + dots, _(L("Export current plate as AMF")),
-            [this](wxCommandEvent&) { if (m_plater) m_plater->export_amf(); }, "export_plater", nullptr,
-            [this](){return can_export_model(); }, this);
-        export_menu->AppendSeparator();
-        append_menu_item(export_menu, wxID_ANY, _(L("Export &toolpaths as OBJ")) + dots, _(L("Export toolpaths as OBJ")),
-            [this](wxCommandEvent&) { if (m_plater) m_plater->export_toolpaths_to_obj(); }, "export_plater", nullptr,
-            [this]() {return can_export_toolpaths(); }, this);
-        export_menu->AppendSeparator();
-        append_menu_item(export_menu, wxID_ANY, _(L("Export &Config")) +dots +"\tCtrl+E", _(L("Export current configuration to file")),
-            [this](wxCommandEvent&) { export_config(); }, "export_config", nullptr,
-            [this]() {return true; }, this);
-        append_menu_item(export_menu, wxID_ANY, _(L("Export Config &Bundle")) + dots, _(L("Export all presets to file")),
-            [this](wxCommandEvent&) { export_configbundle(); }, "export_config_bundle", nullptr,
-            [this]() {return true; }, this);
+        // append_menu_item(export_menu, wxID_ANY, _(L("Export plate as STL &including supports")) + dots, _(L("Export current plate as STL including supports")),
+        //     [this](wxCommandEvent&) { if (m_plater) m_plater->export_stl(true); }, "export_plater", nullptr,
+        //     [this](){return can_export_supports(); }, this);
+        // append_menu_item(export_menu, wxID_ANY, _(L("Export plate as &AMF")) + dots, _(L("Export current plate as AMF")),
+        //     [this](wxCommandEvent&) { if (m_plater) m_plater->export_amf(); }, "export_plater", nullptr,
+        //     [this](){return can_export_model(); }, this);
+        // export_menu->AppendSeparator();
+        // append_menu_item(export_menu, wxID_ANY, _(L("Export &toolpaths as OBJ")) + dots, _(L("Export toolpaths as OBJ")),
+        //     [this](wxCommandEvent&) { if (m_plater) m_plater->export_toolpaths_to_obj(); }, "export_plater", nullptr,
+        //     [this]() {return can_export_toolpaths(); }, this);
+        // export_menu->AppendSeparator();
+        // append_menu_item(export_menu, wxID_ANY, _(L("Export &Config")) +dots +"\tCtrl+E", _(L("Export current configuration to file")),
+        //     [this](wxCommandEvent&) { export_config(); }, "export_config", nullptr,
+        //     [this]() {return true; }, this);
+        // append_menu_item(export_menu, wxID_ANY, _(L("Export Config &Bundle")) + dots, _(L("Export all presets to file")),
+        //     [this](wxCommandEvent&) { export_configbundle(); }, "export_config_bundle", nullptr,
+        //     [this]() {return true; }, this);
         append_submenu(fileMenu, export_menu, wxID_ANY, _(L("&Export")), "");
 
         fileMenu->AppendSeparator();
@@ -595,13 +595,13 @@ void MainFrame::init_menubar()
         append_menu_item(windowMenu, wxID_HIGHEST + 2, _(L("P&rint Settings Tab")) + "\tCtrl+2", _(L("Show the print settings")),
             [this, tab_offset](wxCommandEvent&) { select_tab(tab_offset + 0); }, "cog", nullptr,
             [this]() {return true; }, this);
-        wxMenuItem* item_material_tab = append_menu_item(windowMenu, wxID_HIGHEST + 3, _(L("&Filament Settings Tab")) + "\tCtrl+3", _(L("Show the filament settings")),
+        wxMenuItem* item_material_tab = append_menu_item(windowMenu, wxID_HIGHEST + 3, _(L("&Toolpath Settings Tab")) + "\tCtrl+3", _(L("Show the toolpath settings")),
             [this, tab_offset](wxCommandEvent&) { select_tab(tab_offset + 1); }, "spool", nullptr,
             [this]() {return true; }, this);
         m_changeable_menu_items.push_back(item_material_tab);
-        append_menu_item(windowMenu, wxID_HIGHEST + 4, _(L("Print&er Settings Tab")) + "\tCtrl+4", _(L("Show the printer settings")),
-            [this, tab_offset](wxCommandEvent&) { select_tab(tab_offset + 2); }, "printer", nullptr,
-            [this]() {return true; }, this);
+        // append_menu_item(windowMenu, wxID_HIGHEST + 4, _(L("Print&er Settings Tab")) + "\tCtrl+4", _(L("Show the printer settings")),
+        //     [this, tab_offset](wxCommandEvent&) { select_tab(tab_offset + 2); }, "printer", nullptr,
+        //     [this]() {return true; }, this);
         if (m_plater) {
             windowMenu->AppendSeparator();
             append_menu_item(windowMenu, wxID_HIGHEST + 5, _(L("3&D")) + "\tCtrl+5", _(L("Show the 3D editing view")),
@@ -625,10 +625,10 @@ void MainFrame::init_menubar()
         SetAcceleratorTable(accel);
 #endif // _WIN32
 
-        windowMenu->AppendSeparator();
-        append_menu_item(windowMenu, wxID_ANY, _(L("Print &Host Upload Queue")) + "\tCtrl+J", _(L("Display the Print Host Upload Queue window")),
-            [this](wxCommandEvent&) { m_printhost_queue_dlg->Show(); }, "upload_queue", nullptr,
-            [this]() {return true; }, this);
+        // windowMenu->AppendSeparator();
+        // append_menu_item(windowMenu, wxID_ANY, _(L("Print &Host Upload Queue")) + "\tCtrl+J", _(L("Display the Print Host Upload Queue window")),
+        //     [this](wxCommandEvent&) { m_printhost_queue_dlg->Show(); }, "upload_queue", nullptr,
+        //     [this]() {return true; }, this);
     }
 
     // View menu
@@ -658,36 +658,36 @@ void MainFrame::init_menubar()
     // Help menu
     auto helpMenu = new wxMenu();
     {
-        append_menu_item(helpMenu, wxID_ANY, _(L("Prusa 3D &Drivers")), _(L("Open the Prusa3D drivers download page in your browser")), 
-            [this](wxCommandEvent&) { wxGetApp().open_web_page_localized("https://www.prusa3d.com/downloads"); }); 
-        append_menu_item(helpMenu, wxID_ANY, _(L("Software &Releases")), _(L("Open the software releases page in your browser")), 
-            [this](wxCommandEvent&) { wxLaunchDefaultBrowser("http://github.com/donghyun932/MXLabSlicer/releases"); });
+        // append_menu_item(helpMenu, wxID_ANY, _(L("Prusa 3D &Drivers")), _(L("Open the Prusa3D drivers download page in your browser")), 
+        //     [this](wxCommandEvent&) { wxGetApp().open_web_page_localized("https://www.prusa3d.com/downloads"); }); 
+        // append_menu_item(helpMenu, wxID_ANY, _(L("Software &Releases")), _(L("Open the software releases page in your browser")), 
+        //     [this](wxCommandEvent&) { wxLaunchDefaultBrowser("http://github.com/donghyun932/MXLabSlicer/releases"); });
 //#        my $versioncheck = $self->_append_menu_item($helpMenu, "Check for &Updates...", "Check for new Slic3r versions", sub{
 //#            wxTheApp->check_version(1);
 //#        });
 //#        $versioncheck->Enable(wxTheApp->have_version_check);
-        append_menu_item(helpMenu, wxID_ANY, wxString::Format(_(L("%s &Website")), SLIC3R_APP_NAME), 
-                                             wxString::Format(_(L("Open the %s website in your browser")), SLIC3R_APP_NAME),
-            [this](wxCommandEvent&) { wxGetApp().open_web_page_localized("https://www.prusa3d.com/slicerweb"); });
+        // append_menu_item(helpMenu, wxID_ANY, wxString::Format(_(L("%s &Website")), SLIC3R_APP_NAME), 
+        //                                      wxString::Format(_(L("Open the %s website in your browser")), SLIC3R_APP_NAME),
+        //     [this](wxCommandEvent&) { wxGetApp().open_web_page_localized("https://www.prusa3d.com/slicerweb"); });
 //        append_menu_item(helpMenu, wxID_ANY, wxString::Format(_(L("%s &Manual")), SLIC3R_APP_NAME),
 //                                             wxString::Format(_(L("Open the %s manual in your browser")), SLIC3R_APP_NAME),
 //            [this](wxCommandEvent&) { wxLaunchDefaultBrowser("http://manual.slic3r.org/"); });
         helpMenu->AppendSeparator();
         append_menu_item(helpMenu, wxID_ANY, _(L("System &Info")), _(L("Show system information")), 
             [this](wxCommandEvent&) { wxGetApp().system_info(); });
-        append_menu_item(helpMenu, wxID_ANY, _(L("Show &Configuration Folder")), _(L("Show user configuration folder (datadir)")),
-            [this](wxCommandEvent&) { Slic3r::GUI::desktop_open_datadir_folder(); });
-        append_menu_item(helpMenu, wxID_ANY, _(L("Report an I&ssue")), wxString::Format(_(L("Report an issue on %s")), SLIC3R_APP_NAME), 
-            [this](wxCommandEvent&) { wxLaunchDefaultBrowser("http://github.com/donghyun932/slic3r/issues/new"); });
-        append_menu_item(helpMenu, wxID_ANY, wxString::Format(_(L("&About %s")), SLIC3R_APP_NAME), _(L("Show about dialog")),
-            [this](wxCommandEvent&) { Slic3r::GUI::about(); });
-        helpMenu->AppendSeparator();
+        // append_menu_item(helpMenu, wxID_ANY, _(L("Show &Configuration Folder")), _(L("Show user configuration folder (datadir)")),
+        //     [this](wxCommandEvent&) { Slic3r::GUI::desktop_open_datadir_folder(); });
+        // append_menu_item(helpMenu, wxID_ANY, _(L("Report an I&ssue")), wxString::Format(_(L("Report an issue on %s")), SLIC3R_APP_NAME), 
+        //     [this](wxCommandEvent&) { wxLaunchDefaultBrowser("http://github.com/donghyun932/slic3r/issues/new"); });
+        // append_menu_item(helpMenu, wxID_ANY, wxString::Format(_(L("&About %s")), SLIC3R_APP_NAME), _(L("Show about dialog")),
+        //     [this](wxCommandEvent&) { Slic3r::GUI::about(); });
+        // helpMenu->AppendSeparator();
         append_menu_item(helpMenu, wxID_ANY, _(L("Keyboard Shortcuts")) + sep + "&?", _(L("Show the list of the keyboard shortcuts")),
             [this](wxCommandEvent&) { wxGetApp().keyboard_shortcuts(); });
 #if ENABLE_THUMBNAIL_GENERATOR_DEBUG
-        helpMenu->AppendSeparator();
-        append_menu_item(helpMenu, wxID_ANY, "DEBUG gcode thumbnails", "DEBUG ONLY - read the selected gcode file and generates png for the contained thumbnails",
-            [this](wxCommandEvent&) { wxGetApp().gcode_thumbnails_debug(); });
+        // helpMenu->AppendSeparator();
+        // append_menu_item(helpMenu, wxID_ANY, "DEBUG gcode thumbnails", "DEBUG ONLY - read the selected gcode file and generates png for the contained thumbnails",
+        //     [this](wxCommandEvent&) { wxGetApp().gcode_thumbnails_debug(); });
 #endif // ENABLE_THUMBNAIL_GENERATOR_DEBUG
     }
 
@@ -724,9 +724,9 @@ void MainFrame::update_menubar()
     const bool is_fff = plater()->printer_technology() == ptFFF;
 
     m_changeable_menu_items[miExport]       ->SetItemLabel((is_fff ? _(L("Export &G-code"))         : _(L("E&xport"))       ) + dots     + "\tCtrl+G");
-    m_changeable_menu_items[miSend]         ->SetItemLabel((is_fff ? _(L("S&end G-code"))           : _(L("S&end to print"))) + dots    + "\tCtrl+Shift+G");
+    // m_changeable_menu_items[miSend]         ->SetItemLabel((is_fff ? _(L("S&end G-code"))           : _(L("S&end to print"))) + dots    + "\tCtrl+Shift+G");
 
-    m_changeable_menu_items[miMaterialTab]  ->SetItemLabel((is_fff ? _(L("&Filament Settings Tab")) : _(L("Mate&rial Settings Tab")))   + "\tCtrl+3");
+    m_changeable_menu_items[miMaterialTab]  ->SetItemLabel((is_fff ? _(L("&Toolpath Settings Tab")) : _(L("Mate&rial Settings Tab")))   + "\tCtrl+3");
     m_changeable_menu_items[miMaterialTab]  ->SetBitmap(create_scaled_bitmap(this, is_fff ? "spool": "resin"));
 }
 

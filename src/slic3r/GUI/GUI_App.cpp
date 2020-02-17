@@ -810,11 +810,11 @@ void GUI_App::add_config_menu(wxMenuBar *menu)
     const auto config_wizard_name = _(ConfigWizard::name(true).wx_str());
     const auto config_wizard_tooltip = wxString::Format(_(L("Run %s")), config_wizard_name);
     // Cmd+, is standard on OS X - what about other operating systems?
-    local_menu->Append(config_id_base + ConfigMenuWizard, config_wizard_name + dots, config_wizard_tooltip);
-    local_menu->Append(config_id_base + ConfigMenuSnapshots, _(L("&Configuration Snapshots")) + dots, _(L("Inspect / activate configuration snapshots")));
-    local_menu->Append(config_id_base + ConfigMenuTakeSnapshot, _(L("Take Configuration &Snapshot")), _(L("Capture a configuration snapshot")));
+    // local_menu->Append(config_id_base + ConfigMenuWizard, config_wizard_name + dots, config_wizard_tooltip);
+    // local_menu->Append(config_id_base + ConfigMenuSnapshots, _(L("&Configuration Snapshots")) + dots, _(L("Inspect / activate configuration snapshots")));
+    // local_menu->Append(config_id_base + ConfigMenuTakeSnapshot, _(L("Take Configuration &Snapshot")), _(L("Capture a configuration snapshot")));
     // 	local_menu->Append(config_id_base + ConfigMenuUpdate, 		_(L("Check for updates")), 					_(L("Check for configuration updates")));
-    local_menu->AppendSeparator();
+    // local_menu->AppendSeparator();
     local_menu->Append(config_id_base + ConfigMenuPreferences, _(L("&Preferences")) + dots + 
 #ifdef __APPLE__
         "\tCtrl+,",
@@ -823,19 +823,19 @@ void GUI_App::add_config_menu(wxMenuBar *menu)
 #endif
         _(L("Application preferences")));
     local_menu->AppendSeparator();
-    auto mode_menu = new wxMenu();
-    mode_menu->AppendRadioItem(config_id_base + ConfigMenuModeSimple, _(L("Simple")), _(L("Simple View Mode")));
-    mode_menu->AppendRadioItem(config_id_base + ConfigMenuModeAdvanced, _(L("Advanced")), _(L("Advanced View Mode")));
-    mode_menu->AppendRadioItem(config_id_base + ConfigMenuModeExpert, _(L("Expert")), _(L("Expert View Mode")));
-    Bind(wxEVT_UPDATE_UI, [this](wxUpdateUIEvent& evt) { if(get_mode() == comSimple) evt.Check(true); }, config_id_base + ConfigMenuModeSimple);
-    Bind(wxEVT_UPDATE_UI, [this](wxUpdateUIEvent& evt) { if(get_mode() == comAdvanced) evt.Check(true); }, config_id_base + ConfigMenuModeAdvanced);
-    Bind(wxEVT_UPDATE_UI, [this](wxUpdateUIEvent& evt) { if(get_mode() == comExpert) evt.Check(true); }, config_id_base + ConfigMenuModeExpert);
+    // auto mode_menu = new wxMenu();
+    // mode_menu->AppendRadioItem(config_id_base + ConfigMenuModeSimple, _(L("Simple")), _(L("Simple View Mode")));
+    // mode_menu->AppendRadioItem(config_id_base + ConfigMenuModeAdvanced, _(L("Advanced")), _(L("Advanced View Mode")));
+    // mode_menu->AppendRadioItem(config_id_base + ConfigMenuModeExpert, _(L("Expert")), _(L("Expert View Mode")));
+    // Bind(wxEVT_UPDATE_UI, [this](wxUpdateUIEvent& evt) { if(get_mode() == comSimple) evt.Check(true); }, config_id_base + ConfigMenuModeSimple);
+    // Bind(wxEVT_UPDATE_UI, [this](wxUpdateUIEvent& evt) { if(get_mode() == comAdvanced) evt.Check(true); }, config_id_base + ConfigMenuModeAdvanced);
+    // Bind(wxEVT_UPDATE_UI, [this](wxUpdateUIEvent& evt) { if(get_mode() == comExpert) evt.Check(true); }, config_id_base + ConfigMenuModeExpert);
 
-    local_menu->AppendSubMenu(mode_menu, _(L("Mode")), wxString::Format(_(L("%s View Mode")), SLIC3R_APP_NAME));
-    local_menu->AppendSeparator();
+    // local_menu->AppendSubMenu(mode_menu, _(L("Mode")), wxString::Format(_(L("%s View Mode")), SLIC3R_APP_NAME));
+    // local_menu->AppendSeparator();
     local_menu->Append(config_id_base + ConfigMenuLanguage, _(L("Change Application &Language")));
-    local_menu->AppendSeparator();
-    local_menu->Append(config_id_base + ConfigMenuFlashFirmware, _(L("Flash printer &firmware")), _(L("Upload a firmware image into an Arduino based printer")));
+    // local_menu->AppendSeparator();
+    // local_menu->Append(config_id_base + ConfigMenuFlashFirmware, _(L("Flash printer &firmware")), _(L("Upload a firmware image into an Arduino based printer")));
     // TODO: for when we're able to flash dictionaries
     // local_menu->Append(config_id_base + FirmwareMenuDict,  _(L("Flash language file")),    _(L("Upload a language dictionary file into a MXLab printer")));
 
@@ -911,10 +911,10 @@ void GUI_App::add_config_menu(wxMenuBar *menu)
     
     using std::placeholders::_1;
     
-    auto modfn = [this](int mode, wxCommandEvent&) { if(get_mode() != mode) save_mode(mode); };
-    mode_menu->Bind(wxEVT_MENU, std::bind(modfn, comSimple, _1),   config_id_base + ConfigMenuModeSimple);
-    mode_menu->Bind(wxEVT_MENU, std::bind(modfn, comAdvanced, _1), config_id_base + ConfigMenuModeAdvanced);
-    mode_menu->Bind(wxEVT_MENU, std::bind(modfn, comExpert, _1),   config_id_base + ConfigMenuModeExpert);
+    // auto modfn = [this](int mode, wxCommandEvent&) { if(get_mode() != mode) save_mode(mode); };
+    // mode_menu->Bind(wxEVT_MENU, std::bind(modfn, comSimple, _1),   config_id_base + ConfigMenuModeSimple);
+    // mode_menu->Bind(wxEVT_MENU, std::bind(modfn, comAdvanced, _1), config_id_base + ConfigMenuModeAdvanced);
+    // mode_menu->Bind(wxEVT_MENU, std::bind(modfn, comExpert, _1),   config_id_base + ConfigMenuModeExpert);
 
     menu->Append(local_menu, _(L("&Configuration")));
 }
