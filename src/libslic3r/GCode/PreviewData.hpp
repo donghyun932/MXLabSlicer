@@ -72,15 +72,15 @@ public:
     {
         enum EViewType : unsigned char
         {
-            FeatureType,
-            Height,
-            Width,
-            Feedrate,
-            FanSpeed,
-            VolumetricRate,
+            // FeatureType,
+            // Height,
+            // Width,
+            // Feedrate,
+            // FanSpeed,
+            // VolumetricRate,
             Tool,
-            ColorPrint,
-            Num_View_Types
+            // ColorPrint,
+            // Num_View_Types
         };
 
         static const Color Default_Extrusion_Role_Colors[erCount];
@@ -237,7 +237,7 @@ public:
     void set_extrusion_paths_colors(const std::vector<std::string>& colors);
 
     std::string get_legend_title() const;
-    LegendItemsList get_legend_items(const std::vector<float>& tool_colors, const std::vector<std::string>& cp_items) const;
+    LegendItemsList get_legend_items(const std::vector<float>& tool_colors, const std::vector<std::string>& cp_items, const std::vector<std::string>& object_names) const;
 
     // Return an estimate of the memory consumed by the time estimator.
     size_t memory_used() const;

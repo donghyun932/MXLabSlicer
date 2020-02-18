@@ -212,9 +212,11 @@ void PresetBundle::setup_directories()
 #endif
     };
     for (const std::pair<boost::filesystem::path, boost::filesystem::path> &path_pair : paths) {
-		boost::filesystem::path subdir = path_pair.first;
-        subdir.make_preferred();
-        recursive_copy(path_pair.second, subdir);
+    		boost::filesystem::path dstdir = path_pair.first;
+        boost::filesystem::path srcdir = path_pair.second;
+        dstdir.make_preferred();
+        srcdir.make_preferred();
+        recursive_copy(srcdir, dstdir);
     }
 }
 

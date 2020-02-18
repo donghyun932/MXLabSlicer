@@ -1577,32 +1577,32 @@ void Print::process()
     this->set_status(70, L("Infilling layers"));
     for (PrintObject *obj : m_objects)
         obj->infill();
-    for (PrintObject *obj : m_objects)
-        obj->generate_support_material();
-    if (this->set_started(psWipeTower)) {
-        m_wipe_tower_data.clear();
-        if (this->has_wipe_tower()) {
-            //this->set_status(95, L("Generating wipe tower"));
-            this->_make_wipe_tower();
-        }
-        this->set_done(psWipeTower);
-    }
-    if (this->set_started(psSkirt)) {
-        m_skirt.clear();
-        if (this->has_skirt()) {
-            this->set_status(88, L("Generating skirt"));
-            this->_make_skirt();
-        }
-        this->set_done(psSkirt);
-    }
-	if (this->set_started(psBrim)) {
-        m_brim.clear();
-        if (m_config.brim_width > 0) {
-            this->set_status(88, L("Generating brim"));
-            this->_make_brim();
-        }
-       this->set_done(psBrim);
-    }
+    // for (PrintObject *obj : m_objects)
+    //     obj->generate_support_material();
+    // if (this->set_started(psWipeTower)) {
+    //     m_wipe_tower_data.clear();
+    //     if (this->has_wipe_tower()) {
+    //         this->set_status(95, L("Generating wipe tower"));
+    //         this->_make_wipe_tower();
+    //     }
+    //     this->set_done(psWipeTower);
+    // }
+ //    if (this->set_started(psSkirt)) {
+ //        m_skirt.clear();
+ //        if (this->has_skirt()) {
+ //            this->set_status(88, L("Generating skirt"));
+ //            this->_make_skirt();
+ //        }
+ //        this->set_done(psSkirt);
+ //    }
+	// if (this->set_started(psBrim)) {
+ //        m_brim.clear();
+ //        if (m_config.brim_width > 0) {
+ //            this->set_status(88, L("Generating brim"));
+ //            this->_make_brim();
+ //        }
+ //       this->set_done(psBrim);
+ //    }
     BOOST_LOG_TRIVIAL(info) << "Slicing process finished." << log_memory_info();
 }
 
