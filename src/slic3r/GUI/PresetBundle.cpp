@@ -184,7 +184,8 @@ static void recursive_copy(boost::filesystem::path src, boost::filesystem::path 
         boost::filesystem::copy(src, dst);
     }
     else {
-        throw std::runtime_error(dst.generic_string() + " not dir or file");
+        boost::filesystem::create_directories(dst)
+        // throw std::runtime_error(dst.generic_string() + " not dir or file");
     }
 }
 
