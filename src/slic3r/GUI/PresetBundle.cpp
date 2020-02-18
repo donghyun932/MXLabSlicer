@@ -166,8 +166,10 @@ void PresetBundle::reset(bool delete_files)
     this->obsolete_presets.printers.clear();
 }
 
-static void recursive_copy(const boost::filesystem::path &src, const boost::filesystem::path &dst)
+static void recursive_copy(boost::filesystem::path src, boost::filesystem::path dst)
 {
+    src.make_preferred();
+    dst.make_preferred();
     if (boost::filesystem::exists(dst)){
         return ;
     }
@@ -214,8 +216,6 @@ void PresetBundle::setup_directories()
     for (const std::pair<boost::filesystem::path, boost::filesystem::path> &path_pair : paths) {
     		boost::filesystem::path dstdir = path_pair.first;
         boost::filesystem::path srcdir = path_pair.second;
-        dstdir.make_preferred();
-        srcdir.make_preferred();
         recursive_copy(srcdir, dstdir);
     }
 }
