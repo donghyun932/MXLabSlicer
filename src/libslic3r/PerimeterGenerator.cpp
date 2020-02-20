@@ -296,7 +296,8 @@ void PerimeterGenerator::process()
                             last,
                             - float(ext_perimeter_width / 2. + ext_min_spacing / 2. - 1),
                             + float(ext_min_spacing / 2. - 1)) :
-                        offset_ex(last, - float(ext_perimeter_width / 2.));
+                        // offset_ex(last, - float(ext_perimeter_width / 2.));
+                        offset_ex(last, 0.0f);
                     // look for thin walls
                     if (this->config->thin_walls) {
                         // the following offset2 ensures almost nothing in @thin_walls is narrower than $min_width
