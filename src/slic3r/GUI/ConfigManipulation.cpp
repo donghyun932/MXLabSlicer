@@ -60,40 +60,40 @@ void ConfigManipulation::update_print_fff_config(DynamicPrintConfig* config, con
 
     conf_for_custom_optiong_group.set_key_value(
         "perimeter_speed", 
-        new ConfigOptionFloat(config->option<ConfigOptionFloat>("traverse_speed")->value / 60)
+        new ConfigOptionFloat(config->option<ConfigOptionFloat>("traverse_speed")->value)
     );
     conf_for_custom_optiong_group.set_key_value(
         "infill_speed", 
-        new ConfigOptionFloat(config->option<ConfigOptionFloat>("traverse_speed")->value / 60)
+        new ConfigOptionFloat(config->option<ConfigOptionFloat>("traverse_speed")->value)
     );
     conf_for_custom_optiong_group.set_key_value(
         "support_material_speed", 
-        new ConfigOptionFloat(config->option<ConfigOptionFloat>("traverse_speed")->value / 60)
+        new ConfigOptionFloat(config->option<ConfigOptionFloat>("traverse_speed")->value)
     );
     conf_for_custom_optiong_group.set_key_value(
         "bridge_speed", 
-        new ConfigOptionFloat(config->option<ConfigOptionFloat>("traverse_speed")->value / 60)
+        new ConfigOptionFloat(config->option<ConfigOptionFloat>("traverse_speed")->value)
     );
     conf_for_custom_optiong_group.set_key_value(
         "gap_fill_speed", 
-        new ConfigOptionFloat(config->option<ConfigOptionFloat>("traverse_speed")->value / 60)
+        new ConfigOptionFloat(config->option<ConfigOptionFloat>("traverse_speed")->value)
     );
 
     conf_for_custom_optiong_group.set_key_value(
         "small_perimeter_speed", 
-        new ConfigOptionFloatOrPercent(config->option<ConfigOptionFloat>("traverse_speed")->value / 60, false)
+        new ConfigOptionFloatOrPercent(config->option<ConfigOptionFloat>("traverse_speed")->value, false)
     );
     conf_for_custom_optiong_group.set_key_value(
         "external_perimeter_speed", 
-        new ConfigOptionFloatOrPercent(config->option<ConfigOptionFloat>("traverse_speed")->value / 60, false)
+        new ConfigOptionFloatOrPercent(config->option<ConfigOptionFloat>("traverse_speed")->value, false)
     );
     conf_for_custom_optiong_group.set_key_value(
         "first_layer_speed", 
-        new ConfigOptionFloatOrPercent(config->option<ConfigOptionFloat>("traverse_speed")->value / 60, false)
+        new ConfigOptionFloatOrPercent(config->option<ConfigOptionFloat>("traverse_speed")->value, false)
     );
     conf_for_custom_optiong_group.set_key_value(
         "solid_infill_speed", 
-        new ConfigOptionFloatOrPercent(config->option<ConfigOptionFloat>("traverse_speed")->value / 60, false)
+        new ConfigOptionFloatOrPercent(config->option<ConfigOptionFloat>("traverse_speed")->value, false)
     );
 
     apply(config, &conf_for_custom_optiong_group);
