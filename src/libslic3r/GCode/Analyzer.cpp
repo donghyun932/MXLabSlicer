@@ -957,7 +957,7 @@ void GCodeAnalyzer::_calc_gcode_preview_extrusion_layers(GCodePreviewData& previ
                 path.polyline = polyline;
 				path.extrusion_role = data.extrusion_role;
 				path.mm3_per_mm = data.mm3_per_mm;
-				path.width = data.width;
+				path.width = 0.5;
 				path.height = data.height;
                 path.feedrate = data.feedrate;
                 path.extruder_id = data.extruder_id;

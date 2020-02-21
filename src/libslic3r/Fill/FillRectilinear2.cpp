@@ -1091,7 +1091,7 @@ bool FillRectilinear2::fill_surface_by_lines(const Surface *surface, const FillP
             polylines_out.push_back(Polyline());
             polyline_current = &polylines_out.back();
             // Emit the first point of a path.
-            pointLast = Point(segs[i_vline].pos, segs[i_vline].intersections[i_intersection].pos());
+            pointLast = Point(segs[i_vline].pos, segs[i_vline].intersections[i_intersection].pos() + line_spacing / 2);
             polyline_current->points.push_back(pointLast);
         }
 
@@ -1349,6 +1349,7 @@ bool FillRectilinear2::fill_surface_by_lines(const Surface *surface, const FillP
         // reset the current vertical line to pick a new starting point in the next round.
         assert(intrsctn->is_outer());
         assert(intrsctn->is_high() == going_up);
+        int spacing_revision = polyline_current->points.back()(1) > intrsctn->pos() ? 1 : -1;
         pointLast = Point(seg.pos, intrsctn->pos());
         polyline_current->points.push_back(pointLast);
         // Handle duplicate points and zero length segments.
