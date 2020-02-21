@@ -540,6 +540,14 @@ class PrintRegionConfig : public StaticPrintConfig
 {
     STATIC_PRINT_CONFIG_CACHE(PrintRegionConfig)
 public:
+    ConfigOptionEnum<OrientationEnum>                    orientation;
+    ConfigOptionEnum<StartPointDislocationEnum>          start_point_dislocation;
+    ConfigOptionEnum<MethodEnum>                         method;
+    ConfigOptionFloat               start_angle;
+    ConfigOptionFloat               rotation_increment;
+    ConfigOptionEnum<FixedForAllLayersEnum>              fixed_for_all_layers;
+    ConfigOptionString              user_edit;
+
     ConfigOptionFloat               bridge_angle;
     ConfigOptionInt                 bottom_solid_layers;
     ConfigOptionFloat               bridge_flow_ratio;
@@ -583,6 +591,14 @@ public:
 protected:
     void initialize(StaticCacheBase &cache, const char *base_ptr)
     {
+        OPT_PTR(orientation);
+        OPT_PTR(start_point_dislocation);
+        OPT_PTR(method);
+        OPT_PTR(start_angle);
+        OPT_PTR(rotation_increment);
+        OPT_PTR(fixed_for_all_layers);
+        OPT_PTR(user_edit);
+
         OPT_PTR(bridge_angle);
         OPT_PTR(bottom_solid_layers);
         OPT_PTR(bridge_flow_ratio);
@@ -677,13 +693,9 @@ class GCodeConfig : public StaticPrintConfig
 {
     STATIC_PRINT_CONFIG_CACHE(GCodeConfig)
 public:
-    ConfigOptionEnum<OrientationEnum>                    orientation;
-    ConfigOptionEnum<StartPointDislocationEnum>          start_point_dislocation;
-    ConfigOptionEnum<MethodEnum>                         method;
-    ConfigOptionFloat               start_angle;
-    ConfigOptionFloat               rotation_increment;
-    ConfigOptionEnum<FixedForAllLayersEnum>              fixed_for_all_layers;
-    ConfigOptionString              user_edit;
+    ConfigOptionFloat               dwell_time;
+    ConfigOptionBool                shield_gas_applied;
+    ConfigOptionFloat               traverse_speed;
 
     ConfigOptionString              before_layer_gcode;
     ConfigOptionString              between_objects_gcode;
@@ -758,13 +770,9 @@ public:
 protected:
     void initialize(StaticCacheBase &cache, const char *base_ptr)
     {
-        OPT_PTR(orientation);
-        OPT_PTR(start_point_dislocation);
-        OPT_PTR(method);
-        OPT_PTR(start_angle);
-        OPT_PTR(rotation_increment);
-        OPT_PTR(fixed_for_all_layers);
-        OPT_PTR(user_edit);
+        OPT_PTR(dwell_time);
+        OPT_PTR(shield_gas_applied);
+        OPT_PTR(traverse_speed);
 
         OPT_PTR(before_layer_gcode);
         OPT_PTR(between_objects_gcode);
@@ -841,9 +849,6 @@ public:
     static double                   min_object_distance(const ConfigBase *config);
 
     ConfigOptionFloat               tool_path_spacing;
-    ConfigOptionFloat               traverse_speed;
-    ConfigOptionFloat               dwell_time;
-    ConfigOptionBool                shield_gas_applied;
     ConfigOptionBool                avoid_crossing_perimeters;
     ConfigOptionPoints              bed_shape;
     ConfigOptionInts                bed_temperature;
@@ -917,9 +922,6 @@ protected:
         this->MachineEnvelopeConfig::initialize(cache, base_ptr);
         this->GCodeConfig::initialize(cache, base_ptr);
         OPT_PTR(tool_path_spacing);
-        OPT_PTR(traverse_speed);
-        OPT_PTR(dwell_time);
-        OPT_PTR(shield_gas_applied);
         OPT_PTR(avoid_crossing_perimeters);
         OPT_PTR(bed_shape);
         OPT_PTR(bed_temperature);

@@ -27,6 +27,8 @@ struct SurfaceFillParams
     coordf_t    	overlap = 0.;
     // Angle as provided by the region config, in radians.
     float       	angle = 0.f;
+    // Angle change value
+    float         angle_increment = 0.f;
     // Non-negative for a bridge.
     float 			bridge_angle = 0.f;
 
@@ -135,7 +137,8 @@ std::vector<SurfaceFill> group_fills(const Layer &layer)
 		                    ((surface.surface_type == stTop) ? erTopSolidInfill : erSolidInfill) :
 		                    erInternalInfill);
 		        params.bridge_angle = float(surface.bridge_angle);
-		        params.angle 		= float(Geometry::deg2rad(layerm.region()->config().fill_angle.value));
+		        params.angle 		= float(Geometry::deg2rad(layerm.region()->config().start_angle.value));
+            params.angle_increment = float(Geometry::deg2rad(layerm.region()->config().rotation_increment.value));
 		        
 		        // calculate the actual flow we'll be using for this infill
 		        params.flow = layerm.region()->flow(
@@ -344,6 +347,7 @@ void Layer::make_fills()
         f->layer_id = this->id();
         f->z 		= this->print_z;
         f->angle 	= surface_fill.params.angle;
+        f->angle_increment = surface_fill.params.angle_increment;
 
         // calculate flow spacing for infill pattern generation
         bool using_internal_flow = ! surface_fill.surface.is_solid() && ! surface_fill.params.flow.bridge;
