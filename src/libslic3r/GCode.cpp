@@ -2494,6 +2494,7 @@ std::vector<float> polygon_angles_at_vertices(const Polygon &polygon, const std:
 
 std::string GCode::extrude_loop(ExtrusionLoop loop, std::string description, double speed, std::unique_ptr<EdgeGrid::Grid> *lower_layer_edge_grid)
 {
+    bool want_cw = (this->config().orientation == oeClockwise) || (this->config().orientation == oeAlternating && this->m_layer_index % 2 == 0);
     // get a copy; don't modify the orientation of the original loop object otherwise
     // next copies (if any) would not detect the correct orientation
 
@@ -2519,7 +2520,12 @@ std::string GCode::extrude_loop(ExtrusionLoop loop, std::string description, dou
     }
   
     // extrude all loops ccw
-    bool was_clockwise = loop.make_counter_clockwise();
+    bool was_clockwise, was_counterclockwise;
+    if (want_cw){
+        was_counterclockwise = loop.make_clockwise();
+    } else {
+        was_clockwise = loop.make_counter_clockwise();
+    }
     
     SeamPosition seam_position = m_config.seam_position;
     if (loop.loop_role() == elrSkirt) 
@@ -2571,7 +2577,7 @@ std::string GCode::extrude_loop(ExtrusionLoop loop, std::string description, dou
         // Penalty for visible seams.
         for (size_t i = 0; i < polygon.points.size(); ++ i) {
             float ccwAngle = penalties[i];
-            if (was_clockwise)
+            if ((was_counterclockwise && want_cw) || (was_clockwise && !want_cw))
                 ccwAngle = - ccwAngle;
             float penalty = 0;
 //            if (ccwAngle <- float(PI/3.))
@@ -2728,7 +2734,7 @@ std::string GCode::extrude_loop(ExtrusionLoop loop, std::string description, dou
 		//FIXME improve the algorithm in case the loop is split into segments with a low number of points (see the Point b query).
         Point a = paths.front().polyline.points[1];  // second point
         Point b = *(paths.back().polyline.points.end()-3);       // second to last point
-        if (was_clockwise) {
+        if ((was_counterclockwise && want_cw) || (was_clockwise && !want_cw)) {
             // swap points
             Point c = a; a = b; b = c;
         }
@@ -2736,7 +2742,7 @@ std::string GCode::extrude_loop(ExtrusionLoop loop, std::string description, dou
         double angle = paths.front().first_point().ccw_angle(a, b) / 3;
         
         // turn left if contour, turn right if hole
-        if (was_clockwise) angle *= -1;
+        if ((was_counterclockwise && want_cw) || (was_clockwise && !want_cw)) angle *= -1;
         
         // create the destination point along the first segment and rotate it
         // we make sure we don't exceed the segment length because we don't know
