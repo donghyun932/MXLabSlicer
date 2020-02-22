@@ -743,10 +743,12 @@ void PrintConfigDef::init_fff_params()
     def->enum_values.push_back("f");
     def->enum_values.push_back("cf");
     def->enum_values.push_back("cfc");
+    def->enum_values.push_back("user_edit");
     def->enum_labels.push_back(L("C"));
     def->enum_labels.push_back(L("F"));
     def->enum_labels.push_back(L("CF"));
     def->enum_labels.push_back(L("CFC"));
+    def->enum_labels.push_back(L("User Edit"));
     def->mode = comSimple;
     def->set_default_value(new ConfigOptionEnum<FixedForAllLayersEnum>(ffalCfc));
 

@@ -37,7 +37,7 @@ enum MethodEnum {
 };
 
 enum FixedForAllLayersEnum {
-    ffalC, ffalF, ffalCf, ffalCfc,
+    ffalC, ffalF, ffalCf, ffalCfc, ffalUserEdit,
 };
 
 enum GCodeFlavor : unsigned char {
@@ -200,6 +200,7 @@ template<> inline const t_config_enum_values& ConfigOptionEnum<FixedForAllLayers
         keys_map["f"]              = ffalF;
         keys_map["cf"]             = ffalCf;
         keys_map["cfc"]            = ffalCfc;
+        keys_map["user_edit"]      = ffalUserEdit;
     }
     return keys_map;
 }
@@ -540,13 +541,9 @@ class PrintRegionConfig : public StaticPrintConfig
 {
     STATIC_PRINT_CONFIG_CACHE(PrintRegionConfig)
 public:
-    ConfigOptionEnum<OrientationEnum>                    orientation;
-    ConfigOptionEnum<StartPointDislocationEnum>          start_point_dislocation;
     ConfigOptionEnum<MethodEnum>                         method;
     ConfigOptionFloat               start_angle;
     ConfigOptionFloat               rotation_increment;
-    ConfigOptionEnum<FixedForAllLayersEnum>              fixed_for_all_layers;
-    ConfigOptionString              user_edit;
 
     ConfigOptionFloat               bridge_angle;
     ConfigOptionInt                 bottom_solid_layers;
@@ -591,13 +588,9 @@ public:
 protected:
     void initialize(StaticCacheBase &cache, const char *base_ptr)
     {
-        OPT_PTR(orientation);
-        OPT_PTR(start_point_dislocation);
         OPT_PTR(method);
         OPT_PTR(start_angle);
         OPT_PTR(rotation_increment);
-        OPT_PTR(fixed_for_all_layers);
-        OPT_PTR(user_edit);
 
         OPT_PTR(bridge_angle);
         OPT_PTR(bottom_solid_layers);
@@ -693,6 +686,11 @@ class GCodeConfig : public StaticPrintConfig
 {
     STATIC_PRINT_CONFIG_CACHE(GCodeConfig)
 public:
+    ConfigOptionEnum<OrientationEnum>                    orientation;
+    ConfigOptionEnum<StartPointDislocationEnum>          start_point_dislocation;
+    ConfigOptionEnum<FixedForAllLayersEnum>              fixed_for_all_layers;
+    ConfigOptionString              user_edit;
+
     ConfigOptionFloat               dwell_time;
     ConfigOptionBool                shield_gas_applied;
     ConfigOptionFloat               traverse_speed;
@@ -770,6 +768,11 @@ public:
 protected:
     void initialize(StaticCacheBase &cache, const char *base_ptr)
     {
+        OPT_PTR(orientation);
+        OPT_PTR(start_point_dislocation);
+        OPT_PTR(fixed_for_all_layers);
+        OPT_PTR(user_edit);
+
         OPT_PTR(dwell_time);
         OPT_PTR(shield_gas_applied);
         OPT_PTR(traverse_speed);

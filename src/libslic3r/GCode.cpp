@@ -2087,6 +2087,30 @@ void GCode::process_layer(
         }
     } // for objects
 
+    std::string contour_filling_full;
+    if (this->config().fixed_for_all_layers == ffalUserEdit) {
+        contour_filling_full = this->config().user_edit;
+    } else if (this->config().fixed_for_all_layers == ffalCfc) {
+        contour_filling_full = "CFC";
+    } else if (this->config().fixed_for_all_layers == ffalCf) {
+        contour_filling_full = "CF";
+    } else if (this->config().fixed_for_all_layers == ffalF) {
+        contour_filling_full = "F";
+    } else if (this->config().fixed_for_all_layers == ffalC) {
+        contour_filling_full = "C";
+    }
+
+    std::vector<std::string> contour_fillings;
+    size_t pos = 0;
+    std::string delimiter = "/";
+    std::string token;
+    while ((pos = contour_filling_full.find(delimiter)) != std::string::npos) {
+        token = contour_filling_full.substr(0, pos);
+        contour_fillings.push_back(token);
+        contour_filling_full.erase(0, pos + delimiter.length());
+    }
+    contour_fillings.push_back(contour_filling_full);
+
     // Extrude the skirt, brim, support, perimeters, infill ordered by the extruders.
     std::vector<std::unique_ptr<EdgeGrid::Grid>> lower_layer_edge_grids(layers.size());
     for (unsigned int extruder_id : layer_tools.extruders)
@@ -2176,12 +2200,14 @@ void GCode::process_layer(
                 for (ObjectByExtruder::Island &island : instance_to_print.object_by_extruder.islands) {
                     const auto& by_region_specific = is_anything_overridden ? island.by_region_per_copy(instance_to_print.instance_id, extruder_id, print_wipe_extrusions) : island.by_region;
 
-                    if (print.config().infill_first) {
-                        gcode += this->extrude_infill(print, by_region_specific);
-                        gcode += this->extrude_perimeters(print, by_region_specific, lower_layer_edge_grids[instance_to_print.layer_id]);
-                    } else {
-                        gcode += this->extrude_perimeters(print, by_region_specific, lower_layer_edge_grids[instance_to_print.layer_id]);
-                        gcode += this->extrude_infill(print,by_region_specific);
+                    std::string cf_pattern = contour_fillings[this->m_layer_index % contour_fillings.size()];
+
+                    for (int i = 0; i < cf_pattern.size(); i++){
+                        if (cf_pattern[i] == 'C'){
+                            gcode += this->extrude_perimeters(print, by_region_specific, lower_layer_edge_grids[instance_to_print.layer_id]);
+                        } else if (cf_pattern[i] == 'F') {
+                            gcode += this->extrude_infill(print, by_region_specific);
+                        }
                     }
                 }
                 if (this->config().gcode_label_objects)
