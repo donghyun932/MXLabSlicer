@@ -108,7 +108,7 @@ void BackgroundSlicingProcess::process_fff()
 	    	//FIXME localize the messages
 	    	// Perform the final post-processing of the export path by applying the print statistics over the file name.
 	    	std::string export_path = m_fff_print->print_statistics().finalize_output_path(m_export_path);
-		    if (copy_file(m_temp_output_path, export_path, GUI::RemovableDriveManager::get_instance().is_path_on_removable_drive(export_path)) != 0)
+		    if (copy_file_custom(m_temp_output_path, export_path, GUI::RemovableDriveManager::get_instance().is_path_on_removable_drive(export_path), m_fff_print->config().option<ConfigOptionBool>("shield_gas_applied")->value, m_fff_print->config().option<ConfigOptionFloat>("dwell_time")->value, m_fff_print->config().option<ConfigOptionFloat>("traverse_speed")->value) != 0)
 	    		throw std::runtime_error(_utf8(L("Copying of the temporary G-code to the output G-code failed. Maybe the SD card is write locked?")));
 	    	m_print->set_status(95, _utf8(L("Running post-processing scripts")));
 	    	run_post_process_scripts(export_path, m_fff_print->config());

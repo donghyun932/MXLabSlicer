@@ -69,6 +69,8 @@ bool Print::invalidate_state_by_config_options(const std::vector<t_config_option
     // Cache the plenty of parameters, which influence the G-code generator only,
     // or they are only notes not influencing the generated G-code.
     static std::unordered_set<std::string> steps_gcode = {
+        "tool_path_spacing",
+        "traverse_speed",
         "dwell_time",
         "shield_gas_applied",
         "avoid_crossing_perimeters",
@@ -1363,15 +1365,15 @@ std::string Print::validate() const
 		auto validate_extrusion_width = [min_nozzle_diameter, max_nozzle_diameter](const ConfigBase &config, const char *opt_key, double layer_height, std::string &err_msg) -> bool {
         	double extrusion_width_min = config.get_abs_value(opt_key, min_nozzle_diameter);
         	double extrusion_width_max = config.get_abs_value(opt_key, max_nozzle_diameter);
-        	if (extrusion_width_min == 0) {
-        		// Default "auto-generated" extrusion width is always valid.
-        	} else if (extrusion_width_min <= layer_height) {
-        		err_msg = (boost::format(L("%1%=%2% mm is too low to be printable at a layer height %3% mm")) % opt_key % extrusion_width_min % layer_height).str();
-				return false;
-			} else if (extrusion_width_max >= max_nozzle_diameter * 3.) {
-				err_msg = (boost::format(L("Excessive %1%=%2% mm to be printable with a nozzle diameter %3% mm")) % opt_key % extrusion_width_max % max_nozzle_diameter).str();
-				return false;
-			}
+   //      	if (extrusion_width_min == 0) {
+   //      		// Default "auto-generated" extrusion width is always valid.
+   //      	} else if (extrusion_width_min <= layer_height) {
+   //      		err_msg = (boost::format(L("%1%=%2% mm is too low to be printable at a layer height %3% mm")) % opt_key % extrusion_width_min % layer_height).str();
+			// 	return false;
+			// } else if (extrusion_width_max >= max_nozzle_diameter * 3.) {
+			// 	err_msg = (boost::format(L("Excessive %1%=%2% mm to be printable with a nozzle diameter %3% mm")) % opt_key % extrusion_width_max % max_nozzle_diameter).str();
+			// 	return false;
+			// }
 			return true;
 		};
         for (PrintObject *object : m_objects) {

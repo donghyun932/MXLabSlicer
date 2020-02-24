@@ -1038,6 +1038,7 @@ void TabPrint::build()
     auto page = add_options_page(_(L("Slicing setting")), "layers");
         auto optgroup = page->new_optgroup(_(L("Slicing")));
         optgroup->append_single_option_line("layer_height");
+        optgroup->append_single_option_line("tool_path_spacing");
         optgroup->append_single_option_line("fill_density");
 
         optgroup = page->new_optgroup(_(L("Dwell Time")));
@@ -1045,6 +1046,7 @@ void TabPrint::build()
         optgroup->append_single_option_line("shield_gas_applied");
 
         optgroup = page->new_optgroup(_(L("Traverse Speed")));
+        optgroup->append_single_option_line("traverse_speed");
         optgroup->append_single_option_line("perimeter_speed");
 
         page = add_options_page(_(L("Layers and perimeters")), "layers");

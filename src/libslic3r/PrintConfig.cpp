@@ -114,6 +114,27 @@ void PrintConfigDef::init_fff_params()
     // Maximum extruder temperature, bumped to 1500 to support printing of glass.
     const int max_temp = 1500;
 
+    def = this->add("tool_path_spacing", coFloat);
+    def->label = L("Tool Path Spacing");
+    def->category = L("General");
+    def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
+                   "TODO 설명 적고 po 파일에 번역본 저장");
+    def->sidetext = L("mm");
+    def->min = 0;
+    def->mode = comSimple;
+    def->set_default_value(new ConfigOptionFloat(0.3));
+
+    def = this->add("traverse_speed", coFloat);
+    def->label = L("Traverse Speed");
+    def->category = L("General");
+    def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
+                   "TODO 설명 적고 po 파일에 번역본 저장");
+    def->sidetext = L("mm/min");
+    def->max = 1500;
+    def->min = 0.001;
+    def->mode = comSimple;
+    def->set_default_value(new ConfigOptionFloat(850));
+
     def = this->add("dwell_time", coFloat);
     def->label = L("Dwell Time");
     def->category = L("General");
@@ -722,10 +743,12 @@ void PrintConfigDef::init_fff_params()
     def->enum_values.push_back("f");
     def->enum_values.push_back("cf");
     def->enum_values.push_back("cfc");
+    def->enum_values.push_back("user_edit");
     def->enum_labels.push_back(L("C"));
     def->enum_labels.push_back(L("F"));
     def->enum_labels.push_back(L("CF"));
     def->enum_labels.push_back(L("CFC"));
+    def->enum_labels.push_back(L("User Edit"));
     def->mode = comSimple;
     def->set_default_value(new ConfigOptionEnum<FixedForAllLayersEnum>(ffalCfc));
 
@@ -823,7 +846,6 @@ void PrintConfigDef::init_fff_params()
     def->label = L("Fill density");
     def->category = L("General");
     def->tooltip = L("Density of internal infill, expressed in the range 0% - 100%.");
-    def->mode = comSimple;
     def->sidetext = L("%");
     def->min = 0;
     def->max = 100;
@@ -1426,7 +1448,6 @@ void PrintConfigDef::init_fff_params()
     def->sidetext = L("mm/s");
     def->aliases = { "perimeter_feed_rate" };
     def->min = 0;
-    def->mode = comSimple;
     def->set_default_value(new ConfigOptionFloat(60));
 
     def = this->add("perimeters", coInt);
