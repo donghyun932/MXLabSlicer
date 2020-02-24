@@ -119,7 +119,16 @@ std::vector<SurfaceFill> group_fills(const Layer &layer)
 		        FlowRole extrusion_role = (surface.surface_type == stTop) ? frTopSolidInfill : (surface.is_solid() ? frSolidInfill : frInfill);
 		        bool     is_bridge 	    = layer.id() > 0 && surface.is_bridge();
 		        params.extruder 	 = layerm.region()->extruder(extrusion_role);
-		        params.pattern 		 = layerm.region()->config().fill_pattern.value;
+            
+            auto fill_method   = layerm.region()->config().method.value;
+            if (fill_method == MethodEnum(0)){
+                params.pattern     = InfillPattern(0);
+            } else if (fill_method == MethodEnum(1)) {
+                params.pattern     = InfillPattern(0);
+            } else if (fill_method == MethodEnum(2)) {
+                params.pattern     = InfillPattern(6);
+            }
+		        
 		        params.density       = float(layerm.region()->config().fill_density);
 
 		        if (surface.is_solid()) {

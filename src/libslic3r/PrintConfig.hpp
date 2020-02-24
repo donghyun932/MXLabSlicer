@@ -541,7 +541,7 @@ class PrintRegionConfig : public StaticPrintConfig
 {
     STATIC_PRINT_CONFIG_CACHE(PrintRegionConfig)
 public:
-    ConfigOptionEnum<MethodEnum>                         method;
+    ConfigOptionEnum<MethodEnum>    method;
     ConfigOptionFloat               start_angle;
     ConfigOptionFloat               rotation_increment;
 
