@@ -2697,9 +2697,26 @@ std::string GCode::extrude_loop(ExtrusionLoop loop, std::string description, dou
     // clip the path to avoid the extruder to get exactly on the first point of the loop;
     // if polyline was shorter than the clipping distance we'd get a null polyline, so
     // we discard it in that case
-    double clip_length = m_enable_loop_clipping ? 
-        scale_(EXTRUDER_CONFIG(nozzle_diameter)) * LOOP_CLIPPING_LENGTH_OVER_NOZZLE_DIAMETER : 
-        0;
+    // double clip_length = m_enable_loop_clipping ? 
+    //     scale_(EXTRUDER_CONFIG(nozzle_diameter)) * LOOP_CLIPPING_LENGTH_OVER_NOZZLE_DIAMETER : 
+    //     0;
+    double clip_length = 0;
+
+    int split_idx = 0;
+    if (want_cw) {
+        if (this->config().start_point_dislocation == spdClockwise) {
+            split_idx = this->m_layer_index % loop.polygon().points.size();
+        } else {
+            split_idx = (-this->m_layer_index) % loop.polygon().points.size() + loop.polygon().points.size();
+        }
+    } else {
+        if (this->config().start_point_dislocation == spdClockwise) {
+            split_idx = (-this->m_layer_index) % loop.polygon().points.size() + loop.polygon().points.size();
+        } else {
+            split_idx = this->m_layer_index % loop.polygon().points.size();
+        }
+    }
+    loop.split_at_vertex(loop.polygon().points[split_idx % loop.polygon().points.size()]);
 
     // get paths
     ExtrusionPaths paths;
