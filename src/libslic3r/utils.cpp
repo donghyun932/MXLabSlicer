@@ -439,10 +439,90 @@ int copy_file_inner(const std::string& from, const std::string& to)
 	return 0;
 }
 
-int copy_file(const std::string &from, const std::string &to, const bool with_check)
+std::string changing_to_custom_gcode(std::string target){
+    float origin_x = 87.5, origin_y = 87.5, first_layer_h = 0.01;
+    std::string result = "G1";
+    std::vector<std::string> parsed;
+    std::string delimiter = " ";
+
+    size_t pos = 0;
+    std::string token;
+    while ((pos = target.find(delimiter)) != std::string::npos) {
+        token = target.substr(0, pos);
+        parsed.push_back(token);
+        target.erase(0, pos + delimiter.length());
+    }
+    parsed.push_back(target);
+
+    for (int i=0; i<parsed.size(); i++){
+        if (parsed[i].rfind("X", 0) == 0){
+            float v = std::stof(parsed[i].substr(1));
+            result += " X" + std::to_string(v-origin_x);
+        }
+        else if (parsed[i].rfind("Y", 0) == 0) {
+            float v = std::stof(parsed[i].substr(1));
+            result += " Y" + std::to_string(v-origin_y);
+        }
+        else if (parsed[i].rfind("Z", 0) == 0) {
+            float v = std::stof(parsed[i].substr(1));
+            result += " Z" + std::to_string(v-first_layer_h);
+        }
+    }
+
+    return result;
+}
+
+int copy_file_inner_custom(const std::string& from, const std::string& to, bool shield_gas, float dwell_t, float traverse_speed)
+{
+  const boost::filesystem::path source(from);
+  const boost::filesystem::path target(to);
+  static const auto perms = boost::filesystem::owner_read | boost::filesystem::owner_write | boost::filesystem::group_read | boost::filesystem::others_read;   // aka 644
+  boost::system::error_code ec;
+  boost::filesystem::permissions(target, perms, ec);
+
+  std::ifstream file(from.c_str());
+  std::string str;
+
+  std::vector<std::string> lines;
+  bool before_layer_change_flag = false;
+  bool e_flag = false;
+
+  std::string g1("G1"), X("X"), Y("Y"), Z("Z"), E("E");
+  while(getline(file, str)){
+      if (str == ";BEFORE_LAYER_CHANGE") before_layer_change_flag = true;
+      if (before_layer_change_flag && str.rfind(";", 0) != 0 && str.find(g1) != std::string::npos && (str.find(X) != std::string::npos || str.find(Y) != std::string::npos || str.find(Z) != std::string::npos)){
+          if (str.find(E) != std::string::npos){
+              if (!e_flag){
+                  lines.push_back("M63");
+                  e_flag = true;
+              }
+          } else if (e_flag) {
+              lines.push_back("M62");
+              e_flag = false;
+          }
+          lines.push_back(changing_to_custom_gcode(str));
+      }
+  }
+
+  std::ofstream custom_output(to.c_str());
+  custom_output << "G90\nG54\nM71\nM73" << std::endl;
+  if (shield_gas) custom_output << "M75" << std::endl;
+  char t_speed[30]; sprintf(t_speed, "M88\nF%.3lf\nM91 P100", traverse_speed); custom_output << t_speed << std::endl;
+
+  for(auto line : lines) {
+      custom_output << line << std::endl;
+  }
+  custom_output << "M99\nM89\nM79\nM30" << std::endl;
+  custom_output.close();
+
+  boost::filesystem::permissions(target, perms, ec);
+  return 0;
+}
+
+int copy_file_custom(const std::string &from, const std::string &to, const bool with_check, bool shield_gas, float dwell_t, float traverse_speed)
 {
 	std::string to_temp = to + ".tmp";
-	int ret_val = copy_file_inner(from,to_temp);
+	int ret_val = copy_file_inner_custom(from, to_temp, shield_gas, dwell_t, traverse_speed);
     if(ret_val == 0)
 	{
         if (with_check)
@@ -452,6 +532,21 @@ int copy_file(const std::string &from, const std::string &to, const bool with_ch
         	ret_val = -1;
 	}
 	return ret_val;
+}
+
+int copy_file(const std::string &from, const std::string &to, const bool with_check)
+{
+  std::string to_temp = to + ".tmp";
+  int ret_val = copy_file_inner(from,to_temp);
+    if(ret_val == 0)
+  {
+        if (with_check)
+            ret_val = check_copy(from, to_temp);
+
+        if (ret_val == 0 && rename_file(to_temp, to))
+          ret_val = -1;
+  }
+  return ret_val;
 }
 
 int check_copy(const std::string &origin, const std::string &copy)
