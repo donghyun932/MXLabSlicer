@@ -27,7 +27,7 @@ void FillConcentric::_fill_surface_single(
     Polygons loops = (Polygons)expolygon;
     Polygons last  = loops;
     while (! last.empty()) {
-        last = offset2(last, -(distance + min_spacing/2), +min_spacing/2);
+        last = offset2(last, -distance, +0.f);
         loops.insert(loops.end(), last.begin(), last.end());
     }
 

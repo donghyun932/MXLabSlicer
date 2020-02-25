@@ -122,10 +122,12 @@ std::vector<SurfaceFill> group_fills(const Layer &layer)
             
             auto fill_method   = layerm.region()->config().method.value;
             if (fill_method == MethodEnum(0)){
+                params.dont_connect = true;
                 params.pattern     = InfillPattern(0);
             } else if (fill_method == MethodEnum(1)) {
                 params.pattern     = InfillPattern(0);
             } else if (fill_method == MethodEnum(2)) {
+                params.dont_adjust = true;
                 params.pattern     = InfillPattern(6);
             }
 		        
@@ -379,6 +381,7 @@ void Layer::make_fills()
         // apply half spacing using this flow's own spacing and generate infill
         FillParams params;
         params.density 		= float(0.01 * surface_fill.params.density);
+        params.dont_connect = surface_fill.params.dont_connect;
         params.dont_adjust 	= surface_fill.params.dont_adjust; // false
 
         for (ExPolygon &expoly : surface_fill.expolygons) {
