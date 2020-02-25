@@ -141,7 +141,7 @@ void PrintConfigDef::init_fff_params()
     def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
                    "TODO 설명 적고 po 파일에 번역본 저장");
     def->sidetext = L("sec");
-    def->min = 1;
+    def->min = 0;
     def->mode = comSimple;
     def->set_default_value(new ConfigOptionFloat(3.5));
 

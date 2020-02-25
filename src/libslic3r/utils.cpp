@@ -489,7 +489,16 @@ int copy_file_inner_custom(const std::string& from, const std::string& to, bool 
 
   std::string g1("G1"), X("X"), Y("Y"), Z("Z"), E("E");
   while(getline(file, str)){
-      if (str == ";BEFORE_LAYER_CHANGE") before_layer_change_flag = true;
+      if (str == ";BEFORE_LAYER_CHANGE") {
+          before_layer_change_flag = true;
+          if (dwell_t >= 0.1){
+              lines.push_back("M99");
+          }
+      }
+      else if (str == ";AFTER_LAYER_CHANGE" && dwell_t >= 0.1) {
+          char dwell[30]; sprintf(dwell, "G4 T%.3lf", dwell_t);
+          lines.push_back(std::string(dwell));
+      }
       if (before_layer_change_flag && str.rfind(";", 0) != 0 && str.find(g1) != std::string::npos && (str.find(X) != std::string::npos || str.find(Y) != std::string::npos || str.find(Z) != std::string::npos)){
           if (str.find(E) != std::string::npos){
               if (!e_flag){
