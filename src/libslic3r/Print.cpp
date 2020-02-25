@@ -1212,17 +1212,17 @@ std::string Print::validate() const
             }
         }
         // Check vertical clearance.
-        {
-            std::vector<coord_t> object_height;
-            for (const PrintObject *object : m_objects)
-                object_height.insert(object_height.end(), object->copies().size(), object->size(2));
-            std::sort(object_height.begin(), object_height.end());
-            // Ignore the tallest *copy* (this is why we repeat height for all of them):
-            // it will be printed as last one so its height doesn't matter.
-            object_height.pop_back();
-            if (! object_height.empty() && object_height.back() > scale_(m_config.extruder_clearance_height.value))
-                return L("Some objects are too tall and cannot be printed without extruder collisions.");
-        }
+        // {
+        //     std::vector<coord_t> object_height;
+        //     for (const PrintObject *object : m_objects)
+        //         object_height.insert(object_height.end(), object->copies().size(), object->size(2));
+        //     std::sort(object_height.begin(), object_height.end());
+        //     // Ignore the tallest *copy* (this is why we repeat height for all of them):
+        //     // it will be printed as last one so its height doesn't matter.
+        //     object_height.pop_back();
+        //     if (! object_height.empty() && object_height.back() > scale_(m_config.extruder_clearance_height.value))
+        //         return L("Some objects are too tall and cannot be printed without extruder collisions.");
+        // }
     } // end if (m_config.complete_objects)
 
     if (m_config.spiral_vase) {
