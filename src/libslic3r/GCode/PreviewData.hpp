@@ -106,6 +106,8 @@ public:
 		    uint32_t	 	cp_color_id;
 		    // Fan speed for the extrusion, used for visualization purposes.
 		    float 			fan_speed;
+
+        std::string object_color;
 		};
 		using Paths = std::vector<Path>;
 

@@ -951,6 +951,7 @@ Print::ApplyStatus Print::apply(const Model &model, DynamicPrintConfig new_full_
 					print_object->set_trafo(print_instances.trafo);
                     print_object->set_copies(print_instances.copies);
                     print_object->config_apply(config);
+                    print_object->object_color = model_object->instances[0]->object_color;
                     print_objects_new.emplace_back(print_object);
                     // print_object_status.emplace(PrintObjectStatus(print_object, PrintObjectStatus::New));
                     new_objects = true;
@@ -970,6 +971,7 @@ Print::ApplyStatus Print::apply(const Model &model, DynamicPrintConfig new_full_
                     print_object->set_trafo(new_instances.trafo);
                     print_object->set_copies(new_instances.copies);
                     print_object->config_apply(config);
+                    print_object->object_color = model_object->instances[0]->object_color;
                     print_objects_new.emplace_back(print_object);
                     // print_object_status.emplace(PrintObjectStatus(print_object, PrintObjectStatus::New));
                     new_objects = true;

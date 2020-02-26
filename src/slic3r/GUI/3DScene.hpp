@@ -323,6 +323,7 @@ public:
     bool                printable;
     // custom object color from sidebar object list
     std::string         object_color;
+    void update_colors_by_object_color();
     // custom check box
     bool                checked;
     // true : base,   false: dmt

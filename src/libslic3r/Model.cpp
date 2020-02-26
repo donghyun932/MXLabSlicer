@@ -636,6 +636,8 @@ ModelObject& ModelObject::assign_copy(const ModelObject &rhs)
     this->layer_config_ranges         = rhs.layer_config_ranges;    // #ys_FIXME_experiment
     this->layer_height_profile        = rhs.layer_height_profile;
     this->printable                   = rhs.printable;
+    this->checked                     = rhs.checked;
+    this->base_dmt                    = rhs.base_dmt;
     this->object_color                = rhs.object_color;
     this->origin_translation          = rhs.origin_translation;
     m_bounding_box                    = rhs.m_bounding_box;

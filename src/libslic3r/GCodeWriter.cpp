@@ -364,13 +364,16 @@ bool GCodeWriter::will_move_z(double z) const
     return true;
 }
 
-std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std::string &comment)
+std::string GCodeWriter::extrude_to_xy(const Vec2d &point, double dE, const std::string &comment, std::string object_color)
 {
     m_pos(0) = point(0);
     m_pos(1) = point(1);
     m_extruder->extrude(dE);
     
     std::ostringstream gcode;
+
+    gcode << "C " << object_color << " ; for custom object color\n";
+
     gcode << "G1 X" << XYZF_NUM(point(0))
           <<   " Y" << XYZF_NUM(point(1))
           <<    " " << m_extrusion_axis << E_NUM(m_extruder->E());
