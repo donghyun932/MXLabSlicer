@@ -457,15 +457,18 @@ std::string changing_to_custom_gcode(std::string target){
     for (int i=0; i<parsed.size(); i++){
         if (parsed[i].rfind("X", 0) == 0){
             float v = std::stof(parsed[i].substr(1));
-            result += " X" + std::to_string(v-origin_x);
+            char xx[30]; sprintf(xx, " X%.3lf", v-origin_x);
+            result += std::string(xx);
         }
         else if (parsed[i].rfind("Y", 0) == 0) {
             float v = std::stof(parsed[i].substr(1));
-            result += " Y" + std::to_string(v-origin_y);
+            char yy[30]; sprintf(yy, " Y%.3lf", v-origin_y);
+            result += std::string(yy);
         }
         else if (parsed[i].rfind("Z", 0) == 0) {
             float v = std::stof(parsed[i].substr(1));
-            result += " Z" + std::to_string(v-first_layer_h);
+            char zz[30]; sprintf(zz, " Z%.3lf", v-first_layer_h);
+            result += std::string(zz);
         }
     }
 
