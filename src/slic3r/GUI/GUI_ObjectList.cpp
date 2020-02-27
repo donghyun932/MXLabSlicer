@@ -3903,6 +3903,7 @@ void ObjectList::toggle_checkbox_state(wxDataViewItem item)
                                                         object->name);
         take_snapshot(snapshot_text);
 
+        object->checked = checked;
         // set checked value for all instances in object
         for (auto inst : object->instances)
             inst->checked = checked;
@@ -3937,6 +3938,7 @@ void ObjectList::toggle_object_color(wxDataViewItem item)
                                                     object->name);
     take_snapshot(snapshot_text);
 
+    object->object_color = object_color;
     // set object color value for all instances in object
     for (auto inst : object->instances)
         inst->object_color = object_color;

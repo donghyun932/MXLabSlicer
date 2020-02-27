@@ -238,6 +238,20 @@ GLVolume::GLVolume(float r, float g, float b, float a)
     set_render_color(r, g, b, a);
 }
 
+void GLVolume::update_colors_by_object_color()
+{
+    static const float inv_255 = 1.0f / 255.0f;
+
+    unsigned char rgb[3];
+
+    PresetBundle::parse_color(this->object_color, rgb);
+    for (int i = 0; i < 3; ++i)
+    {
+        this->color[i] = (float)rgb[i] * inv_255;
+    }
+    this->color[3] = 1.0f;
+}
+
 void GLVolume::set_render_color(float r, float g, float b, float a)
 {
     render_color[0] = r;

@@ -2204,9 +2204,9 @@ void GCode::process_layer(
                         const auto& by_region_specific = is_anything_overridden ? island.by_region_per_copy(instance_to_print.instance_id, extruder_id, print_wipe_extrusions) : island.by_region;
 
                         if (cf_pattern[i] == 'C'){
-                            gcode += this->extrude_perimeters(print, by_region_specific, lower_layer_edge_grids[instance_to_print.layer_id]);
+                            gcode += this->extrude_perimeters(print, by_region_specific, lower_layer_edge_grids[instance_to_print.layer_id], instance_to_print.print_object.object_color);
                         } else if (cf_pattern[i] == 'F') {
-                            gcode += this->extrude_infill(print, by_region_specific);
+                            gcode += this->extrude_infill(print, by_region_specific, instance_to_print.print_object.object_color);
                         }
                     }
                 }
@@ -2493,7 +2493,7 @@ std::vector<float> polygon_angles_at_vertices(const Polygon &polygon, const std:
     return angles;
 }
 
-std::string GCode::extrude_loop(ExtrusionLoop loop, std::string description, double speed, std::unique_ptr<EdgeGrid::Grid> *lower_layer_edge_grid)
+std::string GCode::extrude_loop(ExtrusionLoop loop, std::string description, double speed, std::unique_ptr<EdgeGrid::Grid> *lower_layer_edge_grid, std::string object_color)
 {
     bool want_cw = (this->config().orientation == oeClockwise) || (this->config().orientation == oeAlternating && this->m_layer_index % 2 == 0);
     // get a copy; don't modify the orientation of the original loop object otherwise
@@ -2732,6 +2732,7 @@ std::string GCode::extrude_loop(ExtrusionLoop loop, std::string description, dou
     for (ExtrusionPaths::iterator path = paths.begin(); path != paths.end(); ++path) {
 //    description += ExtrusionLoop::role_to_string(loop.loop_role());
 //    description += ExtrusionEntity::role_to_string(path->role);
+        path->object_color = object_color;
         path->simplify(SCALED_RESOLUTION);
         gcode += this->_extrude(*path, description, speed);
     }
@@ -2779,13 +2780,14 @@ std::string GCode::extrude_loop(ExtrusionLoop loop, std::string description, dou
     return gcode;
 }
 
-std::string GCode::extrude_multi_path(ExtrusionMultiPath multipath, std::string description, double speed)
+std::string GCode::extrude_multi_path(ExtrusionMultiPath multipath, std::string description, double speed, std::string object_color)
 {
     // extrude along the path
     std::string gcode;
     for (ExtrusionPath path : multipath.paths) {
 //    description += ExtrusionLoop::role_to_string(loop.loop_role());
 //    description += ExtrusionEntity::role_to_string(path->role);
+        path.object_color = object_color;
         path.simplify(SCALED_RESOLUTION);
         gcode += this->_extrude(path, description, speed);
     }
@@ -2798,22 +2800,23 @@ std::string GCode::extrude_multi_path(ExtrusionMultiPath multipath, std::string 
     return gcode;
 }
 
-std::string GCode::extrude_entity(const ExtrusionEntity &entity, std::string description, double speed, std::unique_ptr<EdgeGrid::Grid> *lower_layer_edge_grid)
+std::string GCode::extrude_entity(const ExtrusionEntity &entity, std::string description, double speed, std::unique_ptr<EdgeGrid::Grid> *lower_layer_edge_grid, std::string object_color)
 {
     if (const ExtrusionPath* path = dynamic_cast<const ExtrusionPath*>(&entity))
-        return this->extrude_path(*path, description, speed);
+        return this->extrude_path(*path, description, speed, object_color);
     else if (const ExtrusionMultiPath* multipath = dynamic_cast<const ExtrusionMultiPath*>(&entity))
-        return this->extrude_multi_path(*multipath, description, speed);
+        return this->extrude_multi_path(*multipath, description, speed, object_color);
     else if (const ExtrusionLoop* loop = dynamic_cast<const ExtrusionLoop*>(&entity))
-        return this->extrude_loop(*loop, description, speed, lower_layer_edge_grid);
+        return this->extrude_loop(*loop, description, speed, lower_layer_edge_grid, object_color);
     else
         throw std::invalid_argument("Invalid argument supplied to extrude()");
     return "";
 }
 
-std::string GCode::extrude_path(ExtrusionPath path, std::string description, double speed)
+std::string GCode::extrude_path(ExtrusionPath path, std::string description, double speed, std::string object_color)
 {
 //    description += ExtrusionEntity::role_to_string(path.role());
+    path.object_color = object_color;
     path.simplify(SCALED_RESOLUTION);
     std::string gcode = this->_extrude(path, description, speed);
     if (m_wipe.enable) {
@@ -2826,19 +2829,19 @@ std::string GCode::extrude_path(ExtrusionPath path, std::string description, dou
 }
 
 // Extrude perimeters: Decide where to put seams (hide or align seams).
-std::string GCode::extrude_perimeters(const Print &print, const std::vector<ObjectByExtruder::Island::Region> &by_region, std::unique_ptr<EdgeGrid::Grid> &lower_layer_edge_grid)
+std::string GCode::extrude_perimeters(const Print &print, const std::vector<ObjectByExtruder::Island::Region> &by_region, std::unique_ptr<EdgeGrid::Grid> &lower_layer_edge_grid, std::string object_color)
 {
     std::string gcode;
     for (const ObjectByExtruder::Island::Region &region : by_region) {
         m_config.apply(print.regions()[&region - &by_region.front()]->config());
         for (ExtrusionEntity *ee : region.perimeters.entities)
-            gcode += this->extrude_entity(*ee, "perimeter", -1., &lower_layer_edge_grid);
+            gcode += this->extrude_entity(*ee, "perimeter", -1., &lower_layer_edge_grid, object_color);
     }
     return gcode;
 }
 
 // Chain the paths hierarchically by a greedy algorithm to minimize a travel distance.
-std::string GCode::extrude_infill(const Print &print, const std::vector<ObjectByExtruder::Island::Region> &by_region)
+std::string GCode::extrude_infill(const Print &print, const std::vector<ObjectByExtruder::Island::Region> &by_region, std::string object_color)
 {
     std::string gcode;
     for (const ObjectByExtruder::Island::Region &region : by_region) {
@@ -2847,9 +2850,9 @@ std::string GCode::extrude_infill(const Print &print, const std::vector<ObjectBy
             auto *eec = dynamic_cast<ExtrusionEntityCollection*>(fill);
             if (eec) {
 				for (ExtrusionEntity *ee : eec->chained_path_from(m_last_pos).entities)
-                    gcode += this->extrude_entity(*ee, "infill");
+                    gcode += this->extrude_entity(*ee, "infill", -1., nullptr, object_color);
             } else
-                gcode += this->extrude_entity(*fill, "infill");
+                gcode += this->extrude_entity(*fill, "infill", -1., nullptr, object_color);
         }
     }
     return gcode;
@@ -3088,7 +3091,8 @@ std::string GCode::_extrude(const ExtrusionPath &path, std::string description, 
             gcode += m_writer.extrude_to_xy(
                 this->point_to_gcode(line.b),
                 e_per_mm * line_length,
-                comment);
+                comment,
+                path.object_color);
         }
     }
     if (m_enable_cooling_markers)

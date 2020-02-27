@@ -5883,22 +5883,22 @@ void GLCanvas3D::_load_gcode_extrusion_paths(const GCodePreviewData& preview_dat
 
 	    // detects filters
 	    size_t vertex_buffer_prealloc_size = 0;
-	    std::vector<std::vector<std::pair<float, GLVolume*>>> roles_filters;
+	    std::vector<std::vector<std::pair<std::string, GLVolume*>>> roles_filters;
 	    {
 		    std::vector<size_t> num_paths_per_role(size_t(erCount), 0);
 		    for (const GCodePreviewData::Extrusion::Layer &layer : preview_data.extrusion.layers)
 		        for (const GCodePreviewData::Extrusion::Path &path : layer.paths)
 		        	++ num_paths_per_role[size_t(path.extrusion_role)];
-            std::vector<std::vector<float>> roles_values;
-			roles_values.assign(size_t(erCount), std::vector<float>());
+            std::vector<std::vector<std::string>> roles_values;
+			roles_values.assign(size_t(erCount), std::vector<std::string>());
 		    for (size_t i = 0; i < roles_values.size(); ++ i)
 		    	roles_values[i].reserve(num_paths_per_role[i]);
             for (const GCodePreviewData::Extrusion::Layer& layer : preview_data.extrusion.layers)
 		        for (const GCodePreviewData::Extrusion::Path &path : layer.paths)
-		        	roles_values[size_t(path.extrusion_role)].emplace_back(Helper::path_filter(preview_data.extrusion.view_type, path));
+		        	roles_values[size_t(path.extrusion_role)].emplace_back(path.object_color);
             roles_filters.reserve(size_t(erCount));
 			size_t num_buffers = 0;
-		    for (std::vector<float> &values : roles_values) {
+		    for (std::vector<std::string> &values : roles_values) {
 		    	sort_remove_duplicates(values);
 		    	num_buffers += values.size();
 		    }
@@ -5907,13 +5907,17 @@ void GLCanvas3D::_load_gcode_extrusion_paths(const GCodePreviewData& preview_dat
 		        return;
 		    vertex_buffer_prealloc_size = (uint64_t(num_buffers) * uint64_t(VERTEX_BUFFER_RESERVE_SIZE) < VERTEX_BUFFER_RESERVE_SIZE_SUM_MAX) ? 
 	    		VERTEX_BUFFER_RESERVE_SIZE : next_highest_power_of_2(VERTEX_BUFFER_RESERVE_SIZE_SUM_MAX / num_buffers) / 2;
-		    for (std::vector<float> &values : roles_values) {
+		    for (std::vector<std::string> &values : roles_values) {
 		    	size_t role = &values - &roles_values.front();
 				roles_filters.emplace_back();
 		    	if (! values.empty()) {
 		        	m_gcode_preview_volume_index.first_volumes.emplace_back(GCodePreviewVolumeIndex::Extrusion, role, (unsigned int)m_volumes.volumes.size());
-					for (const float value : values)
-						roles_filters.back().emplace_back(value, m_volumes.new_toolpath_volume(Helper::path_color(preview_data, tool_colors, value).rgba, vertex_buffer_prealloc_size));
+					for (const std::string value : values){
+            unsigned char rgb[4];
+            PresetBundle::parse_color(value, rgb);
+            GCodePreviewData::Color color(rgb[0]/255.f, rgb[1]/255.f, rgb[2]/255.f);
+						roles_filters.back().emplace_back(value, m_volumes.new_toolpath_volume(color.rgba, vertex_buffer_prealloc_size));
+          }
 				}
 			}
 		}
@@ -5929,8 +5933,8 @@ void GLCanvas3D::_load_gcode_extrusion_paths(const GCodePreviewData& preview_dat
 			{
                 // if (is_selected_separate_extruder && path.extruder_id != m_selected_extruder - 1)
                 //     continue;
-				std::vector<std::pair<float, GLVolume*>> &filters = roles_filters[size_t(path.extrusion_role)];
-				auto key = std::make_pair<float, GLVolume*>(Helper::path_filter(preview_data.extrusion.view_type, path), nullptr);
+				std::vector<std::pair<std::string, GLVolume*>> &filters = roles_filters[size_t(path.extrusion_role)];
+				std::pair<std::string, GLVolume*> key; key.first = path.object_color; key.second = nullptr;
 				auto it_filter = std::lower_bound(filters.begin(), filters.end(), key);
 				assert(it_filter != filters.end() && key.first == it_filter->first);
 
@@ -5942,9 +5946,9 @@ void GLCanvas3D::_load_gcode_extrusion_paths(const GCodePreviewData& preview_dat
 				_3DScene::extrusionentity_to_verts(path.polyline, path.width, path.height, layer.z, vol);
 			}
 			// Ensure that no volume grows over the limits. If the volume is too large, allocate a new one.
-		    for (std::vector<std::pair<float, GLVolume*>> &filters : roles_filters) {
+		    for (std::vector<std::pair<std::string, GLVolume*>> &filters : roles_filters) {
 		    	unsigned int role = (unsigned int)(&filters - &roles_filters.front());
-			    for (std::pair<float, GLVolume*> &filter : filters)
+			    for (std::pair<std::string, GLVolume*> &filter : filters)
 					if (filter.second->indexed_vertex_array.vertices_and_normals_interleaved.size() > MAX_VERTEX_BUFFER_SIZE) {
 						if (m_gcode_preview_volume_index.first_volumes.back().type != GCodePreviewVolumeIndex::Extrusion || m_gcode_preview_volume_index.first_volumes.back().flag != role)
 			        		m_gcode_preview_volume_index.first_volumes.emplace_back(GCodePreviewVolumeIndex::Extrusion, role, (unsigned int)m_volumes.volumes.size());
@@ -5956,8 +5960,8 @@ void GLCanvas3D::_load_gcode_extrusion_paths(const GCodePreviewData& preview_dat
 	    }
 
 	    // Finalize volumes and sends geometry to gpu
-	    for (std::vector<std::pair<float, GLVolume*>> &filters : roles_filters)
-		    for (std::pair<float, GLVolume*> &filter : filters)
+	    for (std::vector<std::pair<std::string, GLVolume*>> &filters : roles_filters)
+		    for (std::pair<std::string, GLVolume*> &filter : filters)
 	    		filter.second->indexed_vertex_array.finalize_geometry(m_initialized);
 
 	    BOOST_LOG_TRIVIAL(debug) << "Loading G-code extrusion paths - end" << m_volumes.log_memory_info() << log_memory_info();
