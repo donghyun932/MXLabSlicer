@@ -432,6 +432,7 @@ const std::vector<std::string>& Preset::printer_options()
     static std::vector<std::string> s_opts;
     if (s_opts.empty()) {
         s_opts = {
+            "powder_feeder_define",
             "printer_technology",
             "bed_shape", "bed_custom_texture", "bed_custom_model", "z_offset", "gcode_flavor", "use_relative_e_distances", "serial_port", "serial_speed",
             "use_firmware_retraction", "use_volumetric_e", "variable_layer_height",
@@ -1115,7 +1116,7 @@ void PresetCollection::update_platter_ui(GUI::PresetComboBox *ui)
             bmps.emplace_back(m_bitmap_add ? *m_bitmap_add : wxNullBitmap);
             bmp = m_bitmap_cache->insert(bitmap_key, bmps);
         }
-        ui->set_label_marker(ui->Append(PresetCollection::separator(L("Add a new printer")), *bmp), GUI::PresetComboBox::LABEL_ITEM_WIZARD_PRINTERS);
+        // ui->set_label_marker(ui->Append(PresetCollection::separator(L("Add a new printer")), *bmp), GUI::PresetComboBox::LABEL_ITEM_WIZARD_PRINTERS);
     } else if (m_type == Preset::TYPE_SLA_MATERIAL) {
         ui->set_label_marker(ui->Append(PresetCollection::separator(L("Add/Remove materials")), wxNullBitmap), GUI::PresetComboBox::LABEL_ITEM_WIZARD_MATERIALS);
     }
@@ -1212,7 +1213,7 @@ size_t PresetCollection::update_tab_ui(wxBitmapComboBox *ui, bool show_incompati
             bmps.emplace_back(m_bitmap_add ? *m_bitmap_add : wxNullBitmap);
             bmp = m_bitmap_cache->insert("add_printer_tab", bmps);
         }
-        ui->Append(PresetCollection::separator("Add a new printer"), *bmp);
+        // ui->Append(PresetCollection::separator("Add a new printer"), *bmp);
     }
 
     /* But, if selected_preset_item is still equal to INT_MAX, it means that

@@ -803,9 +803,9 @@ Sidebar::Sidebar(Plater *parent)
     p->combos_filament.push_back(nullptr);
     init_combo(&p->combo_print,         _(L("Print setting")),     Preset::TYPE_PRINT,         false);
     init_combo(&p->combos_filament[0],  _(L("Toolpath setting")),           Preset::TYPE_FILAMENT,      true);
-    // init_combo(&p->combo_sla_print,     _(L("SLA print settings")), Preset::TYPE_SLA_PRINT,     false);
-    // init_combo(&p->combo_sla_material,  _(L("SLA material")),       Preset::TYPE_SLA_MATERIAL,  false);
-    // init_combo(&p->combo_printer,       _(L("Printer")),            Preset::TYPE_PRINTER,       false);
+    init_combo(&p->combo_sla_print,     _(L("SLA print settings")), Preset::TYPE_SLA_PRINT,     false);
+    init_combo(&p->combo_sla_material,  _(L("SLA material")),       Preset::TYPE_SLA_MATERIAL,  false);
+    init_combo(&p->combo_printer,       _(L("Feeder setting")),            Preset::TYPE_PRINTER,       false);
 
     const int margin_5  = int(0.5*wxGetApp().em_unit());// 5;
 

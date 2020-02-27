@@ -69,6 +69,7 @@ bool Print::invalidate_state_by_config_options(const std::vector<t_config_option
     // Cache the plenty of parameters, which influence the G-code generator only,
     // or they are only notes not influencing the generated G-code.
     static std::unordered_set<std::string> steps_gcode = {
+        "powder_feeder_define",
         "tool_path_spacing",
         "traverse_speed",
         "dwell_time",

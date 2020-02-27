@@ -475,7 +475,7 @@ std::string changing_to_custom_gcode(std::string target){
     return result;
 }
 
-int copy_file_inner_custom(const std::string& from, const std::string& to, bool shield_gas, float dwell_t, float traverse_speed)
+int copy_file_inner_custom(const std::string& from, const std::string& to, bool shield_gas, float dwell_t, float traverse_speed, std::string hopper)
 {
   const boost::filesystem::path source(from);
   const boost::filesystem::path target(to);
@@ -519,7 +519,7 @@ int copy_file_inner_custom(const std::string& from, const std::string& to, bool 
   std::ofstream custom_output(to.c_str());
   custom_output << "G90\nG54\nM71\nM73" << std::endl;
   if (shield_gas) custom_output << "M75" << std::endl;
-  char t_speed[30]; sprintf(t_speed, "M88\nF%.3lf\nM91 P100", traverse_speed); custom_output << t_speed << std::endl;
+  char t_speed[30]; sprintf(t_speed, "M88\nF%.3lf\nM%s", traverse_speed, hopper.c_str()); custom_output << t_speed << std::endl;
 
   for(auto line : lines) {
       custom_output << line << std::endl;
@@ -531,10 +531,10 @@ int copy_file_inner_custom(const std::string& from, const std::string& to, bool 
   return 0;
 }
 
-int copy_file_custom(const std::string &from, const std::string &to, const bool with_check, bool shield_gas, float dwell_t, float traverse_speed)
+int copy_file_custom(const std::string &from, const std::string &to, const bool with_check, bool shield_gas, float dwell_t, float traverse_speed, std::string hopper)
 {
 	std::string to_temp = to + ".tmp";
-	int ret_val = copy_file_inner_custom(from, to_temp, shield_gas, dwell_t, traverse_speed);
+	int ret_val = copy_file_inner_custom(from, to_temp, shield_gas, dwell_t, traverse_speed, hopper);
     if(ret_val == 0)
 	{
         if (with_check)
