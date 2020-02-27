@@ -493,10 +493,10 @@ int copy_file_inner_custom(const std::string& from, const std::string& to, bool 
   std::string g1("G1"), X("X"), Y("Y"), Z("Z"), E("E");
   while(getline(file, str)){
       if (str == ";BEFORE_LAYER_CHANGE") {
+          // if (dwell_t >= 0.1 && before_layer_change_flag){
+          //     lines.push_back("M99");
+          // }
           before_layer_change_flag = true;
-          if (dwell_t >= 0.1){
-              lines.push_back("M99");
-          }
       }
       else if (str == ";AFTER_LAYER_CHANGE" && dwell_t >= 0.1) {
           char dwell[30]; sprintf(dwell, "G4 T%.3lf", dwell_t);
