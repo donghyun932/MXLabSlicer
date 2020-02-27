@@ -2219,6 +2219,27 @@ void PrintConfigDef::init_fff_params()
     def->sidetext = L("mm");
     def->set_default_value(new ConfigOptionFloat(0));
 
+    def = this->add("powder_feeder_define", coString);
+    def->gui_type = "f_enum_open";
+    def->gui_flags = "show_value";
+    def->label = L("Define");
+    def->category = L("Powder Feeders");
+    def->tooltip = L("... ... ...");
+    def->mode = comSimple;
+    def->enum_values.push_back("91");
+    def->enum_values.push_back("92");
+    def->enum_values.push_back("93");
+    def->enum_values.push_back("94");
+    def->enum_values.push_back("95");
+    def->enum_values.push_back("96");
+    def->enum_labels.push_back("Hopper 1");
+    def->enum_labels.push_back("Hopper 2");
+    def->enum_labels.push_back("Hopper 3");
+    def->enum_labels.push_back("Hopper 4");
+    def->enum_labels.push_back("Hopper 5");
+    def->enum_labels.push_back("Hopper 6");
+    def->set_default_value(new ConfigOptionString("91"));
+
     // Declare retract values for filament profile, overriding the printer's extruder profile.
     for (const char *opt_key : {
         // floats

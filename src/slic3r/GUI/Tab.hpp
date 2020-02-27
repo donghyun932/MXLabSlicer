@@ -385,7 +385,7 @@ public:
 
 // 	TabPrinter(wxNotebook* parent) : Tab(parent, _(L("Printer Settings")), L("printer")) {}
     TabPrinter(wxNotebook* parent) : 
-        Tab(parent, _(L("Printer Settings")), Slic3r::Preset::TYPE_PRINTER) {}
+        Tab(parent, _(L("Feeder Settings")), Slic3r::Preset::TYPE_PRINTER) {}
 	~TabPrinter() {}
 
 	void		build() override;

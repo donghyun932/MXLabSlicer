@@ -845,6 +845,7 @@ public:
     ConfigOptionFloat               dwell_time;
     ConfigOptionBool                shield_gas_applied;
     ConfigOptionFloat               traverse_speed;
+    ConfigOptionString              powder_feeder_define;
 
     ConfigOptionFloat               tool_path_spacing;
     ConfigOptionBool                avoid_crossing_perimeters;
@@ -922,6 +923,7 @@ protected:
         OPT_PTR(dwell_time);
         OPT_PTR(shield_gas_applied);
         OPT_PTR(traverse_speed);
+        OPT_PTR(powder_feeder_define);
 
         OPT_PTR(tool_path_spacing);
         OPT_PTR(avoid_crossing_perimeters);

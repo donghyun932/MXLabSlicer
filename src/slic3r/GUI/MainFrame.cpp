@@ -218,9 +218,9 @@ void MainFrame::create_preset_tabs()
     wxGetApp().update_label_colours_from_appconfig();
     add_created_tab(new TabPrint(m_tabpanel));
     add_created_tab(new TabFilament(m_tabpanel));
-//    add_created_tab(new TabSLAPrint(m_tabpanel));
-//    add_created_tab(new TabSLAMaterial(m_tabpanel));
-//    add_created_tab(new TabPrinter(m_tabpanel));
+    add_created_tab(new TabSLAPrint(m_tabpanel));
+    add_created_tab(new TabSLAMaterial(m_tabpanel));
+    add_created_tab(new TabPrinter(m_tabpanel));
 }
 
 void MainFrame::add_created_tab(Tab* panel)
@@ -599,9 +599,9 @@ void MainFrame::init_menubar()
             [this, tab_offset](wxCommandEvent&) { select_tab(tab_offset + 1); }, "spool", nullptr,
             [this]() {return true; }, this);
         m_changeable_menu_items.push_back(item_material_tab);
-        // append_menu_item(windowMenu, wxID_HIGHEST + 4, _(L("Print&er Settings Tab")) + "\tCtrl+4", _(L("Show the printer settings")),
-        //     [this, tab_offset](wxCommandEvent&) { select_tab(tab_offset + 2); }, "printer", nullptr,
-        //     [this]() {return true; }, this);
+        append_menu_item(windowMenu, wxID_HIGHEST + 4, _(L("Feeder Settings Tab")) + "\tCtrl+4", _(L("Show the printer settings")),
+            [this, tab_offset](wxCommandEvent&) { select_tab(tab_offset + 2); }, "printer", nullptr,
+            [this]() {return true; }, this);
         if (m_plater) {
             windowMenu->AppendSeparator();
             append_menu_item(windowMenu, wxID_HIGHEST + 5, _(L("3&D")) + "\tCtrl+5", _(L("Show the 3D editing view")),

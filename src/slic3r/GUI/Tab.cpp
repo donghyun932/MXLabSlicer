@@ -240,8 +240,8 @@ void Tab::create_preset_tab()
                 /*selected_string == "------- System presets -------" ||
                 selected_string == "-------  User presets  -------"*/) {
                 m_presets_choice->SetSelection(m_selected_preset_item);
-                if (wxString::FromUTF8(selected_string.c_str()) == PresetCollection::separator(L("Add a new printer")))
-                    wxTheApp->CallAfter([]() { wxGetApp().run_wizard(ConfigWizard::RR_USER); });
+                // if (wxString::FromUTF8(selected_string.c_str()) == PresetCollection::separator(L("Add a new printer")))
+                //     wxTheApp->CallAfter([]() { wxGetApp().run_wizard(ConfigWizard::RR_USER); });
                 return;
             }
             m_selected_preset_item = selected_item;
@@ -657,24 +657,24 @@ void Tab::on_roll_back_value(const bool to_sys /*= true*/)
                     }
 
                 }
-                if (group->title == _("Profile dependencies")) {
-                    if (m_type != Slic3r::Preset::TYPE_PRINTER && (m_options_list["compatible_printers"] & os) == 0) {
-                        to_sys ? group->back_to_sys_value("compatible_printers") : group->back_to_initial_value("compatible_printers");
-                        load_key_value("compatible_printers", true/*some value*/, true);
+                // if (group->title == _("Profile dependencies")) {
+                //     if (m_type != Slic3r::Preset::TYPE_PRINTER && (m_options_list["compatible_printers"] & os) == 0) {
+                //         to_sys ? group->back_to_sys_value("compatible_printers") : group->back_to_initial_value("compatible_printers");
+                //         load_key_value("compatible_printers", true/*some value*/, true);
 
-                        bool is_empty = m_config->option<ConfigOptionStrings>("compatible_printers")->values.empty();
-                        m_compatible_printers.checkbox->SetValue(is_empty);
-                        is_empty ? m_compatible_printers.btn->Disable() : m_compatible_printers.btn->Enable();
-                    }
-                    if ((m_type == Slic3r::Preset::TYPE_PRINT || m_type == Slic3r::Preset::TYPE_SLA_PRINT) && (m_options_list["compatible_prints"] & os) == 0) {
-                        to_sys ? group->back_to_sys_value("compatible_prints") : group->back_to_initial_value("compatible_prints");
-                        load_key_value("compatible_prints", true/*some value*/, true);
+                //         bool is_empty = m_config->option<ConfigOptionStrings>("compatible_printers")->values.empty();
+                //         m_compatible_printers.checkbox->SetValue(is_empty);
+                //         is_empty ? m_compatible_printers.btn->Disable() : m_compatible_printers.btn->Enable();
+                //     }
+                //     if ((m_type == Slic3r::Preset::TYPE_PRINT || m_type == Slic3r::Preset::TYPE_SLA_PRINT) && (m_options_list["compatible_prints"] & os) == 0) {
+                //         to_sys ? group->back_to_sys_value("compatible_prints") : group->back_to_initial_value("compatible_prints");
+                //         load_key_value("compatible_prints", true/*some value*/, true);
 
-                        bool is_empty = m_config->option<ConfigOptionStrings>("compatible_prints")->values.empty();
-                        m_compatible_prints.checkbox->SetValue(is_empty);
-                        is_empty ? m_compatible_prints.btn->Disable() : m_compatible_prints.btn->Enable();
-                    }
-                }
+                //         bool is_empty = m_config->option<ConfigOptionStrings>("compatible_prints")->values.empty();
+                //         m_compatible_prints.checkbox->SetValue(is_empty);
+                //         is_empty ? m_compatible_prints.btn->Disable() : m_compatible_prints.btn->Enable();
+                //     }
+                // }
                 for (auto kvp : group->m_opt_map) {
                     const std::string& opt_key = kvp.first;
                     if ((m_options_list[opt_key] & os) == 0)
@@ -918,7 +918,7 @@ void Tab::on_presets_changed()
 
     // Instead of PostEvent (EVT_TAB_PRESETS_CHANGED) just call update_presets
     wxGetApp().plater()->sidebar().update_presets(m_type);
-    update_preset_description_line();
+    // update_preset_description_line();
 
     // Printer selected at the Printer tab, update "compatible" marks at the print and filament selectors.
     for (auto t: m_dependent_tabs)
@@ -2013,14 +2013,17 @@ void TabPrinter::build_fff()
         option.opt.height = notes_field_height;//250;
         optgroup->append_single_option_line(option);
 
-    page = add_options_page(_(L("Dependencies")), "wrench.png");
-        optgroup = page->new_optgroup(_(L("Profile dependencies")));
-        line = Line{ "", "" };
-        line.full_width = 1;
-        line.widget = [this](wxWindow* parent) {
-            return description_line_widget(parent, &m_parent_preset_description_line);
-        };
-        optgroup->append_line(line);
+    // page = add_options_page(_(L("Dependencies")), "wrench.png");
+    //     optgroup = page->new_optgroup(_(L("Profile dependencies")));
+    //     line = Line{ "", "" };
+    //     line.full_width = 1;
+    //     line.widget = [this](wxWindow* parent) {
+    //         return description_line_widget(parent, &m_parent_preset_description_line);
+    //     };
+    //     optgroup->append_line(line);
+    page = add_options_page(_(L("Feeder Setting")), "funnel");
+        optgroup = page->new_optgroup(_(L("Powder Feeders")));
+        optgroup->append_single_option_line("powder_feeder_define");
 
     build_unregular_pages();
 
