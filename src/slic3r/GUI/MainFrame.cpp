@@ -593,14 +593,14 @@ void MainFrame::init_menubar()
             windowMenu->AppendSeparator();
         }
         append_menu_item(windowMenu, wxID_HIGHEST + 2, _(L("P&rint Settings Tab")) + "\tCtrl+2", _(L("Show the print settings")),
-            [this, tab_offset](wxCommandEvent&) { select_tab(tab_offset + 0); }, "cog", nullptr,
+            [this, tab_offset](wxCommandEvent&) { select_tab(tab_offset + 0); }, "layers", nullptr,
             [this]() {return true; }, this);
         wxMenuItem* item_material_tab = append_menu_item(windowMenu, wxID_HIGHEST + 3, _(L("&Toolpath Settings Tab")) + "\tCtrl+3", _(L("Show the toolpath settings")),
-            [this, tab_offset](wxCommandEvent&) { select_tab(tab_offset + 1); }, "spool", nullptr,
+            [this, tab_offset](wxCommandEvent&) { select_tab(tab_offset + 1); }, "infill", nullptr,
             [this]() {return true; }, this);
         m_changeable_menu_items.push_back(item_material_tab);
         append_menu_item(windowMenu, wxID_HIGHEST + 4, _(L("Feeder Settings Tab")) + "\tCtrl+4", _(L("Show the printer settings")),
-            [this, tab_offset](wxCommandEvent&) { select_tab(tab_offset + 2); }, "printer", nullptr,
+            [this, tab_offset](wxCommandEvent&) { select_tab(tab_offset + 2); }, "funnel", nullptr,
             [this]() {return true; }, this);
         if (m_plater) {
             windowMenu->AppendSeparator();

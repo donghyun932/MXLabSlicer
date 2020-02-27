@@ -1565,11 +1565,11 @@ void PresetBundle::load_default_preset_bitmaps(wxWindow *window)
     this->sla_materials.clear_bitmap_cache();
     this->printers.clear_bitmap_cache();
 
-    this->prints.load_bitmap_default(window, "cog");
-    this->sla_prints.load_bitmap_default(window, "cog");
-    this->filaments.load_bitmap_default(window, "spool.png");
-    this->sla_materials.load_bitmap_default(window, "resin");
-    this->printers.load_bitmap_default(window, "printer");
+    this->prints.load_bitmap_default(window, "layers");
+    this->sla_prints.load_bitmap_default(window, "layers");
+    this->filaments.load_bitmap_default(window, "infill");
+    this->sla_materials.load_bitmap_default(window, "infill");
+    this->printers.load_bitmap_default(window, "funnel");
     this->printers.load_bitmap_add(window, "add.png");
     this->load_compatible_bitmaps(window);
 }
@@ -1665,7 +1665,7 @@ void PresetBundle::update_platter_filament_ui(unsigned int idx_extruder, GUI::Pr
         const std::string name = preset.alias.empty() ? preset.name : preset.alias;
         if (preset.is_default || preset.is_system) {
 			ui->Append(wxString::FromUTF8((/*preset.*/name + (preset.is_dirty ? Preset::suffix_modified() : "")).c_str()), 
-				(bitmap == 0) ? wxNullBitmap : create_scaled_bitmap(nullptr, "cog"));
+				(bitmap == 0) ? wxNullBitmap : create_scaled_bitmap(nullptr, "infill"));
 			if (selected ||
                 // just in case: mark selected_preset_item as a first added element
                 selected_preset_item == INT_MAX ) {
@@ -1676,7 +1676,7 @@ void PresetBundle::update_platter_filament_ui(unsigned int idx_extruder, GUI::Pr
 		else
 		{
 			nonsys_presets.emplace(wxString::FromUTF8((/*preset.*/name + (preset.is_dirty ? Preset::suffix_modified() : "")).c_str()), 
-				(bitmap == 0) ? wxNullBitmap : create_scaled_bitmap(nullptr, "cog"));
+				(bitmap == 0) ? wxNullBitmap : create_scaled_bitmap(nullptr, "infill"));
 			if (selected) {
 				selected_str = wxString::FromUTF8((/*preset.*/name + (preset.is_dirty ? Preset::suffix_modified() : "")).c_str());
                 tooltip = wxString::FromUTF8(preset.name.c_str());
