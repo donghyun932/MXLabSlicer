@@ -648,6 +648,11 @@ std::vector<coordf_t> generate_object_layers(
         out.push_back(print_z);
     }
 
+    if (out.back() >= slicing_params.object_print_z_height()) {
+        out.pop_back();
+        out.pop_back();
+    }
+
     //FIXME Adjust the last layer to align with the top object layer exactly?
     return out;
 }
