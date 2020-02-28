@@ -2136,7 +2136,7 @@ std::string Print::output_filename(const std::string &filename_base) const
     // Set the placeholders for the data know first after the G-code export is finished.
     // These values will be just propagated into the output file name.
     DynamicConfig config = this->finished() ? this->print_statistics().config() : this->print_statistics().placeholders();
-    return this->PrintBase::output_filename(m_config.output_filename_format.value, ".gcode", filename_base, &config);
+    return this->PrintBase::output_filename(m_config.output_filename_format.value, ".nc", filename_base, &config);
 }
 
 DynamicConfig PrintStatistics::config() const

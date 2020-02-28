@@ -39,7 +39,7 @@ enum FileType
     FT_AMF,
     FT_3MF,
     FT_MXLAB,
-    FT_GCODE,
+    FT_NCCODE,
     FT_MODEL,
     FT_PROJECT,
 

@@ -2598,7 +2598,7 @@ wxString Plater::priv::get_export_file(GUI::FileType file_type)
         case FT_STL:
         case FT_AMF:
         case FT_3MF:
-        case FT_GCODE:
+        case FT_NCCODE:
         case FT_OBJ:
             wildcard = file_wildcards(file_type);
         break;
@@ -4684,10 +4684,10 @@ void Plater::export_gcode()
 			start_dir = RemovableDriveManager::get_instance().get_drive_path();
 		}
 	}
-    wxFileDialog dlg(this, (printer_technology() == ptFFF) ? _(L("Save G-code file as:")) : _(L("Save SL1 file as:")),
+    wxFileDialog dlg(this, (printer_technology() == ptFFF) ? _(L("Save NC-code file as:")) : _(L("Save SL1 file as:")),
         start_dir,
-        from_path(default_output_file.filename()),
-        GUI::file_wildcards((printer_technology() == ptFFF) ? FT_GCODE : FT_PNGZIP, default_output_file.extension().string()),
+        from_path(""),
+        GUI::file_wildcards((printer_technology() == ptFFF) ? FT_NCCODE : FT_PNGZIP, default_output_file.extension().string()),
         wxFD_SAVE | wxFD_OVERWRITE_PROMPT
     );
 

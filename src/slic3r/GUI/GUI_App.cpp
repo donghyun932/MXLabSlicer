@@ -69,7 +69,7 @@ wxString file_wildcards(FileType file_type, const std::string &custom_extension)
         /* FT_AMF */     "AMF files (*.amf)|*.zip.amf;*.amf;*.AMF;*.xml;*.XML",
         /* FT_3MF */     "3MF files (*.3mf)|*.3mf;*.3MF;",
         /* FT_MXLAB */   "MXLab Control files (*.mxlab)|*.mxlab;*.MXLAB",
-        /* FT_GCODE */   "G-code files (*.gcode, *.gco, *.g, *.ngc)|*.gcode;*.GCODE;*.gco;*.GCO;*.g;*.G;*.ngc;*.NGC",
+        /* FT_NCCODE */   "NC-code files (*.nc)|*.nc",
         /* FT_MODEL */   "Known files (*.stl, *.obj, *.amf, *.xml, *.3mf, *.mxlab)|*.stl;*.STL;*.obj;*.OBJ;*.amf;*.AMF;*.xml;*.XML;*.3mf;*.3MF;*.mxlab;*.MXLAB",
         /* FT_PROJECT */ "Project files (*.3mf, *.amf)|*.3mf;*.3MF;*.amf;*.AMF",
 
