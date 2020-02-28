@@ -349,7 +349,7 @@ class TabFilament : public Tab
 public:
 	TabFilament(wxNotebook* parent) : 
 // 		Tab(parent, _(L("Filament Settings")), L("filament")) {}
-		Tab(parent, _(L("Toolpath Setting")), Slic3r::Preset::TYPE_FILAMENT) {}
+		Tab(parent, _(L("Toolpath Settings")), Slic3r::Preset::TYPE_FILAMENT) {}
 	~TabFilament() {}
 
 	void		build() override;

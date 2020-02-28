@@ -1035,7 +1035,7 @@ void TabPrint::build()
     m_presets = &m_preset_bundle->prints;
     load_initial_data();
 
-    auto page = add_options_page(_(L("Slicing setting")), "layers");
+    auto page = add_options_page(_(L("Slicing")), "layers");
         auto optgroup = page->new_optgroup(_(L("Slicing")));
         optgroup->append_single_option_line("layer_height");
         optgroup->append_single_option_line("tool_path_spacing");
@@ -2021,7 +2021,7 @@ void TabPrinter::build_fff()
     //         return description_line_widget(parent, &m_parent_preset_description_line);
     //     };
     //     optgroup->append_line(line);
-    page = add_options_page(_(L("Feeder Setting")), "funnel");
+    page = add_options_page(_(L("Feeder")), "funnel");
         optgroup = page->new_optgroup(_(L("Powder Feeders")));
         optgroup->append_single_option_line("powder_feeder_define");
 
