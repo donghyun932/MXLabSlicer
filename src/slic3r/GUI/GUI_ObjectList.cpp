@@ -3932,6 +3932,8 @@ void ObjectList::toggle_object_color(wxDataViewItem item)
 
     // get object's color and change it
     const std::string object_color = m_objects_model->GetNewObjectColor(item);
+    if (object_color == "")
+        return;
 
     const wxString snapshot_text = wxString::Format("%s %s", 
                                                     _(L("Change Object Color")), 
