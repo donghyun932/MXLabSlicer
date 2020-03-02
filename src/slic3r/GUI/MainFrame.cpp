@@ -443,13 +443,13 @@ void MainFrame::init_menubar()
         fileMenu->AppendSeparator();
 
         wxMenu* import_menu = new wxMenu();
-        // append_menu_item(import_menu, wxID_ANY, _(L("Import STL/OBJ/AM&F/3MF")) + dots + "\tCtrl+I", _(L("Load a model")),
-        //     [this](wxCommandEvent&) { if (m_plater) m_plater->add_model(); }, "import_plater", nullptr,
-        //     [this](){return m_plater != nullptr; }, this);
+        append_menu_item(import_menu, wxID_ANY, _(L("Import STL/OBJ/AM&F/3MF")) + dots + "\tCtrl+I", _(L("Load a model")),
+            [this](wxCommandEvent&) { if (m_plater) m_plater->add_model(); }, "import_plater", nullptr,
+            [this](){return m_plater != nullptr; }, this);
         // import_menu->AppendSeparator();
-        append_menu_item(import_menu, wxID_ANY, _(L("Import &Config")) + dots + "\tCtrl+L", _(L("Load exported configuration file")),
-            [this](wxCommandEvent&) { load_config_file(); }, "import_config", nullptr,
-            [this]() {return true; }, this);
+        // append_menu_item(import_menu, wxID_ANY, _(L("Import &Config")) + dots + "\tCtrl+L", _(L("Load exported configuration file")),
+        //     [this](wxCommandEvent&) { load_config_file(); }, "import_config", nullptr,
+        //     [this]() {return true; }, this);
         // append_menu_item(import_menu, wxID_ANY, _(L("Import Config from &project")) + dots +"\tCtrl+Alt+L", _(L("Load configuration from project file")),
         //     [this](wxCommandEvent&) { if (m_plater) m_plater->extract_config_from_project(); }, "import_config", nullptr,
         //     [this]() {return true; }, this);
