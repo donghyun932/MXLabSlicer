@@ -527,15 +527,15 @@ void MainFrame::init_menubar()
             [this](wxCommandEvent&) { Close(false); });
     }
 
-#ifdef _MSC_VER
-    // \xA0 is a non-breaking space. It is entered here to spoil the automatic accelerators,
-    // as the simple numeric accelerators spoil all numeric data entry.
-    wxString sep = "\t\xA0";
-    wxString sep_space = "\xA0";
-#else
+// #ifdef _MSC_VER
+//     // \xA0 is a non-breaking space. It is entered here to spoil the automatic accelerators,
+//     // as the simple numeric accelerators spoil all numeric data entry.
+//     wxString sep = "\t\xA0";
+//     wxString sep_space = "\xA0";
+// #else
     wxString sep = " - ";
     wxString sep_space = "";
-#endif
+// #endif
 
     // Edit menu
     wxMenu* editMenu = nullptr;

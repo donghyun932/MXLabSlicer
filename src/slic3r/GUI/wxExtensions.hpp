@@ -194,6 +194,7 @@ enum ColumnNumber
     colPrint           ,    // printable property
     colCheckbox        ,    // checkbox
     colObjectColor     ,    // object color
+    colBaseDmt         ,
 };
 
 enum PrintIndicator
@@ -208,6 +209,13 @@ enum CheckboxIndicator
     ciUndef         = 0,    // no checkbox indicator
     ciChecked          ,    // checked
     ciUnchecked        ,    // unchecked
+};
+
+enum BaseDmtIndicator
+{
+    bdUndef         = 0,    // no base dmt indicator
+    bdBase             ,    // base
+    bdDmt              ,    // dmt
 };
 
 class ObjectDataViewModelNode;
@@ -230,12 +238,14 @@ class ObjectDataViewModelNode
     wxString				        m_extruder = "default";
     wxBitmap                        m_extruder_bmp;
     wxBitmap				        m_action_icon;
+    BaseDmtIndicator                m_base_dmt = {bdUndef};
     PrintIndicator                  m_printable {piUndef};
     CheckboxIndicator               m_checked {ciUndef};
     std::string                     m_object_color = "#950918";
     wxBitmap                m_object_color_bmp;
     wxBitmap				        m_printable_icon;
     wxBitmap                m_checkbox_icon;
+    wxBitmap                m_base_dmt_icon;
 
     std::string                     m_action_icon_name = "";
     Slic3r::ModelVolumeType         m_volume_type;
@@ -351,6 +361,7 @@ public:
 	t_layer_height_range    GetLayerRange() const   { return m_layer_range; }
     PrintIndicator  IsPrintable() const             { return m_printable; }
     CheckboxIndicator  IsChecked() const             { return m_checked; }
+    BaseDmtIndicator   IsBasePart() const            { return m_base_dmt; }
     std::string        GetObjectColor() const        { return m_object_color; }
 
     // use this function only for childrens
@@ -387,6 +398,7 @@ public:
     void        set_printable_icon(PrintIndicator printable);
     void        set_checkbox_icon(CheckboxIndicator checked);
     void        set_object_color_bitmap(std::string object_color);
+    void        set_base_dmt(BaseDmtIndicator base_dmt);
 
     void        update_settings_digest_bitmaps();
     bool        update_settings_digest(const std::vector<std::string>& categories);
@@ -517,6 +529,7 @@ public:
 
     bool    IsPrintable(const wxDataViewItem &item) const;
     bool    IsChecked(const wxDataViewItem &item) const;
+    bool    IsBasePart(const wxDataViewItem &item) const;
     std::string GetObjectColor(const wxDataViewItem &item) const;
     std::string GetNewObjectColor(const wxDataViewItem &item) const;
     void    UpdateObjectPrintable(wxDataViewItem parent_item);
@@ -544,10 +557,11 @@ public:
     wxDataViewItem SetObjectColor( std::string object_color, int obj_idx,
                                       int subobj_idx = -1, 
                                       ItemType subobj_type = itInstance);
-    wxDataViewItem SetBaseDMTState( int obj_idx,
-                                      int subobj_idx = -1, 
-                                      ItemType subobj_type = itInstance);
-    wxDataViewItem SetObjectBaseDMTState(wxDataViewItem obj_item);
+    wxDataViewItem SetBaseDMTState( BaseDmtIndicator base_dmt,
+                                    int obj_idx,
+                                    int subobj_idx = -1, 
+                                    ItemType subobj_type = itInstance);
+    wxDataViewItem SetObjectBaseDMTState(BaseDmtIndicator base_dmt, wxDataViewItem obj_item);
 
     void    SetAssociatedControl(wxDataViewCtrl* ctrl) { m_ctrl = ctrl; }
     // Rescale bitmaps for existing Items

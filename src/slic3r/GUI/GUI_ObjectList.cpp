@@ -277,6 +277,9 @@ void ObjectList::create_objects_ctrl()
     AppendBitmapColumn("color", colObjectColor, wxDATAVIEW_CELL_INERT, 4*em,
         wxALIGN_CENTER_HORIZONTAL, wxDATAVIEW_COL_RESIZABLE);
 
+    AppendBitmapColumn("part(s) type", colBaseDmt, wxDATAVIEW_CELL_INERT, 8*em,
+        wxALIGN_CENTER_HORIZONTAL, wxDATAVIEW_COL_RESIZABLE);
+
     // For some reason under OSX on 4K(5K) monitors in wxDataViewColumn constructor doesn't set width of column.
     // Therefore, force set column width.
     if (wxOSX)
@@ -285,6 +288,7 @@ void ObjectList::create_objects_ctrl()
         GetColumn(colPrint)->SetWidth(3*em);
         GetColumn(colCheckbox)->SetWidth(3*em);
         GetColumn(colObjectColor)->SetWidth(4*em);
+        GetColumn(colBaseDmt)->SetWidth(8*em);
     }
 }
 
@@ -775,6 +779,8 @@ void ObjectList::list_manipulation(bool evt_context_menu/* = false*/)
         toggle_checkbox_state(item);
     else if (title == "color")
         toggle_object_color(item);
+    else if (title == "part(s) type")
+        toggle_base_dmt(item);
     else if (title == _("Name"))
     {
         if (wxOSX)
@@ -1592,56 +1598,6 @@ void ObjectList::create_default_popupmenu(wxMenu*menu)
         }, "", menu);
 
     menu->AppendSeparator();
-
-    append_menu_item(menu, wxID_ANY, _(L("Base Part(s)")), _(L("Base Part(s)")),
-        [this](wxCommandEvent&) { 
-
-            const wxString snapshot_text = wxString::Format("%s",  _(L("Base Part(s)")));
-            take_snapshot(snapshot_text);
-
-            for (size_t obj_idx=0; obj_idx < m_objects->size(); obj_idx++){
-                wxDataViewItem item = m_objects_model->GetItemById(obj_idx);
-                ModelObject* object = (*m_objects)[obj_idx];
-                bool checked = m_objects_model->IsChecked(item);
-
-                if (checked) {
-                    object->base_dmt = true;
-                    for (auto inst : object->instances)
-                        inst->base_dmt = true;
-                }
-
-                wxGetApp().plater()->canvas3D()->update_instance_base_dmt_for_object(obj_idx);
-                m_objects_model->SetObjectBaseDMTState(item);
-            }
-            // update scene
-            wxGetApp().plater()->update();
-
-        }, "", menu);
-
-    append_menu_item(menu, wxID_ANY, _(L("DMT Part(s)")), _(L("DMT Part(s)")),
-        [this](wxCommandEvent&) { 
-
-            const wxString snapshot_text = wxString::Format("%s",  _(L("DMT Part(s)")));
-            take_snapshot(snapshot_text);
-
-            for (size_t obj_idx=0; obj_idx < m_objects->size(); obj_idx++){
-                wxDataViewItem item = m_objects_model->GetItemById(obj_idx);
-                ModelObject* object = (*m_objects)[obj_idx];
-                bool checked = m_objects_model->IsChecked(item);
-
-                if (checked) {
-                    object->base_dmt = false;
-                    for (auto inst : object->instances)
-                        inst->base_dmt = false;
-                }
-
-                wxGetApp().plater()->canvas3D()->update_instance_base_dmt_for_object(obj_idx);
-                m_objects_model->SetObjectBaseDMTState(item);
-            }
-            // update scene
-            wxGetApp().plater()->update();
-
-        }, "", menu);
 
     menu->AppendSeparator();
 }
@@ -2466,13 +2422,32 @@ void ObjectList::add_object_to_list(size_t obj_idx, bool call_selection_changed)
         m_objects_model->SetPrintableState(piPrintable, obj_idx);
         m_objects_model->SetCheckboxState(ciUnchecked, obj_idx);
         m_objects_model->SetObjectColor("#950918", obj_idx);
+        m_objects_model->SetBaseDMTState(bdDmt, obj_idx);
     }
+
+    model_object->printable = true;
+    model_object->checked = false;
+    model_object->object_color = "#950918";
+    model_object->base_dmt = false;
+    for (auto inst : model_object->instances) {
+        inst->printable = true;
+        inst->checked = false;
+        inst->object_color = "#950918";
+        inst->base_dmt = false;
+    }
+
+    wxGetApp().plater()->canvas3D()->update_instance_printable_state_for_object((size_t)obj_idx);
+    wxGetApp().plater()->canvas3D()->update_instance_checked_state_for_object((size_t)obj_idx);
+    wxGetApp().plater()->canvas3D()->update_instance_object_color_for_object((size_t)obj_idx);
+    wxGetApp().plater()->canvas3D()->update_instance_base_dmt_for_object((size_t)obj_idx);
 
     // add settings to the object, if it has those
     add_settings_item(item, &model_object->config);
 
     // Add layers if it has
     add_layer_root_item(item);
+
+    wxGetApp().plater()->update();
 
 #ifndef __WXOSX__ 
     if (call_selection_changed)
@@ -3684,6 +3659,7 @@ void ObjectList::msw_rescale()
     GetColumn(colPrint      )->SetWidth( 3 * em);
     GetColumn(colCheckbox   )->SetWidth( 3 * em);
     GetColumn(colObjectColor)->SetWidth( 4 * em);
+    GetColumn(colBaseDmt    )->SetWidth( 8 * em);
 
     // rescale all icons, used by ObjectList
     msw_rescale_icons();
@@ -3819,6 +3795,7 @@ void ObjectList::update_after_undo_redo()
     // update printable states on canvas
     wxGetApp().plater()->canvas3D()->update_instance_printable_state_for_objects(obj_idxs);
     wxGetApp().plater()->canvas3D()->update_instance_object_color_for_objects(obj_idxs);
+    wxGetApp().plater()->canvas3D()->update_instance_checked_state_for_objects(obj_idxs);
     wxGetApp().plater()->canvas3D()->update_instance_base_dmt_for_objects(obj_idxs);
     // update scene
     wxGetApp().plater()->update();
@@ -3927,29 +3904,67 @@ void ObjectList::toggle_object_color(wxDataViewItem item)
     if (!(type&(itObject|itInstance/*|itVolume*/)))
         return;
 
-    const int obj_idx = m_objects_model->GetObjectIdByItem(item);
-    ModelObject* object = (*m_objects)[obj_idx];
+    if (type & itObject)
+    {
+        const int obj_idx = m_objects_model->GetObjectIdByItem(item);
+        ModelObject* object = (*m_objects)[obj_idx];
 
-    // get object's color and change it
-    const std::string object_color = m_objects_model->GetNewObjectColor(item);
-    if (object_color == "")
+        // get object's color and change it
+        const std::string object_color = m_objects_model->GetNewObjectColor(item);
+        if (object_color == "")
+            return;
+
+        const wxString snapshot_text = wxString::Format("%s %s", 
+                                                        _(L("Change Object Color")), 
+                                                        object->name);
+        take_snapshot(snapshot_text);
+
+        object->object_color = object_color;
+        // set object color value for all instances in object
+        for (auto inst : object->instances)
+            inst->object_color = object_color;
+
+        // update object color on canvas
+        wxGetApp().plater()->canvas3D()->update_instance_object_color_for_object((size_t)obj_idx);
+
+        // update object color in ObjectList
+        m_objects_model->SetObjectObjectColor(object_color , item);
+    }
+
+    // update scene
+    wxGetApp().plater()->update();
+}
+
+void ObjectList::toggle_base_dmt(wxDataViewItem item)
+{
+    const ItemType type = m_objects_model->GetItemType(item);
+    if (!(type&(itObject|itInstance/*|itVolume*/)))
         return;
 
-    const wxString snapshot_text = wxString::Format("%s %s", 
-                                                    _(L("Change Object Color")), 
-                                                    object->name);
-    take_snapshot(snapshot_text);
+    if (type & itObject)
+    {
+        const int obj_idx = m_objects_model->GetObjectIdByItem(item);
+        ModelObject* object = (*m_objects)[obj_idx];
 
-    object->object_color = object_color;
-    // set object color value for all instances in object
-    for (auto inst : object->instances)
-        inst->object_color = object_color;
+        // get object's color and change it
+        const bool base_dmt = !m_objects_model->IsBasePart(item);
 
-    // update object color on canvas
-    wxGetApp().plater()->canvas3D()->update_instance_object_color_for_object((size_t)obj_idx);
+        const wxString snapshot_text = wxString::Format("%s %s", 
+                                                        _(L("Change Base Dmt")), 
+                                                        object->name);
+        take_snapshot(snapshot_text);
 
-    // update object color in ObjectList
-    m_objects_model->SetObjectObjectColor(object_color , item);
+        object->base_dmt = base_dmt;
+        // set object color value for all instances in object
+        for (auto inst : object->instances)
+            inst->base_dmt = base_dmt;
+
+        // update object color on canvas
+        wxGetApp().plater()->canvas3D()->update_instance_base_dmt_for_object((size_t)obj_idx);
+
+        // update object color in ObjectList
+        m_objects_model->SetObjectBaseDMTState(base_dmt ? bdBase : bdDmt , item);
+    }
 
     // update scene
     wxGetApp().plater()->update();

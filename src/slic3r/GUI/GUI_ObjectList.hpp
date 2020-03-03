@@ -365,6 +365,7 @@ public:
     void toggle_printable_state(wxDataViewItem item);
     void toggle_checkbox_state(wxDataViewItem item);
     void toggle_object_color(wxDataViewItem item);
+    void toggle_base_dmt(wxDataViewItem item);
 
     void show_multi_selection_menu();
 
