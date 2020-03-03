@@ -1641,10 +1641,13 @@ void GLCanvas3D::update_instance_object_color_for_object(const size_t obj_idx)
 
         for (GLVolume* volume : m_volumes.volumes)
         {
-            if ((volume->object_idx() == (int)obj_idx) && (volume->instance_idx() == inst_idx))
+            if ((volume->object_idx() == (int)obj_idx) && (volume->instance_idx() == inst_idx)) {
                 volume->object_color = instance->object_color;
+                volume->update_colors_by_object_color();
+            }
         }
     }
+    wxGetApp().plater()->update();
 }
 
 void GLCanvas3D::update_instance_object_color_for_objects(std::vector<size_t>& object_idxs)
