@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-08-06 09:54+0200\n"
-"PO-Revision-Date: 2020-01-20 17:46+0900\n"
+"PO-Revision-Date: 2020-03-03 15:09+0900\n"
 "Last-Translator: lee hak-min <hangmini12@naver.com>\n"
 "Language-Team: ulsanether\n"
 "Language: ko_KR\n"
@@ -2554,7 +2554,7 @@ msgstr "모든 개체를 선택 합니다"
 
 #: src/slic3r/GUI/MainFrame.cpp:546
 msgid "D&eselect all"
-msgstr "선택 취소 D&select+"
+msgstr "선택 취소"
 
 #: src/slic3r/GUI/MainFrame.cpp:547
 msgid "Deselects all objects"
