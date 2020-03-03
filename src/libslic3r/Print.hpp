@@ -92,8 +92,6 @@ public:
     // so that next call to make_perimeters() performs a union() before computing loops
     bool                    typed_slices;
 
-    std::string             object_color;
-
     Vec3crd                 size;           // XYZ in scaled coordinates
 
     const PrintObjectConfig& config() const         { return m_config; }    
