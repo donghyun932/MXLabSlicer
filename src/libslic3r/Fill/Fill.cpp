@@ -160,6 +160,7 @@ std::vector<SurfaceFill> group_fills(const Layer &layer)
 		            -1,                                 							// auto width
 		            *layer.object()
 		        );
+            params.flow.revise_spacing = layerm.region()->config().revise_spacing.value;
 		        
 		        // Calculate flow spacing for infill pattern generation.
 		        if (! surface.is_solid() && ! is_bridge) {
@@ -399,7 +400,7 @@ void Layer::make_fills()
 		            // so we can safely ignore the slight variation that might have
 		            // been applied to f->spacing
 		        } else {
-		            Flow new_flow = Flow::new_from_spacing(float(f->spacing), surface_fill.params.flow.nozzle_diameter, surface_fill.params.flow.height, surface_fill.params.flow.bridge);
+		            Flow new_flow = Flow::new_from_spacing(float(f->spacing), surface_fill.params.flow.nozzle_diameter, surface_fill.params.flow.height, surface_fill.params.flow.bridge, surface_fill.params.flow.revise_spacing);
 		        	flow_mm3_per_mm = new_flow.mm3_per_mm();
 		        	flow_width      = new_flow.width;
 		        }

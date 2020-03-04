@@ -49,7 +49,7 @@ Flow Flow::new_from_config_width(FlowRole role, const ConfigOptionFloatOrPercent
 }
 
 // This constructor builds a Flow object from a given centerline spacing.
-Flow Flow::new_from_spacing(float spacing, float nozzle_diameter, float height, bool bridge) 
+Flow Flow::new_from_spacing(float spacing, float nozzle_diameter, float height, bool bridge, bool revise_spacing) 
 {
     // we need layer height unless it's a bridge
     if (height <= 0 && !bridge) 
@@ -62,7 +62,7 @@ Flow Flow::new_from_spacing(float spacing, float nozzle_diameter, float height, 
 #ifdef HAS_PERIMETER_LINE_OVERLAP
         (spacing + PERIMETER_LINE_OVERLAP_FACTOR * height * (1. - 0.25 * PI));
 #else
-        (spacing + height * (1. - 0.25 * PI)));
+        revise_spacing ? (spacing + height * (1. - 0.25 * PI)) : spacing);
 #endif
     return Flow(width, bridge ? width : height, nozzle_diameter, bridge);
 }
@@ -78,7 +78,7 @@ float Flow::spacing() const
     float min_flow_spacing = this->width - this->height * (1. - 0.25 * PI);
     float res = this->width - PERIMETER_LINE_OVERLAP_FACTOR * (this->width - min_flow_spacing);
 #else
-    float res = float(this->bridge ? (this->width + BRIDGE_EXTRA_SPACING) : (this->width - this->height * (1. - 0.25 * PI)));
+    float res = float(this->bridge ? (this->width + BRIDGE_EXTRA_SPACING) : this->revise_spacing ? (this->width - this->height * (1. - 0.25 * PI)) : this->width );
 #endif
 //    assert(res > 0.f);
 	if (res <= 0.f)

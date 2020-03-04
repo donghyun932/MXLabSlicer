@@ -114,6 +114,14 @@ void PrintConfigDef::init_fff_params()
     // Maximum extruder temperature, bumped to 1500 to support printing of glass.
     const int max_temp = 1500;
 
+    def = this->add("revise_spacing", coBool);
+    def->label = L("Revise Spacing");
+    def->category = L("General");
+    def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
+                   "TODO 설명 적고 po 파일에 번역본 저장");
+    def->mode = comSimple;
+    def->set_default_value(new ConfigOptionBool(false));
+
     def = this->add("tool_path_spacing", coFloat);
     def->label = L("Tool Path Spacing");
     def->category = L("General");

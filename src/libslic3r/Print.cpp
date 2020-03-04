@@ -99,6 +99,7 @@ bool Print::invalidate_state_by_config_options(const std::vector<t_config_option
         "fan_below_layer_time",
         "orientation",
         "start_point_dislocation",
+        "revise_spacing"
         "method",
         "start_angle",
         "rotation_increment",

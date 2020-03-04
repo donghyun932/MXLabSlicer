@@ -1039,6 +1039,7 @@ void TabPrint::build()
         auto optgroup = page->new_optgroup(_(L("Slicing")));
         optgroup->append_single_option_line("layer_height");
         optgroup->append_single_option_line("tool_path_spacing");
+        optgroup->append_single_option_line("revise_spacing");
         optgroup->append_single_option_line("fill_density");
 
         optgroup = page->new_optgroup(_(L("Dwell Time")));

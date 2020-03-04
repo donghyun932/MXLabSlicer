@@ -376,7 +376,7 @@ void Preset::set_visible_from_appconfig(const AppConfig &app_config)
 const std::vector<std::string>& Preset::print_options()
 {
     static std::vector<std::string> s_opts {
-        "tool_path_spacing", "traverse_speed", "dwell_time", "shield_gas_applied",
+        "revise_spacing", "tool_path_spacing", "traverse_speed", "dwell_time", "shield_gas_applied",
         "layer_height", "first_layer_height", "perimeters", "spiral_vase", "slice_closing_radius", "top_solid_layers", "bottom_solid_layers",
         "extra_perimeters", "ensure_vertical_shell_thickness", "avoid_crossing_perimeters", "thin_walls", "overhangs",
         "seam_position", "external_perimeters_first", "fill_density", "fill_pattern", "top_fill_pattern", "bottom_fill_pattern",

@@ -541,6 +541,7 @@ class PrintRegionConfig : public StaticPrintConfig
 {
     STATIC_PRINT_CONFIG_CACHE(PrintRegionConfig)
 public:
+    ConfigOptionBool                revise_spacing;
     ConfigOptionEnum<MethodEnum>    method;
     ConfigOptionFloat               start_angle;
     ConfigOptionFloat               rotation_increment;
@@ -588,6 +589,7 @@ public:
 protected:
     void initialize(StaticCacheBase &cache, const char *base_ptr)
     {
+        OPT_PTR(revise_spacing);
         OPT_PTR(method);
         OPT_PTR(start_angle);
         OPT_PTR(rotation_increment);
