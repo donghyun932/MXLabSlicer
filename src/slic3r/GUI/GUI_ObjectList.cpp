@@ -274,10 +274,10 @@ void ObjectList::create_objects_ctrl()
     AppendBitmapColumn("V", colCheckbox, wxDATAVIEW_CELL_INERT, 3*em,
         wxALIGN_CENTER_HORIZONTAL, wxDATAVIEW_COL_RESIZABLE);
 
-    AppendBitmapColumn("color", colObjectColor, wxDATAVIEW_CELL_INERT, 4*em,
+    AppendBitmapColumn(_(L("color")), colObjectColor, wxDATAVIEW_CELL_INERT, 4*em,
         wxALIGN_CENTER_HORIZONTAL, wxDATAVIEW_COL_RESIZABLE);
 
-    AppendBitmapColumn("part(s) type", colBaseDmt, wxDATAVIEW_CELL_INERT, 8*em,
+    AppendBitmapColumn(_(L("part(s) type")), colBaseDmt, wxDATAVIEW_CELL_INERT, 8*em,
         wxALIGN_CENTER_HORIZONTAL, wxDATAVIEW_COL_RESIZABLE);
 
     // For some reason under OSX on 4K(5K) monitors in wxDataViewColumn constructor doesn't set width of column.
@@ -777,9 +777,9 @@ void ObjectList::list_manipulation(bool evt_context_menu/* = false*/)
         toggle_printable_state(item);
     else if (title == "V")
         toggle_checkbox_state(item);
-    else if (title == "color")
+    else if (title == _("color"))
         toggle_object_color(item);
-    else if (title == "part(s) type")
+    else if (title == _("part(s) type"))
         toggle_base_dmt(item);
     else if (title == _("Name"))
     {

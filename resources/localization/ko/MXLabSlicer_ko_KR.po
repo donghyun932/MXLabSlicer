@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-08-06 09:54+0200\n"
-"PO-Revision-Date: 2020-03-03 15:09+0900\n"
+"PO-Revision-Date: 2020-03-05 14:23+0900\n"
 "Last-Translator: lee hak-min <hangmini12@naver.com>\n"
 "Language-Team: ulsanether\n"
 "Language: ko_KR\n"
@@ -820,6 +820,118 @@ msgstr "취소 중...."
 #: src/slic3r/GUI/GLCanvas3D.cpp:526
 msgid "Layers heights"
 msgstr "레이어 높이"
+
+#: src/libslic3r/PrintConfig.cpp:126
+msgid "Tool Path Spacing"
+msgstr "공구경로 간격"
+
+#: src/libslic3r/PrintConfig.cpp:135
+msgid "Traverse Speed"
+msgstr "공정 속도"
+
+#: src/libslic3r/PrintConfig.cpp:146
+msgid "Dwell Time"
+msgstr "휴지 시간"
+
+#: src/libslic3r/PrintConfig.cpp:157
+msgid "Shield Gas Applied"
+msgstr "쉴드 가스 추가"
+
+#: src/slic3r/GUI/Tab.cpp:1418
+msgid "Contour"
+msgstr "외곽공정"
+
+#: src/libslic3r/PrintConfig
+msgid "Orientation"
+msgstr "외곽공정 방향"
+
+#: src/libslic3r/PrintConfig
+msgid "Alternating"
+msgstr "방향교차"
+
+#: src/libslic3r/PrintConfig
+msgid "Clockwise"
+msgstr "시계방향"
+
+#: src/libslic3r/PrintConfig
+msgid "Counterclockwise"
+msgstr "반시계방향"
+
+#: src/libslic3r/PrintConfig
+msgid "Start Point Dislocation"
+msgstr "시작 지점 방향"
+
+#: src/libslic3r/PrintConfig
+msgid "Method"
+msgstr "채우기 기법"
+
+#: src/slic3r/GUI/Tab.cpp:1418
+msgid "Filling"
+msgstr "내부 공정"
+
+#: src/libslic3r/PrintConfig
+msgid "Start Angle"
+msgstr "시작 각도"
+
+#: src/libslic3r/PrintConfig
+msgid "Rotation Increment"
+msgstr "시작 각도에 대한 회전 증분"
+
+#: src/libslic3r/PrintConfig
+msgid "Ordering Definition"
+msgstr "외, 내부 공정 정의"
+
+#: src/libslic3r/PrintConfig
+msgid "Fixed For All Layers"
+msgstr "모든 레이어 동일 공정"
+
+#: src/libslic3r/PrintConfig
+msgid "User Edit"
+msgstr "사용자 정의"
+
+#: src/slic3r/GUI/Tab.cpp:2025
+msgid "Feeder"
+msgstr "분말공급"
+
+#: src/libslic3r/PrintConfig
+msgid "Powder Feeders"
+msgstr "분말공급 장치"
+
+#: src/libslic3r/PrintConfig
+msgid "Define"
+msgstr "설정"
+
+#: src/libslic3r/PrintConfig
+msgid "Hopper 1"
+msgstr "분말용기 1"
+
+#: src/libslic3r/PrintConfig
+msgid "Hopper 2"
+msgstr "분말용기 2"
+
+#: src/libslic3r/PrintConfig
+msgid "Hopper 3"
+msgstr "분말용기 3"
+
+#: src/libslic3r/PrintConfig
+msgid "Hopper 4"
+msgstr "분말용기 4"
+
+#: src/libslic3r/PrintConfig
+msgid "Hopper 5"
+msgstr "분말용기 5"
+
+#: src/libslic3r/PrintConfig
+msgid "Hopper 6"
+msgstr "분말용기 6"
+
+#: src/slic3r/GUI/GUI_ObjectList.cpp
+msgid "color"
+msgstr "색상"
+
+#: ssrc/slic3r/GUI/GUI_ObjectList.cpp
+msgid "part(s) type"
+msgstr "파트 구분"
 
 #: src/slic3r/GUI/GLCanvas3D.cpp:623
 msgid "An object outside the print area was detected"
@@ -1900,7 +2012,7 @@ msgstr "잠자리에 들기"
 msgid "Position"
 msgstr "위치"
 
-#: src/slic3r/GUI/GUI_ObjectManipulation.cpp:389
+#: src/slic3r/GUI/Tab.cpp:1418 src/slic3r/GUI/GUI_ObjectManipulation.cpp:389
 #: src/slic3r/GUI/GUI_ObjectManipulation.cpp:444
 msgid "Rotation"
 msgstr "회전"
@@ -2854,6 +2966,10 @@ msgstr "압축(zip)파일 다른이름 저장:"
 #: src/slic3r/GUI/Tab.cpp:3700
 msgid "Slicing"
 msgstr "슬라이싱"
+
+#: src/slic3r/GUI/Tab.cpp:1417
+msgid "Tool path"
+msgstr "공구 경로"
 
 #. TRN "Processing input_file_basename"
 #: src/slic3r/GUI/MainFrame.cpp:817
@@ -4732,7 +4848,15 @@ msgstr "잘못된 핀 헤드 지름"
 
 #: src/slic3r/GUI/Tab.hpp:324 src/slic3r/GUI/Tab.hpp:422
 msgid "Print Settings"
-msgstr "출력 설정"
+msgstr "프린트 설정"
+
+#: src/slic3r/GUI/Tab.hpp:348
+msgid "Toolpath Settings"
+msgstr "공구경로 설정"
+
+#: src/slic3r/GUI/Tab.hpp:383
+msgid "Feeder Settings"
+msgstr "분말공급 설정"
 
 #: src/slic3r/GUI/Tab.hpp:348
 msgid "Filament Settings"
