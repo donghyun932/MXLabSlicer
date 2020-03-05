@@ -4684,9 +4684,10 @@ void Plater::export_gcode()
 			start_dir = RemovableDriveManager::get_instance().get_drive_path();
 		}
 	}
+
     wxFileDialog dlg(this, (printer_technology() == ptFFF) ? _(L("Save NC-code file as:")) : _(L("Save SL1 file as:")),
         start_dir,
-        from_path(""),
+        from_path(default_output_file.filename()),
         GUI::file_wildcards((printer_technology() == ptFFF) ? FT_NCCODE : FT_PNGZIP, default_output_file.extension().string()),
         wxFD_SAVE | wxFD_OVERWRITE_PROMPT
     );

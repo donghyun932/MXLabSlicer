@@ -1396,7 +1396,7 @@ void PrintConfigDef::init_fff_params()
                    "[year], [month], [day], [hour], [minute], [second], [version], [input_filename], "
                    "[input_filename_base].");
     def->full_width = true;
-    def->set_default_value(new ConfigOptionString("[input_filename_base].gcode"));
+    def->set_default_value(new ConfigOptionString(".nc"));
 
     def = this->add("overhangs", coBool);
     def->label = L("Detect bridging perimeters");
