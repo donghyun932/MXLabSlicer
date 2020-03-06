@@ -2727,6 +2727,8 @@ std::string GCode::extrude_loop(ExtrusionLoop loop, std::string description, dou
         for (int i = start_point; i < start_point + point_cnt; i++){
             new_p.push_back(new_p_raw.points[i%point_cnt]);
         }
+        if (new_p.front() != new_p.back())
+            new_p.push_back(new_p.front());
         path->polyline = Polyline(new_p);
         path->simplify(SCALED_RESOLUTION);
 
