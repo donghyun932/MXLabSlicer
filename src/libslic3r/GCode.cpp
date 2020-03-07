@@ -2715,16 +2715,19 @@ std::string GCode::extrude_loop(ExtrusionLoop loop, std::string description, dou
 //    description += ExtrusionEntity::role_to_string(path->role);
         path->object_color = object_color;
 
-        Polyline new_p_raw = Polyline(path->polyline.equally_spaced_points_custom(loop.length() / layer_cnt));
-        int point_cnt = new_p_raw.points.size();
-        int start_point;
+        double start_point_length;
         if (this->config().start_point_dislocation == spdCounterclockwise) {
-            start_point = m_layer_index % point_cnt;
+            start_point_length = ((m_layer_index * 10 + (m_layer_index * 10 / layer_cnt)) % layer_cnt) * loop.length() / layer_cnt;
         } else {
-            start_point = ((-m_layer_index) % point_cnt + point_cnt) % point_cnt;
+            start_point_length = (((-m_layer_index * 10 - (m_layer_index * 10 / layer_cnt)) % layer_cnt + layer_cnt) % layer_cnt) * loop.length() / layer_cnt;
         }
+
+        std::pair<Points, int> result = path->polyline.equally_spaced_points_custom(loop.length() / layer_cnt, start_point_length);
+
+        Polyline new_p_raw = Polyline(result.first);
+        int point_cnt = new_p_raw.points.size();
         Points new_p;
-        for (int i = start_point; i < start_point + point_cnt; i++){
+        for (int i = result.second; i < result.second + point_cnt; i++){
             new_p.push_back(new_p_raw.points[i%point_cnt]);
         }
         if (new_p.front() != new_p.back())
