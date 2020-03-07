@@ -686,6 +686,16 @@ void PrintConfigDef::init_fff_params()
     def->min = 0;
     def->set_default_value(new ConfigOptionFloats { 0.0f });
 
+
+    def = this->add("corner_rounding_r", coFloat);
+    def->label = L("Corner Rounding R");
+    def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
+                   "TODO 설명 적고 po 파일에 번역본 저장");
+    def->sidetext = L("mm");
+    def->min = 0;
+    def->mode = comSimple;
+    def->set_default_value(new ConfigOptionFloat (0.0f));
+
     def = this->add("orientation", coEnum);
     def->label = L("Orientation");
     def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."

@@ -1418,6 +1418,7 @@ void TabFilament::build()
         auto optgroup = page->new_optgroup(_(L("Contour")));
         optgroup->append_single_option_line("orientation");
         optgroup->append_single_option_line("start_point_dislocation");
+        optgroup->append_single_option_line("corner_rounding_r");
 
         optgroup = page->new_optgroup(_(L("Filling")));
         optgroup->append_single_option_line("method");

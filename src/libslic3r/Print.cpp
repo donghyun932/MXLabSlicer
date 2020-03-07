@@ -97,6 +97,7 @@ bool Print::invalidate_state_by_config_options(const std::vector<t_config_option
         "extrusion_multiplier",
         "fan_always_on",
         "fan_below_layer_time",
+        "corner_rounding_r",
         "orientation",
         "start_point_dislocation",
         "revise_spacing"

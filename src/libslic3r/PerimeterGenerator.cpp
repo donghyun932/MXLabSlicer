@@ -298,6 +298,8 @@ void PerimeterGenerator::process()
                             + float(ext_min_spacing / 2. - 1)) :
                         // offset_ex(last, - float(ext_perimeter_width / 2.));
                         offset_ex(last, 0.0f);
+        
+                    offsets = offset_ex(offset_ex(offsets, scale_(-this->config->corner_rounding_r.value), ClipperLib::jtRound), scale_(this->config->corner_rounding_r.value), ClipperLib::jtRound);
                     // look for thin walls
                     if (this->config->thin_walls) {
                         // the following offset2 ensures almost nothing in @thin_walls is narrower than $min_width
@@ -359,7 +361,11 @@ void PerimeterGenerator::process()
                     if (! expolygon.holes.empty()) {
                         holes[i].reserve(holes[i].size() + expolygon.holes.size());
                         for (const Polygon &hole : expolygon.holes)
-                            holes[i].emplace_back(PerimeterGeneratorLoop(hole, i, false));
+                            holes[i].emplace_back(PerimeterGeneratorLoop(
+                                to_polygons(offset_ex(offset_ex(hole, scale_(-this->config->corner_rounding_r.value), ClipperLib::jtRound), scale_(this->config->corner_rounding_r.value), ClipperLib::jtRound))[0], 
+                                i, 
+                                false
+                            ));
                     }
                 }
                 last = std::move(offsets);
