@@ -2716,10 +2716,11 @@ std::string GCode::extrude_loop(ExtrusionLoop loop, std::string description, dou
         path->object_color = object_color;
 
         double start_point_length;
+        int point_step_size = layer_cnt >= 7 ? layer_cnt / 7 : 1; // one_perimeter_how_many_start_points
         if (this->config().start_point_dislocation == spdCounterclockwise) {
-            start_point_length = ((m_layer_index * 10 + (m_layer_index * 10 / layer_cnt)) % layer_cnt) * loop.length() / layer_cnt;
+            start_point_length = ((m_layer_index * point_step_size + (m_layer_index * point_step_size / layer_cnt)) % layer_cnt) * loop.length() / layer_cnt;
         } else {
-            start_point_length = (((-m_layer_index * 10 - (m_layer_index * 10 / layer_cnt)) % layer_cnt + layer_cnt) % layer_cnt) * loop.length() / layer_cnt;
+            start_point_length = (((-m_layer_index * point_step_size - (m_layer_index * point_step_size / layer_cnt)) % layer_cnt + layer_cnt) % layer_cnt) * loop.length() / layer_cnt;
         }
 
         std::pair<Points, int> result = path->polyline.equally_spaced_points_custom(loop.length() / layer_cnt, start_point_length);
