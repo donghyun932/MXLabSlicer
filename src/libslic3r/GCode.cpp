@@ -2204,9 +2204,17 @@ void GCode::process_layer(
                         const auto& by_region_specific = is_anything_overridden ? island.by_region_per_copy(instance_to_print.instance_id, extruder_id, print_wipe_extrusions) : island.by_region;
 
                         if (cf_pattern[i] == 'C'){
-                            gcode += this->extrude_perimeters(print, by_region_specific, lower_layer_edge_grids[instance_to_print.layer_id], instance_to_print.print_object.model_object()->instances[0]->object_color, instance_to_print.print_object.layers().size());
+                            std::string contour_result = this->extrude_perimeters(print, by_region_specific, lower_layer_edge_grids[instance_to_print.layer_id], instance_to_print.print_object.model_object()->instances[0]->object_color, instance_to_print.print_object.layers().size());
+                            if (contour_result != "") {
+                                gcode += ";CUSTOM ANNOTATE CONTOUR START\n";
+                                gcode += contour_result;
+                            }
                         } else if (cf_pattern[i] == 'F') {
-                            gcode += this->extrude_infill(print, by_region_specific, instance_to_print.print_object.model_object()->instances[0]->object_color, instance_to_print.print_object.layers().size());
+                            std::string infill_result = this->extrude_infill(print, by_region_specific, instance_to_print.print_object.model_object()->instances[0]->object_color, instance_to_print.print_object.layers().size());
+                            if (infill_result != "") {
+                                gcode += ";CUSTOM ANNOTATE INFILL START\n";
+                                gcode += infill_result;
+                            }
                         }
                     }
                 }
