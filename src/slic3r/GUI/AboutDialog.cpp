@@ -258,7 +258,7 @@ AboutDialog::AboutDialog()
         const wxString is_lecensed_str = _(L("is licensed under the"));
         const wxString license_str = _(L("GNU Affero General Public License, version 3"));
         const wxString based_on_str = _(L("MXLabSlicer is based on PrusaSlicer by Prusa Research."));
-        const wxString contributors_str = _(L("Contributions by Henrik Brix Andersen, Nicolas Dandrimont, Mark Hindess, Petr Ledvina, Joseph Lenox, Y. Sapir, Mike Sheldrake, Vojtech Bubnik, Donghyun Kim and numerous others."));
+        const wxString contributors_str = _(L("Contributions by Henrik Brix Andersen, Nicolas Dandrimont, Mark Hindess, Petr Ledvina, Joseph Lenox, Y. Sapir, Mike Sheldrake, Vojtech Bubnik, Donghyun Kim, Seungmin Cho and numerous others"));
 		const auto text = wxString::Format(
             "<html>"
             "<body bgcolor= %s link= %s>"

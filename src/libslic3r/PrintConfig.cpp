@@ -66,8 +66,7 @@ void PrintConfigDef::init_common_params()
     def = this->add("layer_height", coFloat);
     def->label = L("Layer height");
     def->category = L("General");
-    def->tooltip = L("This setting controls the height (and thus the total number) of the slices/layers. "
-                   "Thinner layers give better accuracy but take more time to print.");
+    def->tooltip = L("This setting controls the height (and thus total number) of the Slices/Layers.");
     def->sidetext = L("mm");
     def->min = 0;
     def->mode = comSimple;
@@ -119,14 +118,13 @@ void PrintConfigDef::init_fff_params()
     def->category = L("General");
     def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
                    "TODO 설명 적고 po 파일에 번역본 저장");
-    def->mode = comSimple;
+    // def->mode = comSimple;
     def->set_default_value(new ConfigOptionBool(false));
 
     def = this->add("tool_path_spacing", coFloat);
     def->label = L("Tool Path Spacing");
     def->category = L("General");
-    def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
-                   "TODO 설명 적고 po 파일에 번역본 저장");
+    def->tooltip = L("Defines the spacing between tool paths.");
     def->sidetext = L("mm");
     def->min = 0;
     def->mode = comSimple;
@@ -135,8 +133,7 @@ void PrintConfigDef::init_fff_params()
     def = this->add("traverse_speed", coFloat);
     def->label = L("Traverse Speed");
     def->category = L("General");
-    def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
-                   "TODO 설명 적고 po 파일에 번역본 저장");
+    def->tooltip = L("Defines the speed of the feed rate of the traverse during the applying material.");
     def->sidetext = L("mm/min");
     def->max = 1500;
     def->min = 0.001;
@@ -146,8 +143,7 @@ void PrintConfigDef::init_fff_params()
     def = this->add("dwell_time", coFloat);
     def->label = L("Dwell Time");
     def->category = L("General");
-    def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
-                   "TODO 설명 적고 po 파일에 번역본 저장");
+    def->tooltip = L("Defines the waiting time between turning on the powder feeder and the application of material.");
     def->sidetext = L("sec");
     def->min = 0;
     def->mode = comSimple;
@@ -156,9 +152,7 @@ void PrintConfigDef::init_fff_params()
     def = this->add("shield_gas_applied", coBool);
     def->label = L("Shield Gas Applied");
     def->category = L("General");
-    def->tooltip = L("... "
-                   "... "
-                   "...");
+    def->tooltip = L("Enables the shield gas at the nozzle.");
     def->mode = comSimple;
     def->set_default_value(new ConfigOptionBool(false));
 
@@ -693,13 +687,12 @@ void PrintConfigDef::init_fff_params()
                    "TODO 설명 적고 po 파일에 번역본 저장");
     def->sidetext = L("mm");
     def->min = 0;
-    def->mode = comSimple;
+    // def->mode = comSimple;
     def->set_default_value(new ConfigOptionFloat (0.0f));
 
     def = this->add("orientation", coEnum);
     def->label = L("Orientation");
-    def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
-                   "TODO 설명 적고 po 파일에 번역본 저장");
+    def->tooltip = L("Defines the rotation orientation Clockwise or Counterclockwise for the tool path generation of contours. Alternating changes the contour orientation in each layer.");
     def->enum_keys_map = &ConfigOptionEnum<OrientationEnum>::get_enum_values();
     def->enum_values.push_back("alternating");
     def->enum_values.push_back("clockwise");
@@ -712,8 +705,7 @@ void PrintConfigDef::init_fff_params()
 
     def = this->add("start_point_dislocation", coEnum);
     def->label = L("Start Point Dislocation");
-    def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
-                   "TODO 설명 적고 po 파일에 번역본 저장");
+    def->tooltip = L("Contour start points are dislocated in each layer. The parameter specifies, whether the start point location is alternated Clockwise or Counterclockwise.");
     def->enum_keys_map = &ConfigOptionEnum<StartPointDislocationEnum>::get_enum_values();
     def->enum_values.push_back("clockwise");
     def->enum_values.push_back("counterclockwise");
@@ -724,8 +716,7 @@ void PrintConfigDef::init_fff_params()
 
     def = this->add("method", coEnum);
     def->label = L("Method");
-    def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
-                   "TODO 설명 적고 po 파일에 번역본 저장");
+    def->tooltip = L("Defines the active Filling Method of the tool path profiles. Can be choose between Zig, Zigzag and Spiral.");
     def->enum_keys_map = &ConfigOptionEnum<MethodEnum>::get_enum_values();
     def->enum_values.push_back("zig");
     def->enum_values.push_back("zigzag");
@@ -738,24 +729,21 @@ void PrintConfigDef::init_fff_params()
 
     def = this->add("start_angle", coFloat);
     def->label = L("Start Angle");
-    def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
-                   "TODO 설명 적고 po 파일에 번역본 저장");
+    def->tooltip = L("Defines the angle of the tool path direction for the first layer. Only available for Filling Methods Zig and Zigzag");
     def->sidetext = L("degree");
     def->mode = comSimple;
     def->set_default_value(new ConfigOptionFloat(0.0f));
 
     def = this->add("rotation_increment", coFloat);
     def->label = L("Rotation Increment");
-    def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
-                   "TODO 설명 적고 po 파일에 번역본 저장");
+    def->tooltip = L("Defines the increment angle of the tool path direction between two following layers.");
     def->sidetext = L("degree");
     def->mode = comSimple;
     def->set_default_value(new ConfigOptionFloat(90.0f));
 
     def = this->add("fixed_for_all_layers", coEnum);
     def->label = L("Fixed For All Layers");
-    def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
-                   "TODO 설명 적고 po 파일에 번역본 저장");
+    def->tooltip = L("The same ordering methods will be applied to all layers if box is checked.");
     def->enum_keys_map = &ConfigOptionEnum<FixedForAllLayersEnum>::get_enum_values();
     def->enum_values.push_back("c");
     def->enum_values.push_back("f");
@@ -772,8 +760,7 @@ void PrintConfigDef::init_fff_params()
 
     def = this->add("user_edit", coString);
     def->label = L("User Edit");
-    def->tooltip = L("QA할때 이거 보시면 꼭 좀 얘기해주세요."
-                   "TODO 설명 적고 po 파일에 번역본 저장");
+    def->tooltip = L("as like ""CF/CFC""");
     def->set_default_value(new ConfigOptionString(""));
 
     def = this->add("shield_gas_applied", coBool);
@@ -2242,7 +2229,7 @@ void PrintConfigDef::init_fff_params()
     def->gui_flags = "show_value";
     def->label = L("Define");
     def->category = L("Powder Feeders");
-    def->tooltip = L("... ... ...");
+    def->tooltip = L("Defines the powder feeders number.");
     def->mode = comSimple;
     def->enum_values.push_back("91");
     def->enum_values.push_back("92");

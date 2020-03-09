@@ -679,8 +679,8 @@ void MainFrame::init_menubar()
         //     [this](wxCommandEvent&) { Slic3r::GUI::desktop_open_datadir_folder(); });
         // append_menu_item(helpMenu, wxID_ANY, _(L("Report an I&ssue")), wxString::Format(_(L("Report an issue on %s")), SLIC3R_APP_NAME), 
         //     [this](wxCommandEvent&) { wxLaunchDefaultBrowser("http://github.com/donghyun932/slic3r/issues/new"); });
-        // append_menu_item(helpMenu, wxID_ANY, wxString::Format(_(L("&About %s")), SLIC3R_APP_NAME), _(L("Show about dialog")),
-        //     [this](wxCommandEvent&) { Slic3r::GUI::about(); });
+        append_menu_item(helpMenu, wxID_ANY, wxString::Format(_(L("&About %s")), SLIC3R_APP_NAME), _(L("Show about dialog")),
+            [this](wxCommandEvent&) { Slic3r::GUI::about(); });
         // helpMenu->AppendSeparator();
         append_menu_item(helpMenu, wxID_ANY, _(L("Keyboard Shortcuts")) + sep + "&?", _(L("Show the list of the keyboard shortcuts")),
             [this](wxCommandEvent&) { wxGetApp().keyboard_shortcuts(); });
