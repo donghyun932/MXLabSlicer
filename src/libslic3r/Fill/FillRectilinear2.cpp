@@ -780,7 +780,7 @@ bool FillRectilinear2::fill_surface_by_lines(const Surface *surface, const FillP
     ExPolygonWithOffset poly_with_offset(
         surface->expolygon, 
         - rotate_vector.first, 
-        scale_(this->overlap - (0.5 - 0.499f) * this->spacing),
+        scale_(this->overlap - (0.5 - INFILL_OVERLAP_OVER_SPACING) * this->spacing),
         scale_(this->overlap - 0.5 * this->spacing));
     if (poly_with_offset.n_contours_inner == 0) {
         // Not a single infill line fits.
@@ -812,7 +812,7 @@ bool FillRectilinear2::fill_surface_by_lines(const Surface *surface, const FillP
     size_t  n_vlines = (bounding_box.max(0) - bounding_box.min(0) + line_spacing - 1) / line_spacing;
 	coord_t x0 = bounding_box.min(0);
 	if (params.full_infill())
-		x0 += line_spacing / 2;
+		x0 += coord_t((bounding_box.max(0) - bounding_box.min(0)) - (n_vlines- 1) * line_spacing) / 2;
 
 #ifdef SLIC3R_DEBUG
     static int iRun = 0;

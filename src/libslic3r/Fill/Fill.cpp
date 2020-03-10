@@ -127,7 +127,6 @@ std::vector<SurfaceFill> group_fills(const Layer &layer)
             } else if (fill_method == MethodEnum(1)) {
                 params.pattern     = InfillPattern(0);
             } else if (fill_method == MethodEnum(2)) {
-                params.dont_adjust = true;
                 params.pattern     = InfillPattern(6);
             }
 		        
