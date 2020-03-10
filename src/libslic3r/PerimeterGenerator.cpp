@@ -362,7 +362,7 @@ void PerimeterGenerator::process()
                         holes[i].reserve(holes[i].size() + expolygon.holes.size());
                         for (const Polygon &hole : expolygon.holes)
                             holes[i].emplace_back(PerimeterGeneratorLoop(
-                                to_polygons(offset_ex(offset_ex(hole, scale_(-this->config->corner_rounding_r.value), ClipperLib::jtRound), scale_(this->config->corner_rounding_r.value), ClipperLib::jtRound))[0], 
+                                hole,
                                 i, 
                                 false
                             ));
