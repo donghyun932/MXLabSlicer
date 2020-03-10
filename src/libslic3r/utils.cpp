@@ -489,7 +489,6 @@ int copy_file_inner_custom(const std::string& from, const std::string& to, bool 
   std::vector<std::string> lines;
   bool before_layer_change_flag = false;
   bool e_flag = false;
-  bool dwell_flag = false;
 
   std::string g1("G1"), X("X"), Y("Y"), Z("Z"), E("E");
   while(getline(file, str)){
@@ -499,13 +498,14 @@ int copy_file_inner_custom(const std::string& from, const std::string& to, bool 
           // }
           before_layer_change_flag = true;
       }
-      else if (str == ";AFTER_LAYER_CHANGE" && dwell_t >= 0.1) {
-          char dwell[30]; sprintf(dwell, "G4 T%.3lf", dwell_t);
-          lines.push_back(std::string(dwell));
-      }
 
       if ((str == ";CUSTOM ANNOTATE CONTOUR START" || str == ";CUSTOM ANNOTATE INFILL START") && dwell_t >= 0.1) {
-          dwell_flag = true;
+          if (e_flag){
+              lines.push_back("M62");
+              e_flag = false;
+          }
+          char dwell[30]; sprintf(dwell, "G4 T%.3lf", dwell_t);
+          lines.push_back(std::string(dwell));
       }
 
       if (before_layer_change_flag && str.rfind(";", 0) != 0 && str.find(g1) != std::string::npos && (str.find(X) != std::string::npos || str.find(Y) != std::string::npos || str.find(Z) != std::string::npos)){
@@ -516,11 +516,6 @@ int copy_file_inner_custom(const std::string& from, const std::string& to, bool 
               }
           } else if (e_flag) {
               lines.push_back("M62");
-              if (dwell_flag) {
-                  char dwell[30]; sprintf(dwell, "G4 T%.3lf", dwell_t);
-                  lines.push_back(std::string(dwell));
-                  dwell_flag = false;
-              }
               e_flag = false;
           }
           lines.push_back(changing_to_custom_gcode(str));

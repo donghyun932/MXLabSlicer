@@ -2200,21 +2200,18 @@ void GCode::process_layer(
                 std::string cf_pattern = contour_fillings[this->m_layer_index % contour_fillings.size()];
 
                 for (int i = 0; i < cf_pattern.size(); i++){
+                    if (cf_pattern[i] == 'C') {
+                        gcode += ";CUSTOM ANNOTATE CONTOUR START\n";
+                    } else if (cf_pattern[i] == 'F') {
+                        gcode += ";CUSTOM ANNOTATE INFILL START\n";
+                    }
+
                     for (ObjectByExtruder::Island &island : instance_to_print.object_by_extruder.islands) {
                         const auto& by_region_specific = is_anything_overridden ? island.by_region_per_copy(instance_to_print.instance_id, extruder_id, print_wipe_extrusions) : island.by_region;
-
                         if (cf_pattern[i] == 'C'){
-                            std::string contour_result = this->extrude_perimeters(print, by_region_specific, lower_layer_edge_grids[instance_to_print.layer_id], instance_to_print.print_object.model_object()->instances[0]->object_color, instance_to_print.print_object.layers().size());
-                            if (contour_result != "") {
-                                gcode += ";CUSTOM ANNOTATE CONTOUR START\n";
-                                gcode += contour_result;
-                            }
+                            gcode += this->extrude_perimeters(print, by_region_specific, lower_layer_edge_grids[instance_to_print.layer_id], instance_to_print.print_object.model_object()->instances[0]->object_color, instance_to_print.print_object.layers().size());
                         } else if (cf_pattern[i] == 'F') {
-                            std::string infill_result = this->extrude_infill(print, by_region_specific, instance_to_print.print_object.model_object()->instances[0]->object_color, instance_to_print.print_object.layers().size());
-                            if (infill_result != "") {
-                                gcode += ";CUSTOM ANNOTATE INFILL START\n";
-                                gcode += infill_result;
-                            }
+                            gcode += this->extrude_infill(print, by_region_specific, instance_to_print.print_object.model_object()->instances[0]->object_color, instance_to_print.print_object.layers().size());
                         }
                     }
                 }
