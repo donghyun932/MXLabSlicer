@@ -6103,6 +6103,8 @@ void GLCanvas3D::_load_fff_shells()
         }
 
         m_volumes.load_object(model_obj, object_id, instance_ids, "object", m_initialized);
+        for (auto vol : m_volumes.volumes)
+            vol->base_dmt = false;
 
         ++object_id;
     }
