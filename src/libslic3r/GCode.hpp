@@ -234,8 +234,8 @@ protected:
     void            set_extruders(const std::vector<unsigned int> &extruder_ids);
     std::string     preamble();
     std::string     change_layer(coordf_t print_z);
-    std::string     extrude_entity(const ExtrusionEntity &entity, std::string description = "", double speed = -1., std::unique_ptr<EdgeGrid::Grid> *lower_layer_edge_grid = nullptr, std::string object_color = "#FFFFFF", int layer_cnt = 0);
-    std::string     extrude_loop(ExtrusionLoop loop, std::string description, double speed = -1., std::unique_ptr<EdgeGrid::Grid> *lower_layer_edge_grid = nullptr, std::string object_color = "#FFFFFF", int layer_cnt = 0);
+    std::string     extrude_entity(const ExtrusionEntity &entity, std::string description = "", double speed = -1., std::unique_ptr<EdgeGrid::Grid> *lower_layer_edge_grid = nullptr, std::string object_color = "#FFFFFF", int layer_id = 0, int layer_cnt = 0);
+    std::string     extrude_loop(ExtrusionLoop loop, std::string description, double speed = -1., std::unique_ptr<EdgeGrid::Grid> *lower_layer_edge_grid = nullptr, std::string object_color = "#FFFFFF", int layer_id = 0, int layer_cnt = 0);
     std::string     extrude_multi_path(ExtrusionMultiPath multipath, std::string description = "", double speed = -1., std::string object_color = "#FFFFFF");
     std::string     extrude_path(ExtrusionPath path, std::string description = "", double speed = -1., std::string object_color = "#FFFFFF");
 
@@ -292,8 +292,8 @@ protected:
 		// For sequential print, the instance of the object to be printing has to be defined.
 		const size_t                     				 single_object_instance_idx);
 
-    std::string     extrude_perimeters(const Print &print, const std::vector<ObjectByExtruder::Island::Region> &by_region, std::unique_ptr<EdgeGrid::Grid> &lower_layer_edge_grid, std::string object_color = "#FFFFFF", int layer_cnt = 0);
-    std::string     extrude_infill(const Print &print, const std::vector<ObjectByExtruder::Island::Region> &by_region, std::string object_color = "#FFFFFF", int layer_cnt = 0);
+    std::string     extrude_perimeters(const Print &print, const std::vector<ObjectByExtruder::Island::Region> &by_region, std::unique_ptr<EdgeGrid::Grid> &lower_layer_edge_grid, std::string object_color = "#FFFFFF", int layer_id = 0, int layer_cnt = 0);
+    std::string     extrude_infill(const Print &print, const std::vector<ObjectByExtruder::Island::Region> &by_region, std::string object_color = "#FFFFFF", int layer_id = 0, int layer_cnt = 0);
     std::string     extrude_support(const ExtrusionEntityCollection &support_fills);
 
     std::string     travel_to(const Point &point, ExtrusionRole role, std::string comment);
