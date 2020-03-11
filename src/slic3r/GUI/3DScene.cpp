@@ -600,6 +600,7 @@ int GLVolumeCollection::load_wipe_tower_preview(
 GLVolume* GLVolumeCollection::new_toolpath_volume(const float *rgba, size_t reserve_vbo_floats)
 {
 	GLVolume *out = new_nontoolpath_volume(rgba, reserve_vbo_floats);
+  out->base_dmt = false;
 	out->is_extrusion_path = true;
 	return out;
 }
