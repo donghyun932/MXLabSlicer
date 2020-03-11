@@ -2500,7 +2500,7 @@ std::vector<float> polygon_angles_at_vertices(const Polygon &polygon, const std:
 
 std::string GCode::extrude_loop(ExtrusionLoop loop, std::string description, double speed, std::unique_ptr<EdgeGrid::Grid> *lower_layer_edge_grid, std::string object_color, int layer_id, int layer_cnt)
 {
-    printf("%d/%d\n", layer_id, layer_cnt);
+    // printf("%d/%d\n", layer_id, layer_cnt);
     bool want_cw = (this->config().orientation == oeClockwise) || (this->config().orientation == oeAlternating && layer_id % 2 == 0);
     // get a copy; don't modify the orientation of the original loop object otherwise
     // next copies (if any) would not detect the correct orientation
