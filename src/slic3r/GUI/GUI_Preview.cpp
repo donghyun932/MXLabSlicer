@@ -233,19 +233,19 @@ bool Preview::init(wxWindow* parent, Bed3D& bed, Camera& camera, GLToolbar& view
     m_combochecklist_features->Create(this, wxID_ANY, _(L("Feature types")), wxDefaultPosition, wxSize(15 * wxGetApp().em_unit(), -1), wxCB_READONLY);
     std::string feature_text = GUI::into_u8(_(L("Feature types")));
     std::string feature_items = GUI::into_u8(
-        _(L("Perimeter")) + "|" +
+        // _(L("Perimeter")) + "|" +
         _(L("External perimeter")) + "|" +
-        _(L("Overhang perimeter")) + "|" +
+        // _(L("Overhang perimeter")) + "|" +
         _(L("Internal infill")) + "|" +
-        _(L("Solid infill")) + "|" +
-        _(L("Top solid infill")) + "|" +
-        _(L("Bridge infill")) + "|" +
-        _(L("Gap fill")) + "|" +
-        _(L("Skirt")) + "|" +
-        _(L("Support material")) + "|" +
-        _(L("Support material interface")) + "|" +
-        _(L("Wipe tower")) + "|" +
-        _(L("Custom"))
+        // _(L("Solid infill")) + "|" +
+        // _(L("Top solid infill")) + "|" +
+        // _(L("Bridge infill")) + "|" +
+        _(L("Gap fill")) /*+ "|" +*/
+        // _(L("Skirt")) + "|" +
+        // _(L("Support material")) + "|" +
+        // _(L("Support material interface")) + "|" +
+        // _(L("Wipe tower")) + "|" +
+        // _(L("Custom"))
     );
     Slic3r::GUI::create_combochecklist(m_combochecklist_features, feature_text, feature_items, true);
 
@@ -471,8 +471,8 @@ void Preview::show_hide_ui_elements(const std::string& what)
     m_label_show_features->Enable(enable);
     m_combochecklist_features->Enable(enable);
     m_checkbox_travel->Enable(enable); 
-    m_checkbox_retractions->Enable(enable);
-    m_checkbox_unretractions->Enable(enable);
+    m_checkbox_retractions->Enable(false);
+    m_checkbox_unretractions->Enable(false);
     m_checkbox_shells->Enable(enable);
     m_checkbox_legend->Enable(enable);
 
@@ -484,8 +484,8 @@ void Preview::show_hide_ui_elements(const std::string& what)
     m_label_show_features->Show(visible);
     m_combochecklist_features->Show(visible);
     m_checkbox_travel->Show(visible);
-    m_checkbox_retractions->Show(visible);
-    m_checkbox_unretractions->Show(visible);
+    m_checkbox_retractions->Show(false);
+    m_checkbox_unretractions->Show(false);
     m_checkbox_shells->Show(visible);
     m_checkbox_legend->Show(visible);
     m_label_view_type->Show(visible);
