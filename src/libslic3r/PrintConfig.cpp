@@ -763,14 +763,6 @@ void PrintConfigDef::init_fff_params()
     def->tooltip = L("as like ""CF/CFC""");
     def->set_default_value(new ConfigOptionString(""));
 
-    def = this->add("shield_gas_applied", coBool);
-    def->label = L("Shield Gas Applied");
-    def->tooltip = L("... "
-                   "... "
-                   "...");
-    def->mode = comSimple;
-    def->set_default_value(new ConfigOptionBool(false));
-
     def = this->add("filament_diameter", coFloats);
     def->label = L("Diameter");
     def->tooltip = L("Enter your filament diameter here. Good precision is required, so use a caliper "
