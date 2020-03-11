@@ -2407,34 +2407,24 @@ void ObjectList::add_object_to_list(size_t obj_idx, bool call_selection_changed)
         Expand(item);
     }
 
-    // add instances to the object, if it has those
-    if (model_object->instances.size()>1)
+    if (call_selection_changed)
     {
-        std::vector<bool> print_idicator(model_object->instances.size());
-        for (size_t i = 0; i < model_object->instances.size(); ++i)
-            print_idicator[i] = model_object->instances[i]->printable;
-
-        const wxDataViewItem object_item = m_objects_model->GetItemById(obj_idx);
-        m_objects_model->AddInstanceChild(object_item, print_idicator);
-        Expand(m_objects_model->GetInstanceRootItem(object_item));
-    }
-    else {
-        m_objects_model->SetPrintableState(piPrintable, obj_idx);
-        m_objects_model->SetCheckboxState(ciUnchecked, obj_idx);
-        m_objects_model->SetObjectColor("#950918", obj_idx);
-        m_objects_model->SetBaseDMTState(bdDmt, obj_idx);
+        model_object->printable = true;
+        model_object->checked = false;
+        model_object->object_color = "#950918";
+        model_object->base_dmt = false;
+        for (auto inst : model_object->instances) {
+            inst->printable = true;
+            inst->checked = false;
+            inst->object_color = "#950918";
+            inst->base_dmt = false;
+        }
     }
 
-    model_object->printable = true;
-    model_object->checked = false;
-    model_object->object_color = "#950918";
-    model_object->base_dmt = false;
-    for (auto inst : model_object->instances) {
-        inst->printable = true;
-        inst->checked = false;
-        inst->object_color = "#950918";
-        inst->base_dmt = false;
-    }
+    m_objects_model->SetPrintableState(model_object->instances[0]->printable? piPrintable : piUnprintable, obj_idx);
+    m_objects_model->SetCheckboxState(model_object->instances[0]->checked? ciChecked : ciUnchecked, obj_idx);
+    m_objects_model->SetObjectColor(model_object->instances[0]->object_color, obj_idx);
+    m_objects_model->SetBaseDMTState(model_object->instances[0]->base_dmt? bdBase : bdDmt, obj_idx);
 
     wxGetApp().plater()->canvas3D()->update_instance_printable_state_for_object((size_t)obj_idx);
     wxGetApp().plater()->canvas3D()->update_instance_checked_state_for_object((size_t)obj_idx);
