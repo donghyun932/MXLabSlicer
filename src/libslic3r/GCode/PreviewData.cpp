@@ -451,7 +451,7 @@ GCodePreviewData::LegendItemsList GCodePreviewData::get_legend_items(const std::
             {
                 GCodePreviewData::Color color;
                 ::memcpy((void*)color.rgba, (const void*)(tool_colors.data() + i * 4), 4 * sizeof(float));
-                items.emplace_back((boost::format(Slic3r::I18N::translate(L(object_names[i])))).str(), color);
+                items.emplace_back(object_names[i], color);
             }
 
             break;
