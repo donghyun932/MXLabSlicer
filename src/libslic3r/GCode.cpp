@@ -2729,6 +2729,7 @@ std::string GCode::extrude_loop(ExtrusionLoop loop, std::string description, dou
         }
 
         std::pair<Points, int> result = path->polyline.equally_spaced_points_custom(loop.length() / layer_cnt, start_point_length);
+        if (result.second < 0) result.second = 0;
 
         Polyline new_p_raw = Polyline(result.first);
         int point_cnt = new_p_raw.points.size();
