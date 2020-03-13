@@ -3415,7 +3415,8 @@ wxString DoubleSlider::get_tooltip(IconFocus icon_focus)
                                                        "For Edit \"%1%\" code use right mouse button click"))) % tick_code_it->gcode ).str());
     }
 
-    return tooltip;
+    // return tooltip;
+    return _(L(""));
 }
 
 void DoubleSlider::OnMotion(wxMouseEvent& event)
