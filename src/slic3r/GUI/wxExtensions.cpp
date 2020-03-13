@@ -3755,15 +3755,15 @@ void DoubleSlider::OnRightUp(wxMouseEvent& event)
                 add_color_change_menu_item->SetBitmap(create_scaled_bitmap(nullptr, "colorchange_add_m"));
             }
         }
-        else
-        append_menu_item(&menu, wxID_ANY, _(L("Add color change")) + " (M600)", "",
-            [this](wxCommandEvent&) { add_code(Slic3r::ColorChangeCode); }, "colorchange_add_m", &menu);
+        // else
+        // append_menu_item(&menu, wxID_ANY, _(L("Add color change")) + " (M600)", "",
+        //     [this](wxCommandEvent&) { add_code(Slic3r::ColorChangeCode); }, "colorchange_add_m", &menu);
 
-        append_menu_item(&menu, wxID_ANY, _(L("Add pause print")) + " (M601)", "",
-            [this](wxCommandEvent&) { add_code(Slic3r::PausePrintCode); }, "pause_print", &menu);
+        // append_menu_item(&menu, wxID_ANY, _(L("Add pause print")) + " (M601)", "",
+        //     [this](wxCommandEvent&) { add_code(Slic3r::PausePrintCode); }, "pause_print", &menu);
     
-        append_menu_item(&menu, wxID_ANY, _(L("Add custom G-code")), "",
-            [this](wxCommandEvent&) { add_code(""); }, "edit_gcode", &menu);
+        // append_menu_item(&menu, wxID_ANY, _(L("Add custom G-code")), "",
+        //     [this](wxCommandEvent&) { add_code(""); }, "edit_gcode", &menu);
     
         Slic3r::GUI::wxGetApp().plater()->PopupMenu(&menu);
 
