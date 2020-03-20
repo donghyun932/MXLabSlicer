@@ -155,7 +155,7 @@ void RemovableDriveManager::register_window()
 	wndClass.hIcon = LoadIcon(0, IDI_APPLICATION);
 	wndClass.hbrBackground = CreateSolidBrush(RGB(192, 192, 192));
 	wndClass.hCursor = LoadCursor(0, IDC_ARROW);
-	wndClass.lpszClassName = L"PrusaSlicer_aux_class";
+	wndClass.lpszClassName = L"MXLabSlicer_aux_class";
 	wndClass.lpszMenuName = NULL;
 	wndClass.hIconSm = wndClass.hIcon;
 	if(!RegisterClassEx(&wndClass))
@@ -166,8 +166,8 @@ void RemovableDriveManager::register_window()
 
 	HWND hWnd = CreateWindowEx(
 		WS_EX_NOACTIVATE,
-		L"PrusaSlicer_aux_class",
-		L"PrusaSlicer_aux_wnd",
+		L"MXLabSlicer_aux_class",
+		L"MXLabSlicer_aux_wnd",
 		WS_DISABLED, // style
 		CW_USEDEFAULT, 0,
 		640, 480,

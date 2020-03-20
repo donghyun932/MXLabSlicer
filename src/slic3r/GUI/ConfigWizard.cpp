@@ -42,11 +42,11 @@ using Config::SnapshotDB;
 
 // Configuration data structures extensions needed for the wizard
 
-Bundle::Bundle(fs::path source_path, bool is_in_resources, bool is_prusa_bundle)
+Bundle::Bundle(fs::path source_path, bool is_in_resources, bool is_mxlab_bundle)
     : preset_bundle(new PresetBundle)
     , vendor_profile(nullptr)
     , is_in_resources(is_in_resources)
-    , is_prusa_bundle(is_prusa_bundle)
+    , is_mxlab_bundle(is_mxlab_bundle)
 {
     preset_bundle->load_configbundle(source_path.string(), PresetBundle::LOAD_CFGBNDLE_SYSTEM);
     auto first_vendor = preset_bundle->vendors.begin();
@@ -58,7 +58,7 @@ Bundle::Bundle(Bundle &&other)
     : preset_bundle(std::move(other.preset_bundle))
     , vendor_profile(other.vendor_profile)
     , is_in_resources(other.is_in_resources)
-    , is_prusa_bundle(other.is_prusa_bundle)
+    , is_mxlab_bundle(other.is_mxlab_bundle)
 {
     other.vendor_profile = nullptr;
 }
@@ -70,14 +70,14 @@ BundleMap BundleMap::load()
     const auto vendor_dir = (boost::filesystem::path(Slic3r::data_dir()) / "vendor").make_preferred();
     const auto rsrc_vendor_dir = (boost::filesystem::path(resources_dir()) / "profiles").make_preferred();
 
-    auto prusa_bundle_path = (vendor_dir / PresetBundle::PRUSA_BUNDLE).replace_extension(".ini");
-    auto prusa_bundle_rsrc = false;
-    if (! boost::filesystem::exists(prusa_bundle_path)) {
-        prusa_bundle_path = (rsrc_vendor_dir / PresetBundle::PRUSA_BUNDLE).replace_extension(".ini");
-        prusa_bundle_rsrc = true;
+    auto mxlab_bundle_path = (vendor_dir / PresetBundle::MXLAB_BUNDLE).replace_extension(".ini");
+    auto mxlab_bundle_rsrc = false;
+    if (! boost::filesystem::exists(mxlab_bundle_path)) {
+        mxlab_bundle_path = (rsrc_vendor_dir / PresetBundle::MXLAB_BUNDLE).replace_extension(".ini");
+        mxlab_bundle_rsrc = true;
     }
-    Bundle prusa_bundle(std::move(prusa_bundle_path), prusa_bundle_rsrc, true);
-    res.emplace(PresetBundle::PRUSA_BUNDLE, std::move(prusa_bundle));
+    Bundle mxlab_bundle(std::move(mxlab_bundle_path), mxlab_bundle_rsrc, true);
+    res.emplace(PresetBundle::MXLAB_BUNDLE, std::move(mxlab_bundle));
 
     // Load the other bundles in the datadir/vendor directory
     // and then additionally from resources/profiles.
@@ -101,19 +101,19 @@ BundleMap BundleMap::load()
     return res;
 }
 
-Bundle& BundleMap::prusa_bundle()
+Bundle& BundleMap::mxlab_bundle()
 {
-    auto it = find(PresetBundle::PRUSA_BUNDLE);
+    auto it = find(PresetBundle::MXLAB_BUNDLE);
     if (it == end()) {
-        throw std::runtime_error("ConfigWizard: Internal error in BundleMap: PRUSA_BUNDLE not loaded");
+        throw std::runtime_error("ConfigWizard: Internal error in BundleMap: MXLAB_BUNDLE not loaded");
     }
 
     return it->second;
 }
 
-const Bundle& BundleMap::prusa_bundle() const
+const Bundle& BundleMap::mxlab_bundle() const
 {
-    return const_cast<BundleMap*>(this)->prusa_bundle();
+    return const_cast<BundleMap*>(this)->mxlab_bundle();
 }
 
 
@@ -505,7 +505,7 @@ void PagePrinters::set_run_reason(ConfigWizard::RunReason run_reason)
     if (technology == T_FFF
         && (run_reason == ConfigWizard::RR_DATA_EMPTY || run_reason == ConfigWizard::RR_DATA_LEGACY)
         && printer_pickers.size() > 0 
-        && printer_pickers[0]->vendor_id == PresetBundle::PRUSA_BUNDLE) {
+        && printer_pickers[0]->vendor_id == PresetBundle::MXLAB_BUNDLE) {
         printer_pickers[0]->select_one(0, true);
     }
 }
@@ -768,7 +768,7 @@ PageUpdate::PageUpdate(ConfigWizard *parent)
 PageMode::PageMode(ConfigWizard *parent)
     : ConfigWizardPage(parent, _(L("View mode")), _(L("View mode")))
 {
-    append_text(_(L("PrusaSlicer's user interfaces comes in three variants:\nSimple, Advanced, and Expert.\n"
+    append_text(_(L("MXLabSlicer's user interfaces comes in three variants:\nSimple, Advanced, and Expert.\n"
         "The Simple mode shows only the most frequently used settings relevant for regular 3D printing. "
         "The other two offer progressively more sophisticated fine-tuning, "
         "they are suitable for advanced and expert users, respectively.")));
@@ -820,7 +820,7 @@ PageVendors::PageVendors(ConfigWizard *parent)
 
     for (const auto &pair : wizard_p()->bundles) {
         const VendorProfile *vendor = pair.second.vendor_profile;
-        if (vendor->id == PresetBundle::PRUSA_BUNDLE) { continue; }
+        if (vendor->id == PresetBundle::MXLAB_BUNDLE) { continue; }
 
         auto *cbox = new wxCheckBox(this, wxID_ANY, vendor->name);
         cbox->Bind(wxEVT_CHECKBOX, [=](wxCommandEvent &event) {
@@ -1030,7 +1030,7 @@ void PageTemperatures::apply_custom_config(DynamicPrintConfig &config)
 
 ConfigWizardIndex::ConfigWizardIndex(wxWindow *parent)
     : wxPanel(parent)
-    , bg(ScalableBitmap(parent, "PrusaSlicer_192px_transparent.png", 192))
+    , bg(ScalableBitmap(parent, "MXLabSlicer_192px_transparent.png", 192))
     , bullet_black(ScalableBitmap(parent, "bullet_black.png"))
     , bullet_blue(ScalableBitmap(parent, "bullet_blue.png"))
     , bullet_white(ScalableBitmap(parent, "bullet_white.png"))
@@ -1309,14 +1309,14 @@ const std::string& Materials::get_material_vendor(const Preset *preset)
 // priv
 
 static const std::unordered_map<std::string, std::pair<std::string, std::string>> legacy_preset_map {{
-    { "Original Prusa i3 MK2.ini",                           std::make_pair("MK2S", "0.4") },
-    { "Original Prusa i3 MK2 MM Single Mode.ini",            std::make_pair("MK2SMM", "0.4") },
-    { "Original Prusa i3 MK2 MM Single Mode 0.6 nozzle.ini", std::make_pair("MK2SMM", "0.6") },
-    { "Original Prusa i3 MK2 MultiMaterial.ini",             std::make_pair("MK2SMM", "0.4") },
-    { "Original Prusa i3 MK2 MultiMaterial 0.6 nozzle.ini",  std::make_pair("MK2SMM", "0.6") },
-    { "Original Prusa i3 MK2 0.25 nozzle.ini",               std::make_pair("MK2S", "0.25") },
-    { "Original Prusa i3 MK2 0.6 nozzle.ini",                std::make_pair("MK2S", "0.6") },
-    { "Original Prusa i3 MK3.ini",                           std::make_pair("MK3",  "0.4") },
+    { "Original MXLab i3 MK2.ini",                           std::make_pair("MK2S", "0.4") },
+    { "Original MXLab i3 MK2 MM Single Mode.ini",            std::make_pair("MK2SMM", "0.4") },
+    { "Original MXLab i3 MK2 MM Single Mode 0.6 nozzle.ini", std::make_pair("MK2SMM", "0.6") },
+    { "Original MXLab i3 MK2 MultiMaterial.ini",             std::make_pair("MK2SMM", "0.4") },
+    { "Original MXLab i3 MK2 MultiMaterial 0.6 nozzle.ini",  std::make_pair("MK2SMM", "0.6") },
+    { "Original MXLab i3 MK2 0.25 nozzle.ini",               std::make_pair("MK2S", "0.25") },
+    { "Original MXLab i3 MK2 0.6 nozzle.ini",                std::make_pair("MK2S", "0.6") },
+    { "Original MXLab i3 MK3.ini",                           std::make_pair("MK3",  "0.4") },
 }};
 
 void ConfigWizard::priv::load_pages()
@@ -1404,7 +1404,7 @@ void ConfigWizard::priv::load_vendors()
 
                 const auto &model = needle->second.first;
                 const auto &variant = needle->second.second;
-                appconfig_new.set_variant("PrusaResearch", model, variant, true);
+                appconfig_new.set_variant("MXLabResearch", model, variant, true);
             }
     }
 
@@ -1460,7 +1460,7 @@ void ConfigWizard::priv::create_3rdparty_pages()
 {
     for (const auto &pair : bundles) {
         const VendorProfile *vendor = pair.second.vendor_profile;
-        if (vendor->id == PresetBundle::PRUSA_BUNDLE) { continue; }
+        if (vendor->id == PresetBundle::MXLAB_BUNDLE) { continue; }
 
         bool is_fff_technology = false;
         bool is_sla_technology = false;
@@ -1644,8 +1644,8 @@ void ConfigWizard::priv::apply_config(AppConfig *app_config, PresetBundle *prese
     for (const auto &pair : bundles) {
         if (! pair.second.is_in_resources) { continue; }
 
-        if (pair.second.is_prusa_bundle) {
-            // Always install Prusa bundle, because it has a lot of filaments/materials
+        if (pair.second.is_mxlab_bundle) {
+            // Always install MXLab bundle, because it has a lot of filaments/materials
             // likely to be referenced by other profiles.
             install_bundles.emplace_back(pair.first);
             continue;
@@ -1718,12 +1718,12 @@ void ConfigWizard::priv::apply_config(AppConfig *app_config, PresetBundle *prese
     // The default is the first selected printer model (one with at least 1 variant selected).
     // The default is only applied by load_presets() if the user doesn't have a (visible) printer
     // selected already.
-    // Prusa printers are considered first, then 3rd party.
-    const auto config_prusa = enabled_vendors.find("PrusaResearch");
-    if (config_prusa != enabled_vendors.end()) {
-        for (const auto &model : bundles.prusa_bundle().vendor_profile->models) {
-            const auto model_it = config_prusa->second.find(model.id);
-            if (model_it != config_prusa->second.end() && model_it->second.size() > 0) {
+    // MXLab printers are considered first, then 3rd party.
+    const auto config_mxlab = enabled_vendors.find("MXLabResearch");
+    if (config_mxlab != enabled_vendors.end()) {
+        for (const auto &model : bundles.mxlab_bundle().vendor_profile->models) {
+            const auto model_it = config_mxlab->second.find(model.id);
+            if (model_it != config_mxlab->second.end() && model_it->second.size() > 0) {
                 preferred_model = model.id;
                 break;
             }
@@ -1731,7 +1731,7 @@ void ConfigWizard::priv::apply_config(AppConfig *app_config, PresetBundle *prese
     }
     if (preferred_model.empty()) {
         for (const auto &bundle : bundles) {
-            if (bundle.second.is_prusa_bundle) { continue; }
+            if (bundle.second.is_mxlab_bundle) { continue; }
 
             const auto config = enabled_vendors.find(bundle.first);
             for (const auto &model : bundle.second.vendor_profile->models) {
@@ -1841,16 +1841,16 @@ ConfigWizard::ConfigWizard(wxWindow *parent)
     p->btnsizer->Add(p->btn_finish, 0, wxLEFT, BTN_SPACING);
     p->btnsizer->Add(p->btn_cancel, 0, wxLEFT, BTN_SPACING);
 
-    const auto prusa_it = p->bundles.find("PrusaResearch");
-    wxCHECK_RET(prusa_it != p->bundles.cend(), "Vendor PrusaResearch not found");
-    const VendorProfile *vendor_prusa = prusa_it->second.vendor_profile;
+    const auto mxlab_it = p->bundles.find("MXLabResearch");
+    wxCHECK_RET(mxlab_it != p->bundles.cend(), "Vendor MXLabResearch not found");
+    const VendorProfile *vendor_mxlab = mxlab_it->second.vendor_profile;
 
     p->add_page(p->page_welcome = new PageWelcome(this));
 
-    p->page_fff = new PagePrinters(this, _(L("Prusa FFF Technology Printers")), "Prusa FFF", *vendor_prusa, 0, T_FFF);
+    p->page_fff = new PagePrinters(this, _(L("MXLab FFF Technology Printers")), "MXLab FFF", *vendor_mxlab, 0, T_FFF);
     p->add_page(p->page_fff);
 
-    p->page_msla = new PagePrinters(this, _(L("Prusa MSLA Technology Printers")), "Prusa MSLA", *vendor_prusa, 0, T_SLA);
+    p->page_msla = new PagePrinters(this, _(L("MXLab MSLA Technology Printers")), "MXLab MSLA", *vendor_mxlab, 0, T_SLA);
     p->add_page(p->page_msla);
 
     p->any_sla_selected = p->check_sla_selected();

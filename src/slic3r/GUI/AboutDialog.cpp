@@ -12,7 +12,7 @@ AboutDialogLogo::AboutDialogLogo(wxWindow* parent)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize)
 {
     this->SetBackgroundColour(*wxWHITE);
-    this->logo = wxBitmap(from_u8(Slic3r::var("PrusaSlicer_192px.png")), wxBITMAP_TYPE_PNG);
+    this->logo = wxBitmap(from_u8(Slic3r::var("MXLabSlicer_192px.png")), wxBITMAP_TYPE_PNG);
     this->SetMinSize(this->logo.GetSize());
     
     this->Bind(wxEVT_PAINT, &AboutDialogLogo::onRepaint, this);
@@ -209,7 +209,7 @@ AboutDialog::AboutDialog()
 	main_sizer->Add(hsizer, 0, wxEXPAND | wxALL, 20);
 
     // logo
-    m_logo_bitmap = ScalableBitmap(this, "PrusaSlicer_192px.png", 192);
+    m_logo_bitmap = ScalableBitmap(this, "MXLabSlicer_192px.png", 192);
     m_logo = new wxStaticBitmap(this, wxID_ANY, m_logo_bitmap.bmp());
 	hsizer->Add(m_logo, 1, wxALIGN_CENTER_VERTICAL);
     
@@ -257,12 +257,13 @@ AboutDialog::AboutDialog()
         // TRN "Slic3r _is licensed under the_ License"
         const wxString is_lecensed_str = _(L("is licensed under the"));
         const wxString license_str = _(L("GNU Affero General Public License, version 3"));
-        const wxString based_on_str = _(L("PrusaSlicer is based on Slic3r by Alessandro Ranellucci and the RepRap community."));
-        const wxString contributors_str = _(L("Contributions by Henrik Brix Andersen, Nicolas Dandrimont, Mark Hindess, Petr Ledvina, Joseph Lenox, Y. Sapir, Mike Sheldrake, Vojtech Bubnik and numerous others."));
+        const wxString based_on_str = _(L("MXLabSlicer is based on PrusaSlicer by Prusa Research."));
+        const wxString contributors_str = _(L("Contributions by Henrik Brix Andersen, Nicolas Dandrimont, Mark Hindess, Petr Ledvina, Joseph Lenox, Y. Sapir, Mike Sheldrake, Vojtech Bubnik, Donghyun Kim, Seungmin Cho and numerous others"));
 		const auto text = wxString::Format(
             "<html>"
             "<body bgcolor= %s link= %s>"
             "<font color=%s>"
+            "%s &copy; 2020-2021 Insstek Research. <br />"
             "%s &copy; 2016-2019 Prusa Research. <br />"
             "%s &copy; 2011-2018 Alessandro Ranellucci. <br />"
             "<a href=\"http://slic3r.org/\">Slic3r</a> %s "

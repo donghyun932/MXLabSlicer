@@ -81,7 +81,7 @@ static int arduino_read_sig_bytes(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m)
   return 3;
 }
 
-static int prusa_init_external_flash(PROGRAMMER * pgm)
+static int mxlab_init_external_flash(PROGRAMMER * pgm)
 {
   // Note: send/receive as in _the firmare_ send & receives
   const char entry_magic_send[]             = "start\n";
@@ -97,16 +97,16 @@ static int prusa_init_external_flash(PROGRAMMER * pgm)
   recv_size = sizeof(entry_magic_send) - 1;
   res = serial_recv(&pgm->fd, (unsigned char *)buffer, recv_size);
   if (res < 0) {
-    avrdude_message(MSG_INFO, "%s: prusa_init_external_flash(): MK3 printer did not boot up on time or serial communication failed\n", progname);
+    avrdude_message(MSG_INFO, "%s: mxlab_init_external_flash(): MK3 printer did not boot up on time or serial communication failed\n", progname);
     return -1;
   } else if (strncmp(buffer, entry_magic_send, recv_size) != 0) {
-    avrdude_message(MSG_INFO, "%s: prusa_init_external_flash(): MK3 printer emitted incorrect start code: `%*s`\n", progname, recv_size, buffer);
+    avrdude_message(MSG_INFO, "%s: mxlab_init_external_flash(): MK3 printer emitted incorrect start code: `%*s`\n", progname, recv_size, buffer);
     return -1;
   }
 
   // 2. Send the external flash programmer enter command
   if (serial_send(&pgm->fd, entry_magic_receive, sizeof(entry_magic_receive) - 1) < 0) {
-    avrdude_message(MSG_INFO, "%s: prusa_init_external_flash(): Failed to send command to the printer\n",progname);
+    avrdude_message(MSG_INFO, "%s: mxlab_init_external_flash(): Failed to send command to the printer\n",progname);
     return -1;
   }
 
@@ -114,10 +114,10 @@ static int prusa_init_external_flash(PROGRAMMER * pgm)
   recv_size = sizeof(entry_magic_cfm) - 1;
   res = serial_recv(&pgm->fd, (unsigned char *)buffer, recv_size);
   if (res < 0) {
-    avrdude_message(MSG_INFO, "%s: prusa_init_external_flash(): MK3 printer did not boot up on time or serial communication failed\n", progname);
+    avrdude_message(MSG_INFO, "%s: mxlab_init_external_flash(): MK3 printer did not boot up on time or serial communication failed\n", progname);
     return -1;
   } else if (strncmp(buffer, entry_magic_cfm, recv_size) != 0) {
-    avrdude_message(MSG_INFO, "%s: prusa_init_external_flash(): MK3 printer emitted incorrect cfm code: `%*s`\n", progname, recv_size, buffer);
+    avrdude_message(MSG_INFO, "%s: mxlab_init_external_flash(): MK3 printer emitted incorrect cfm code: `%*s`\n", progname, recv_size, buffer);
     return -1;
   }
 
@@ -153,8 +153,8 @@ static int arduino_open(PROGRAMMER * pgm, char * port)
    */
   stk500_drain(pgm, 0);
 
-  // Initialization sequence for programming the external FLASH on the Prusa MK3
-  if (prusa_init_external_flash(pgm) < 0) {
+  // Initialization sequence for programming the external FLASH on the MXLab MK3
+  if (mxlab_init_external_flash(pgm) < 0) {
     avrdude_message(MSG_INFO, "%s: arduino_open(): Failed to initialize MK3 external flash programming mode\n", progname);
     return -1;
   }

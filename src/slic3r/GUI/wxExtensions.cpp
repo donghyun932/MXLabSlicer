@@ -689,6 +689,40 @@ void ObjectDataViewModelNode::set_printable_icon(PrintIndicator printable)
                        create_scaled_bitmap(nullptr, m_printable == piPrintable ? "eye_open.png" : "eye_closed.png");
 }
 
+void ObjectDataViewModelNode::set_checkbox_icon(CheckboxIndicator checked)
+{
+    m_checked = checked;
+    m_checkbox_icon = m_checked == ciUndef ? m_empty_bmp :
+                       create_scaled_bitmap(nullptr, m_checked == ciChecked ? "checked_box.png" : "none_checked_box.png");
+}
+
+void ObjectDataViewModelNode::set_object_color_bitmap(std::string object_color)
+{
+  m_object_color = object_color;
+
+  unsigned char rgb[3];
+  const double em = Slic3r::GUI::wxGetApp().em_unit();
+  const int icon_width = lround(3.2 * em);
+  const int icon_height = lround(1.6 * em);
+  std::string bitmap_key = object_color + "-h" + std::to_string(icon_height) + "-w" + std::to_string(icon_width);
+
+  wxBitmap* bitmap = m_bitmap_cache->find(bitmap_key);
+  if (bitmap == nullptr) {
+      // Paint the color icon.
+      Slic3r::PresetBundle::parse_color(object_color, rgb);
+      bitmap = m_bitmap_cache->insert(bitmap_key, m_bitmap_cache->mksolid(icon_width, icon_height, rgb));
+  }
+  m_object_color_bmp = *bitmap;
+}
+
+void ObjectDataViewModelNode::set_base_dmt(BaseDmtIndicator base_dmt)
+{
+    m_base_dmt = base_dmt;
+    m_base_dmt_icon = m_base_dmt == bdUndef ? m_empty_bmp :
+                       create_scaled_bitmap(nullptr, m_base_dmt == bdBase ? "base.png" : "dmt.png");
+
+}
+
 void ObjectDataViewModelNode::update_settings_digest_bitmaps()
 {
     m_bmp = m_empty_bmp;
@@ -736,6 +770,26 @@ void ObjectDataViewModelNode::msw_rescale()
     if (m_printable != piUndef)
         m_printable_icon = create_scaled_bitmap(nullptr, m_printable == piPrintable ? "eye_open.png" : "eye_closed.png");
 
+    if (m_checked != ciUndef)
+        m_checkbox_icon = create_scaled_bitmap(nullptr, m_checked == ciChecked ? "checked_box.png" : "none_checked_box.png");
+
+    if (m_base_dmt != bdUndef)
+        m_base_dmt_icon = create_scaled_bitmap(nullptr, m_base_dmt == bdBase ? "base.png" : "dmt.png");
+
+    unsigned char rgb[3];
+    const double em = Slic3r::GUI::wxGetApp().em_unit();
+    const int icon_width = lround(3.2 * em);
+    const int icon_height = lround(1.6 * em);
+    std::string bitmap_key = m_object_color + "-h" + std::to_string(icon_height) + "-w" + std::to_string(icon_width);
+
+    wxBitmap* bitmap = m_bitmap_cache->find(bitmap_key);
+    if (bitmap == nullptr) {
+        // Paint the color icon.
+        Slic3r::PresetBundle::parse_color(m_object_color, rgb);
+        bitmap = m_bitmap_cache->insert(bitmap_key, m_bitmap_cache->mksolid(icon_width, icon_height, rgb));
+    }
+    m_object_color_bmp = *bitmap;
+
     if (!m_opt_categories.empty())
         update_settings_digest_bitmaps();
 }
@@ -753,14 +807,14 @@ bool ObjectDataViewModelNode::SetValue(const wxVariant& variant, unsigned col)
         m_bmp = data.GetBitmap();
         m_name = data.GetText();
         return true; }
-    case colExtruder: {
-        DataViewBitmapText data;
-        data << variant;
-        m_extruder_bmp = data.GetBitmap();
-        m_extruder = data.GetText() == "0" ? _(L("default")) : data.GetText();
-        return true; }
-    case colEditing:
-        m_action_icon << variant;
+    case colCheckbox:
+        m_checkbox_icon << variant;
+        return true;
+    case colObjectColor:
+        m_object_color_bmp << variant;
+        return true;
+    case colBaseDmt:
+        m_base_dmt_icon << variant;
         return true;
     default:
         printf("MyObjectTreeModel::SetValue: wrong column");
@@ -1025,6 +1079,117 @@ void ObjectDataViewModel::UpdateInstancesPrintable(wxDataViewItem parent_item)
     }
 }
 
+void ObjectDataViewModel::UpdateObjectBaseDMT(wxDataViewItem parent_item)
+{
+    const wxDataViewItem inst_root_item = GetInstanceRootItem(parent_item);
+    if (!inst_root_item) 
+        return;
+
+    ObjectDataViewModelNode* inst_root_node = (ObjectDataViewModelNode*)inst_root_item.GetID();
+
+    const size_t child_cnt = inst_root_node->GetChildren().Count();
+    BaseDmtIndicator obj_bd = bdDmt;
+    for (size_t i=0; i < child_cnt; i++)
+        if (inst_root_node->GetNthChild(i)->IsBasePart() & bdBase) {
+            obj_bd = bdBase;
+            break;
+        }
+
+    ObjectDataViewModelNode* obj_node = (ObjectDataViewModelNode*)parent_item.GetID();
+    obj_node->set_base_dmt(obj_bd);
+    ItemChanged(parent_item);
+
+}
+
+void ObjectDataViewModel::UpdateInstancesBaseDMT(wxDataViewItem parent_item)
+{
+    const wxDataViewItem inst_root_item = GetInstanceRootItem(parent_item);
+    if (!inst_root_item) 
+        return;
+
+    ObjectDataViewModelNode* obj_node = (ObjectDataViewModelNode*)parent_item.GetID();
+    const BaseDmtIndicator obj_bd = obj_node->IsBasePart();
+
+    ObjectDataViewModelNode* inst_root_node = (ObjectDataViewModelNode*)inst_root_item.GetID();
+    const size_t child_cnt = inst_root_node->GetChildren().Count();
+
+    for (size_t i=0; i < child_cnt; i++)
+    {
+        ObjectDataViewModelNode* inst_node = inst_root_node->GetNthChild(i);
+        inst_node->set_base_dmt(obj_bd);
+        ItemChanged(wxDataViewItem((void*)inst_node));
+    }
+}
+
+void ObjectDataViewModel::UpdateObjectCheckbox(wxDataViewItem parent_item)
+{
+    const wxDataViewItem inst_root_item = GetInstanceRootItem(parent_item);
+    if (!inst_root_item) 
+        return;
+
+    ObjectDataViewModelNode* inst_root_node = (ObjectDataViewModelNode*)inst_root_item.GetID();
+
+    const size_t child_cnt = inst_root_node->GetChildren().Count();
+    CheckboxIndicator obj_pi = ciUnchecked;
+    for (size_t i=0; i < child_cnt; i++)
+        if (inst_root_node->GetNthChild(i)->IsChecked() & ciChecked) {
+            obj_pi = ciChecked;
+            break;
+        }
+    // and set checkbox state for object_node to piUndef
+    ObjectDataViewModelNode* obj_node = (ObjectDataViewModelNode*)parent_item.GetID();
+    obj_node->set_checkbox_icon(obj_pi);
+    ItemChanged(parent_item);
+}
+
+// update checkbox property for all instances from object
+void ObjectDataViewModel::UpdateInstancesCheckbox(wxDataViewItem parent_item)
+{
+    const wxDataViewItem inst_root_item = GetInstanceRootItem(parent_item);
+    if (!inst_root_item) 
+        return;
+
+    ObjectDataViewModelNode* obj_node = (ObjectDataViewModelNode*)parent_item.GetID();
+    const CheckboxIndicator obj_pi = obj_node->IsChecked();
+
+    ObjectDataViewModelNode* inst_root_node = (ObjectDataViewModelNode*)inst_root_item.GetID();
+    const size_t child_cnt = inst_root_node->GetChildren().Count();
+
+    for (size_t i=0; i < child_cnt; i++)
+    {
+        ObjectDataViewModelNode* inst_node = inst_root_node->GetNthChild(i);
+        // and set checkbox state for object_node to piUndef
+        inst_node->set_checkbox_icon(obj_pi);
+        ItemChanged(wxDataViewItem((void*)inst_node));
+    }
+}
+
+void ObjectDataViewModel::UpdateObjectObjectColor(wxDataViewItem parent_item)
+{
+}
+
+// update object color property for all instances from object
+void ObjectDataViewModel::UpdateInstancesObjectColor(wxDataViewItem parent_item)
+{
+    const wxDataViewItem inst_root_item = GetInstanceRootItem(parent_item);
+    if (!inst_root_item) 
+        return;
+
+    ObjectDataViewModelNode* obj_node = (ObjectDataViewModelNode*)parent_item.GetID();
+    const std::string obj_pi = obj_node->GetObjectColor();
+
+    ObjectDataViewModelNode* inst_root_node = (ObjectDataViewModelNode*)inst_root_item.GetID();
+    const size_t child_cnt = inst_root_node->GetChildren().Count();
+
+    for (size_t i=0; i < child_cnt; i++)
+    {
+        ObjectDataViewModelNode* inst_node = inst_root_node->GetNthChild(i);
+        // and set object color state for object_node to piUndef
+        inst_node->set_object_color_bitmap(obj_pi);
+        ItemChanged(wxDataViewItem((void*)inst_node));
+    }
+}
+
 bool ObjectDataViewModel::IsPrintable(const wxDataViewItem& item) const
 {
     ObjectDataViewModelNode* node = (ObjectDataViewModelNode*)item.GetID();
@@ -1032,6 +1197,54 @@ bool ObjectDataViewModel::IsPrintable(const wxDataViewItem& item) const
         return false;
 
     return node->IsPrintable() == piPrintable;
+}
+
+bool ObjectDataViewModel::IsChecked(const wxDataViewItem& item) const
+{
+    ObjectDataViewModelNode* node = (ObjectDataViewModelNode*)item.GetID();
+    if (!node)
+        return false;
+
+    return node->IsChecked() == ciChecked;
+}
+
+bool ObjectDataViewModel::IsBasePart(const wxDataViewItem& item) const
+{
+    ObjectDataViewModelNode* node = (ObjectDataViewModelNode*)item.GetID();
+    if (!node)
+        return false;
+    return node->IsBasePart() == bdBase;
+}
+
+std::string ObjectDataViewModel::GetObjectColor(const wxDataViewItem& item) const
+{
+    ObjectDataViewModelNode* node = (ObjectDataViewModelNode*)item.GetID();
+    if (!node)
+        return "#950918";
+
+    return node->GetObjectColor();
+}
+
+std::string ObjectDataViewModel::GetNewObjectColor(const wxDataViewItem& item) const
+{
+    ObjectDataViewModelNode* node = (ObjectDataViewModelNode*)item.GetID();
+    if (!node)
+        return "#950918";
+
+    const std::string& color = node->GetObjectColor();
+    wxColour clr(color);
+    if (!clr.IsOk())
+        clr = wxColour(0, 0, 0); // Don't set alfa to transparence
+
+    auto data = new wxColourData();
+    data->SetChooseFull(1);
+    data->SetColour(clr);
+
+    wxColourDialog dialog(nullptr, data);
+    dialog.CenterOnParent();
+    if (dialog.ShowModal() == wxID_OK)
+        return dialog.GetColourData().GetColour().GetAsString(wxC2S_HTML_SYNTAX).ToStdString();
+    return "";
 }
 
 wxDataViewItem ObjectDataViewModel::AddLayersRoot(const wxDataViewItem &parent_item)
@@ -1536,43 +1749,14 @@ bool ObjectDataViewModel::UpdateColumValues(unsigned col)
     {
     case colPrint:
     case colName:
-    case colEditing:
+    case colCheckbox:
+    case colObjectColor:
+    case colBaseDmt:
         return true;
-    case colExtruder:
-    {
-        wxDataViewItemArray items;
-        GetAllChildren(wxDataViewItem(nullptr), items);
-
-        if (items.IsEmpty()) return false;
-
-        for (auto item : items)
-            UpdateExtruderBitmap(item);
-
-        return true;
-    }
     default:
         printf("MyObjectTreeModel::SetValue: wrong column");
     }
     return false;
-}
-
-
-void ObjectDataViewModel::UpdateExtruderBitmap(wxDataViewItem item)
-{
-    wxString extruder = GetExtruder(item);
-    if (extruder.IsEmpty())
-        return;
-
-    // set extruder bitmap
-    int extruder_idx = atoi(extruder.c_str());
-    if (extruder_idx > 0) --extruder_idx;
-
-    const DataViewBitmapText extruder_val(extruder, get_extruder_color_icon(extruder_idx));
-
-    wxVariant value;
-    value << extruder_val;
-
-    SetValue(value, item, colExtruder);
 }
 
 void ObjectDataViewModel::GetItemInfo(const wxDataViewItem& item, ItemType& type, int& obj_idx, int& idx)
@@ -1702,12 +1886,16 @@ void ObjectDataViewModel::GetValue(wxVariant &variant, const wxDataViewItem &ite
 	case colName:
         variant << DataViewBitmapText(node->m_name, node->m_bmp);
 		break;
-	case colExtruder:
-		variant << DataViewBitmapText(node->m_extruder, node->m_extruder_bmp);
-		break;
-	case colEditing:
-		variant << node->m_action_icon;
-		break;
+  case colCheckbox:
+    variant << node->m_checkbox_icon;
+    break;
+  case colObjectColor:
+    variant << node->m_object_color_bmp;
+    break;
+  case colBaseDmt: {
+    variant << node->m_base_dmt_icon;
+    break;
+  }
 	default:
 		;
 	}
@@ -1727,22 +1915,6 @@ bool ObjectDataViewModel::SetValue(const wxVariant &variant, const int item_idx,
 		return false;
 
 	return m_objects[item_idx]->SetValue(variant, col);
-}
-
-void ObjectDataViewModel::SetExtruder(const wxString& extruder, wxDataViewItem item)
-{
-    DataViewBitmapText extruder_val;
-    extruder_val.SetText(extruder);
-
-    // set extruder bitmap
-    int extruder_idx = atoi(extruder.c_str());
-    if (extruder_idx > 0) --extruder_idx;
-    extruder_val.SetBitmap(get_extruder_color_icon(extruder_idx));
-
-    wxVariant value;
-    value << extruder_val;
-    
-    SetValue(value, item, colExtruder);
 }
 
 wxDataViewItem ObjectDataViewModel::ReorganizeChildren( const int current_volume_id, 
@@ -1784,7 +1956,7 @@ bool ObjectDataViewModel::IsEnabled(const wxDataViewItem &item, unsigned int col
     ObjectDataViewModelNode *node = (ObjectDataViewModelNode*)item.GetID();
 
     // disable extruder selection for the non "itObject|itVolume" item
-    return !(col == colExtruder && node->m_extruder.IsEmpty());
+    return !(node->m_extruder.IsEmpty());
 }
 
 wxDataViewItem ObjectDataViewModel::GetParent(const wxDataViewItem &item) const
@@ -1989,6 +2161,126 @@ wxDataViewItem ObjectDataViewModel::SetObjectPrintableState(
     return obj_item;
 }
 
+wxDataViewItem ObjectDataViewModel::SetObjectColor(
+    std::string     object_color,
+    int             obj_idx,
+    int             subobj_idx /* = -1*/,
+    ItemType        subobj_type/* = itInstance*/)
+{
+    wxDataViewItem item = wxDataViewItem(0);
+    if (subobj_idx < 0)
+        item = GetItemById(obj_idx);
+    else
+        item =  subobj_type&itInstance ? GetItemByInstanceId(obj_idx, subobj_idx) :
+                GetItemByVolumeId(obj_idx, subobj_idx);
+
+    ObjectDataViewModelNode* node = (ObjectDataViewModelNode*)item.GetID();
+    if (!node)
+        return wxDataViewItem(0);
+    node->set_object_color_bitmap(object_color);
+    ItemChanged(item);
+
+    if (subobj_idx >= 0)
+        UpdateObjectObjectColor(GetItemById(obj_idx));
+
+    return item;
+}
+
+wxDataViewItem ObjectDataViewModel::SetObjectObjectColor(
+    std::string object_color, 
+    wxDataViewItem obj_item)
+{
+    ObjectDataViewModelNode* node = (ObjectDataViewModelNode*)obj_item.GetID();
+    if (!node)
+        return wxDataViewItem(0);
+    node->set_object_color_bitmap(object_color);
+    ItemChanged(obj_item);
+
+    UpdateInstancesObjectColor(obj_item);
+
+    return obj_item;
+}
+
+wxDataViewItem ObjectDataViewModel::SetCheckboxState(
+    CheckboxIndicator  checked,
+    int             obj_idx,
+    int             subobj_idx /* = -1*/,
+    ItemType        subobj_type/* = itInstance*/)
+{
+    wxDataViewItem item = wxDataViewItem(0);
+    if (subobj_idx < 0)
+        item = GetItemById(obj_idx);
+    else
+        item =  subobj_type&itInstance ? GetItemByInstanceId(obj_idx, subobj_idx) :
+                GetItemByVolumeId(obj_idx, subobj_idx);
+
+    ObjectDataViewModelNode* node = (ObjectDataViewModelNode*)item.GetID();
+    if (!node)
+        return wxDataViewItem(0);
+    node->set_checkbox_icon(checked);
+    ItemChanged(item);
+
+    if (subobj_idx >= 0)
+        UpdateObjectCheckbox(GetItemById(obj_idx));
+
+    return item;
+}
+
+wxDataViewItem ObjectDataViewModel::SetObjectCheckboxState(
+    CheckboxIndicator  checked,
+    wxDataViewItem  obj_item)
+{
+    ObjectDataViewModelNode* node = (ObjectDataViewModelNode*)obj_item.GetID();
+    if (!node)
+        return wxDataViewItem(0);
+    node->set_checkbox_icon(checked);
+    ItemChanged(obj_item);
+
+    UpdateInstancesCheckbox(obj_item);
+
+    return obj_item;
+}
+
+wxDataViewItem ObjectDataViewModel::SetBaseDMTState(
+    BaseDmtIndicator base_dmt,
+    int              obj_idx,
+    int              subobj_idx /* = -1*/,
+    ItemType         subobj_type/* = itInstance*/)
+{
+    wxDataViewItem item = wxDataViewItem(0);
+    if (subobj_idx < 0)
+        item = GetItemById(obj_idx);
+    else
+        item =  subobj_type&itInstance ? GetItemByInstanceId(obj_idx, subobj_idx) :
+                GetItemByVolumeId(obj_idx, subobj_idx);
+
+    ObjectDataViewModelNode* node = (ObjectDataViewModelNode*)item.GetID();
+    if (!node)
+        return wxDataViewItem(0);
+    node->set_base_dmt(base_dmt);
+    ItemChanged(item);
+
+    if (subobj_idx >= 0)
+        UpdateObjectBaseDMT(GetItemById(obj_idx));
+
+    return item;
+}
+
+wxDataViewItem ObjectDataViewModel::SetObjectBaseDMTState(
+    BaseDmtIndicator base_dmt,
+    wxDataViewItem  obj_item)
+{
+    ObjectDataViewModelNode* node = (ObjectDataViewModelNode*)obj_item.GetID();
+    if (!node)
+        return wxDataViewItem(0);
+    node->set_base_dmt(base_dmt);
+    ItemChanged(obj_item);
+
+    UpdateInstancesBaseDMT(obj_item);
+
+    return obj_item;
+}
+
 void ObjectDataViewModel::Rescale()
 {
     wxDataViewItemArray all_items;
@@ -2084,7 +2376,7 @@ IMPLEMENT_VARIANT_OBJECT(DataViewBitmapText)
 #if ENABLE_NONCUSTOM_DATA_VIEW_RENDERING
 BitmapTextRenderer::BitmapTextRenderer(wxDataViewCellMode mode /*= wxDATAVIEW_CELL_EDITABLE*/, 
                                                  int align /*= wxDVR_DEFAULT_ALIGNMENT*/): 
-wxDataViewRenderer(wxT("PrusaDataViewBitmapText"), mode, align)
+wxDataViewRenderer(wxT("MXLabDataViewBitmapText"), mode, align)
 {
     SetMode(mode);
     SetAlignment(align);
@@ -3123,7 +3415,8 @@ wxString DoubleSlider::get_tooltip(IconFocus icon_focus)
                                                        "For Edit \"%1%\" code use right mouse button click"))) % tick_code_it->gcode ).str());
     }
 
-    return tooltip;
+    // return tooltip;
+    return _(L(""));
 }
 
 void DoubleSlider::OnMotion(wxMouseEvent& event)
@@ -3463,15 +3756,15 @@ void DoubleSlider::OnRightUp(wxMouseEvent& event)
                 add_color_change_menu_item->SetBitmap(create_scaled_bitmap(nullptr, "colorchange_add_m"));
             }
         }
-        else
-        append_menu_item(&menu, wxID_ANY, _(L("Add color change")) + " (M600)", "",
-            [this](wxCommandEvent&) { add_code(Slic3r::ColorChangeCode); }, "colorchange_add_m", &menu);
+        // else
+        // append_menu_item(&menu, wxID_ANY, _(L("Add color change")) + " (M600)", "",
+        //     [this](wxCommandEvent&) { add_code(Slic3r::ColorChangeCode); }, "colorchange_add_m", &menu);
 
-        append_menu_item(&menu, wxID_ANY, _(L("Add pause print")) + " (M601)", "",
-            [this](wxCommandEvent&) { add_code(Slic3r::PausePrintCode); }, "pause_print", &menu);
+        // append_menu_item(&menu, wxID_ANY, _(L("Add pause print")) + " (M601)", "",
+        //     [this](wxCommandEvent&) { add_code(Slic3r::PausePrintCode); }, "pause_print", &menu);
     
-        append_menu_item(&menu, wxID_ANY, _(L("Add custom G-code")), "",
-            [this](wxCommandEvent&) { add_code(""); }, "edit_gcode", &menu);
+        // append_menu_item(&menu, wxID_ANY, _(L("Add custom G-code")), "",
+        //     [this](wxCommandEvent&) { add_code(""); }, "edit_gcode", &menu);
     
         Slic3r::GUI::wxGetApp().plater()->PopupMenu(&menu);
 
@@ -3907,7 +4200,7 @@ void MenuWithSeparators::SetSecondSeparator()
 }
 
 // ----------------------------------------------------------------------------
-// PrusaBitmap
+// MXLabBitmap
 // ----------------------------------------------------------------------------
 ScalableBitmap::ScalableBitmap( wxWindow *parent, 
                                 const std::string& icon_name/* = ""*/,
@@ -3926,7 +4219,7 @@ void ScalableBitmap::msw_rescale()
 }
 
 // ----------------------------------------------------------------------------
-// PrusaButton
+// MXLabButton
 // ----------------------------------------------------------------------------
 
 ScalableButton::ScalableButton( wxWindow *          parent,

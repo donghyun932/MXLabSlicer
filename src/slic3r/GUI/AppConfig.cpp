@@ -26,7 +26,7 @@ namespace Slic3r {
 
 static const std::string VENDOR_PREFIX = "vendor:";
 static const std::string MODEL_PREFIX = "model:";
-static const std::string VERSION_CHECK_URL = "https://files.prusa3d.com/wp-content/uploads/repository/PrusaSlicer-settings-master/live/PrusaSlicer.version";
+static const std::string VERSION_CHECK_URL = "https://files.mxlab3d.com/wp-content/uploads/repository/MXLabSlicer-settings-master/live/MXLabSlicer.version";
 
 const std::string AppConfig::SECTION_FILAMENTS = "filaments";
 const std::string AppConfig::SECTION_MATERIALS = "sla_materials";
@@ -47,7 +47,7 @@ void AppConfig::set_defaults()
     if (get("background_processing").empty())
         set("background_processing", "0");
     // If set, the "Controller" tab for the control of the printer over serial line and the serial port settings are hidden.
-    // By default, Prusa has the controller hidden.
+    // By default, MXLab has the controller hidden.
     if (get("no_controller").empty())
         set("no_controller", "1");
     // If set, the "- default -" selections of print/filament/printer are suppressed, if there is a valid preset available.
@@ -57,9 +57,9 @@ void AppConfig::set_defaults()
         set("show_incompatible_presets", "0");
 
     if (get("version_check").empty())
-        set("version_check", "1");
+        set("version_check", "0");
     if (get("preset_update").empty())
-        set("preset_update", "1");
+        set("preset_update", "0");
 
     // remove old 'use_legacy_opengl' parameter from this config, if present
     if (!get("use_legacy_opengl").empty())
@@ -102,7 +102,7 @@ void AppConfig::load()
     } catch (pt::ptree_error& ex) {
         // Error while parsing config file. We'll customize the error message and rethrow to be displayed.
         throw std::runtime_error(
-        	_utf8(L("Error parsing PrusaSlicer config file, it is probably corrupted. "
+        	_utf8(L("Error parsing MXLabSlicer config file, it is probably corrupted. "
                     "Try to manually delete the file to recover from the error. Your user profiles will not be affected.")) + 
         	"\n\n" + AppConfig::config_path() + "\n\n" + ex.what());
     }

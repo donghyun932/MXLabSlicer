@@ -140,7 +140,7 @@ const GCodePreviewData::Color GCodePreviewData::Extrusion::Default_Extrusion_Rol
     Color(0.0f, 0.0f, 0.0f, 1.0f)    // erMixed
 };
 
-const GCodePreviewData::Extrusion::EViewType GCodePreviewData::Extrusion::Default_View_Type = GCodePreviewData::Extrusion::FeatureType;
+const GCodePreviewData::Extrusion::EViewType GCodePreviewData::Extrusion::Default_View_Type = GCodePreviewData::Extrusion::Tool;
 
 void GCodePreviewData::Extrusion::set_default()
 {
@@ -356,31 +356,34 @@ std::string GCodePreviewData::get_legend_title() const
 {
     switch (extrusion.view_type)
     {
-    case Extrusion::FeatureType:
-        return L("Feature type");
-    case Extrusion::Height:
-        return L("Height (mm)");
-    case Extrusion::Width:
-        return L("Width (mm)");
-    case Extrusion::Feedrate:
-        return L("Speed (mm/s)");
-    case Extrusion::FanSpeed:
-        return L("Fan Speed (%)");
-    case Extrusion::VolumetricRate:
-        return L("Volumetric flow rate (mm³/s)");
+    // case Extrusion::FeatureType:
+    //     return L("Feature type");
+    // case Extrusion::Height:
+    //     return L("Height (mm)");
+    // case Extrusion::Width:
+    //     return L("Width (mm)");
+    // case Extrusion::Feedrate:
+    //     return L("Speed (mm/s)");
+    // case Extrusion::FanSpeed:
+    //     return L("Fan Speed (%)");
+    // case Extrusion::VolumetricRate:
+    //     return L("Volumetric flow rate (mm³/s)");
     case Extrusion::Tool:
         return L("Tool");
-    case Extrusion::ColorPrint:
-        return L("Color Print");
-    case Extrusion::Num_View_Types:
-        break; // just to supress warning about non-handled value
+    // case Extrusion::ColorPrint:
+    //     return L("Color Print");
+    // case Extrusion::Num_View_Types:
+    //     break; // just to supress warning about non-handled value
+    default:
+        break;
     }
 
     return "";
 }
 
 GCodePreviewData::LegendItemsList GCodePreviewData::get_legend_items(const std::vector<float>& tool_colors, 
-                                                                     const std::vector<std::string>& cp_items) const
+                                                                     const std::vector<std::string>& cp_items,
+                                                                     const std::vector<std::string>& object_names) const
 {
     struct Helper
     {
@@ -402,44 +405,44 @@ GCodePreviewData::LegendItemsList GCodePreviewData::get_legend_items(const std::
 
     switch (extrusion.view_type)
     {
-    case Extrusion::FeatureType:
-        {
-            ExtrusionRole first_valid = erPerimeter;
-            ExtrusionRole last_valid = erCustom;
+    // case Extrusion::FeatureType:
+    //     {
+    //         ExtrusionRole first_valid = erPerimeter;
+    //         ExtrusionRole last_valid = erCustom;
 
-            items.reserve(last_valid - first_valid + 1);
-            for (unsigned int i = (unsigned int)first_valid; i <= (unsigned int)last_valid; ++i)
-            {
-                items.emplace_back(Slic3r::I18N::translate(extrusion.role_names[i]), extrusion.role_colors[i]);
-            }
+    //         items.reserve(last_valid - first_valid + 1);
+    //         for (unsigned int i = (unsigned int)first_valid; i <= (unsigned int)last_valid; ++i)
+    //         {
+    //             items.emplace_back(Slic3r::I18N::translate(extrusion.role_names[i]), extrusion.role_colors[i]);
+    //         }
 
-            break;
-        }
-    case Extrusion::Height:
-        {
-            Helper::FillListFromRange(items, ranges.height, 3, 1.0f);
-            break;
-        }
-    case Extrusion::Width:
-        {
-            Helper::FillListFromRange(items, ranges.width, 3, 1.0f);
-            break;
-        }
-    case Extrusion::Feedrate:
-        {
-            Helper::FillListFromRange(items, ranges.feedrate, 1, 1.0f);
-            break;
-        }
-    case Extrusion::FanSpeed:
-        {
-            Helper::FillListFromRange(items, ranges.fan_speed, 0, 1.0f);
-            break;
-        }
-    case Extrusion::VolumetricRate:
-        {
-            Helper::FillListFromRange(items, ranges.volumetric_rate, 3, 1.0f);
-            break;
-        }
+    //         break;
+    //     }
+    // case Extrusion::Height:
+    //     {
+    //         Helper::FillListFromRange(items, ranges.height, 3, 1.0f);
+    //         break;
+    //     }
+    // case Extrusion::Width:
+    //     {
+    //         Helper::FillListFromRange(items, ranges.width, 3, 1.0f);
+    //         break;
+    //     }
+    // case Extrusion::Feedrate:
+    //     {
+    //         Helper::FillListFromRange(items, ranges.feedrate, 1, 1.0f);
+    //         break;
+    //     }
+    // case Extrusion::FanSpeed:
+    //     {
+    //         Helper::FillListFromRange(items, ranges.fan_speed, 0, 1.0f);
+    //         break;
+    //     }
+    // case Extrusion::VolumetricRate:
+    //     {
+    //         Helper::FillListFromRange(items, ranges.volumetric_rate, 3, 1.0f);
+    //         break;
+    //     }
     case Extrusion::Tool:
         {
             unsigned int tools_colors_count = (unsigned int)tool_colors.size() / 4;
@@ -448,38 +451,40 @@ GCodePreviewData::LegendItemsList GCodePreviewData::get_legend_items(const std::
             {
                 GCodePreviewData::Color color;
                 ::memcpy((void*)color.rgba, (const void*)(tool_colors.data() + i * 4), 4 * sizeof(float));
-                items.emplace_back((boost::format(Slic3r::I18N::translate(L("Extruder %d"))) % (i + 1)).str(), color);
+                items.emplace_back(object_names[i], color);
             }
 
             break;
         }
-    case Extrusion::ColorPrint:
-        {
-            const int color_cnt = (int)tool_colors.size()/4;
-            const auto color_print_cnt = (int)cp_items.size();
-            if (color_print_cnt == 1) // means "Default print color"
-            {
-                Color color;
-                ::memcpy((void*)color.rgba, (const void*)(tool_colors.data()), 4 * sizeof(float));
+    // case Extrusion::ColorPrint:
+    //     {
+    //         const int color_cnt = (int)tool_colors.size()/4;
+    //         const auto color_print_cnt = (int)cp_items.size();
+    //         if (color_print_cnt == 1) // means "Default print color"
+    //         {
+    //             Color color;
+    //             ::memcpy((void*)color.rgba, (const void*)(tool_colors.data()), 4 * sizeof(float));
 
-                items.emplace_back(cp_items[0], color);
-                break;
-            }
+    //             items.emplace_back(cp_items[0], color);
+    //             break;
+    //         }
 
-            if (color_cnt != color_print_cnt)
-                break;
+    //         if (color_cnt != color_print_cnt)
+    //             break;
 
-            for (int i = 0 ; i < color_print_cnt; ++i)
-            {
-                Color color;
-                ::memcpy((void*)color.rgba, (const void*)(tool_colors.data() + i * 4), 4 * sizeof(float));
+    //         for (int i = 0 ; i < color_print_cnt; ++i)
+    //         {
+    //             Color color;
+    //             ::memcpy((void*)color.rgba, (const void*)(tool_colors.data() + i * 4), 4 * sizeof(float));
                 
-                items.emplace_back(cp_items[i], color);
-            }
-            break;
-        }
-    case Extrusion::Num_View_Types:
-        break; // just to supress warning about non-handled value
+    //             items.emplace_back(cp_items[i], color);
+    //         }
+    //         break;
+    //     }
+    // case Extrusion::Num_View_Types:
+    //     break; // just to supress warning about non-handled value
+    default:
+        break;
     }
 
     return items;

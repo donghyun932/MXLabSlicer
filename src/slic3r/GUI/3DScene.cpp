@@ -191,6 +191,7 @@ void GLIndexedVertexArray::render(
     glsafe(::glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
+const float GLVolume::BASE_DMT_COLOR[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
 const float GLVolume::SELECTED_COLOR[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
 const float GLVolume::HOVER_SELECT_COLOR[4] = { 0.4f, 0.9f, 0.1f, 1.0f };
 const float GLVolume::HOVER_DESELECT_COLOR[4] = { 1.0f, 0.75f, 0.75f, 1.0f };
@@ -216,6 +217,7 @@ GLVolume::GLVolume(float r, float g, float b, float a)
     , selected(false)
     , disabled(false)
     , printable(true)
+    , object_color("#950918")
     , is_active(true)
     , zoom_to_volumes(true)
     , shader_outside_printer_detection_enabled(false)
@@ -234,6 +236,20 @@ GLVolume::GLVolume(float r, float g, float b, float a)
     color[2] = b;
     color[3] = a;
     set_render_color(r, g, b, a);
+}
+
+void GLVolume::update_colors_by_object_color()
+{
+    static const float inv_255 = 1.0f / 255.0f;
+
+    unsigned char rgb[3];
+
+    PresetBundle::parse_color(this->object_color, rgb);
+    for (int i = 0; i < 3; ++i)
+    {
+        this->color[i] = (float)rgb[i] * inv_255;
+    }
+    this->color[3] = 1.0f;
 }
 
 void GLVolume::set_render_color(float r, float g, float b, float a)
@@ -259,7 +275,10 @@ void GLVolume::set_render_color()
             set_render_color(color, 4);
     }
     else {
-        if (hover == HS_Select)
+        if (base_dmt) {
+            set_render_color(BASE_DMT_COLOR, 4);
+        }
+        else if (hover == HS_Select)
             set_render_color(HOVER_SELECT_COLOR, 4);
         else if (hover == HS_Deselect)
             set_render_color(HOVER_DESELECT_COLOR, 4);
@@ -271,13 +290,6 @@ void GLVolume::set_render_color()
             set_render_color(OUTSIDE_COLOR, 4);
         else
             set_render_color(color, 4);
-    }
-
-    if (!printable)
-    {
-        render_color[0] /= 4;
-        render_color[1] /= 4;
-        render_color[2] /= 4;
     }
 
     if (force_transparent)
@@ -588,6 +600,7 @@ int GLVolumeCollection::load_wipe_tower_preview(
 GLVolume* GLVolumeCollection::new_toolpath_volume(const float *rgba, size_t reserve_vbo_floats)
 {
 	GLVolume *out = new_nontoolpath_volume(rgba, reserve_vbo_floats);
+  out->base_dmt = false;
 	out->is_extrusion_path = true;
 	return out;
 }
@@ -676,8 +689,10 @@ void GLVolumeCollection::render(GLVolumeCollection::ERenderType type, bool disab
 
     GLVolumeWithIdAndZList to_render = volumes_to_render(this->volumes, type, view_matrix, filter_func);
     for (GLVolumeWithIdAndZ& volume : to_render) {
-        volume.first->set_render_color();
-        volume.first->render(color_id, print_box_detection_id, print_box_worldmatrix_id);
+        if (volume.first->printable) {
+            volume.first->set_render_color();
+            volume.first->render(color_id, print_box_detection_id, print_box_worldmatrix_id);
+        }
     }
 
     glsafe(::glBindBuffer(GL_ARRAY_BUFFER, 0));
@@ -719,7 +734,7 @@ bool GLVolumeCollection::check_outside_state(const DynamicPrintConfig* config, M
         bool contained = print_volume.contains(bb);
 
         volume->is_outside = !contained;
-        if (!volume->printable)
+        if (!volume->printable || volume->base_dmt)
             continue;
 
         if (contained)
@@ -751,75 +766,17 @@ void GLVolumeCollection::update_colors_by_extruder(const DynamicPrintConfig* con
 {
     static const float inv_255 = 1.0f / 255.0f;
 
-    struct Color
-    {
-        std::string text;
-        unsigned char rgb[3];
-
-        Color()
-            : text("")
-        {
-            rgb[0] = 255;
-            rgb[1] = 255;
-            rgb[2] = 255;
-        }
-
-        void set(const std::string& text, unsigned char* rgb)
-        {
-            this->text = text;
-            ::memcpy((void*)this->rgb, (const void*)rgb, 3 * sizeof(unsigned char));
-        }
-    };
-
-    if (config == nullptr)
-        return;
-
-    const ConfigOptionStrings* extruders_opt = dynamic_cast<const ConfigOptionStrings*>(config->option("extruder_colour"));
-    if (extruders_opt == nullptr)
-        return;
-
-    const ConfigOptionStrings* filamemts_opt = dynamic_cast<const ConfigOptionStrings*>(config->option("filament_colour"));
-    if (filamemts_opt == nullptr)
-        return;
-
-    unsigned int colors_count = std::max((unsigned int)extruders_opt->values.size(), (unsigned int)filamemts_opt->values.size());
-    if (colors_count == 0)
-        return;
-
-    std::vector<Color> colors(colors_count);
-
-    unsigned char rgb[3];
-    for (unsigned int i = 0; i < colors_count; ++i)
-    {
-        const std::string& txt_color = config->opt_string("extruder_colour", i);
-        if (PresetBundle::parse_color(txt_color, rgb))
-        {
-            colors[i].set(txt_color, rgb);
-        }
-        else
-        {
-            const std::string& txt_color = config->opt_string("filament_colour", i);
-            if (PresetBundle::parse_color(txt_color, rgb))
-                colors[i].set(txt_color, rgb);
-        }
-    }
-
     for (GLVolume* volume : volumes)
     {
         if ((volume == nullptr) || volume->is_modifier || volume->is_wipe_tower || (volume->volume_idx() < 0))
             continue;
 
-        int extruder_id = volume->extruder_id - 1;
-        if ((extruder_id < 0) || ((int)colors.size() <= extruder_id))
-            extruder_id = 0;
+        unsigned char rgb[3];
 
-        const Color& color = colors[extruder_id];
-        if (!color.text.empty())
+        PresetBundle::parse_color(volume->object_color, rgb);
+        for (int i = 0; i < 3; ++i)
         {
-            for (int i = 0; i < 3; ++i)
-            {
-                volume->color[i] = (float)color.rgb[i] * inv_255;
-            }
+            volume->color[i] = (float)rgb[i] * inv_255;
         }
     }
 }

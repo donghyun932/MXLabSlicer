@@ -296,7 +296,10 @@ void PerimeterGenerator::process()
                             last,
                             - float(ext_perimeter_width / 2. + ext_min_spacing / 2. - 1),
                             + float(ext_min_spacing / 2. - 1)) :
-                        offset_ex(last, - float(ext_perimeter_width / 2.));
+                        // offset_ex(last, - float(ext_perimeter_width / 2.));
+                        offset_ex(last, 0.0f);
+        
+                    offsets = offset_ex(offset_ex(offsets, scale_(-this->config->corner_rounding_r.value), ClipperLib::jtRound), scale_(this->config->corner_rounding_r.value), ClipperLib::jtRound);
                     // look for thin walls
                     if (this->config->thin_walls) {
                         // the following offset2 ensures almost nothing in @thin_walls is narrower than $min_width
@@ -318,7 +321,7 @@ void PerimeterGenerator::process()
                     coord_t distance = (i == 1) ? ext_perimeter_spacing2 : perimeter_spacing;
                     offsets = this->config->thin_walls ?
                         // This path will ensure, that the perimeters do not overfill, as in 
-                        // prusa3d/Slic3r GH #32, but with the cost of rounding the perimeters
+                        // mxlab3d/Slic3r GH #32, but with the cost of rounding the perimeters
                         // excessively, creating gaps, which then need to be filled in by the not very 
                         // reliable gap fill algorithm.
                         // Also the offset2(perimeter, -x, x) may sometimes lead to a perimeter, which is larger than
@@ -327,7 +330,7 @@ void PerimeterGenerator::process()
                                 - float(distance + min_spacing / 2. - 1.),
                                 float(min_spacing / 2. - 1.)) :
                         // If "detect thin walls" is not enabled, this paths will be entered, which 
-                        // leads to overflows, as in prusa3d/Slic3r GH #32
+                        // leads to overflows, as in mxlab3d/Slic3r GH #32
                         offset_ex(last, - float(distance));
                     // look for gaps
                     if (has_gap_fill)
@@ -358,7 +361,11 @@ void PerimeterGenerator::process()
                     if (! expolygon.holes.empty()) {
                         holes[i].reserve(holes[i].size() + expolygon.holes.size());
                         for (const Polygon &hole : expolygon.holes)
-                            holes[i].emplace_back(PerimeterGeneratorLoop(hole, i, false));
+                            holes[i].emplace_back(PerimeterGeneratorLoop(
+                                hole,
+                                i, 
+                                false
+                            ));
                     }
                 }
                 last = std::move(offsets);

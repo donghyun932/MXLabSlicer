@@ -812,7 +812,7 @@ bool FillRectilinear2::fill_surface_by_lines(const Surface *surface, const FillP
     size_t  n_vlines = (bounding_box.max(0) - bounding_box.min(0) + line_spacing - 1) / line_spacing;
 	coord_t x0 = bounding_box.min(0);
 	if (params.full_infill())
-		x0 += (line_spacing + SCALED_EPSILON) / 2;
+		x0 += coord_t((bounding_box.max(0) - bounding_box.min(0)) - (n_vlines- 1) * line_spacing) / 2;
 
 #ifdef SLIC3R_DEBUG
     static int iRun = 0;
@@ -1091,7 +1091,7 @@ bool FillRectilinear2::fill_surface_by_lines(const Surface *surface, const FillP
             polylines_out.push_back(Polyline());
             polyline_current = &polylines_out.back();
             // Emit the first point of a path.
-            pointLast = Point(segs[i_vline].pos, segs[i_vline].intersections[i_intersection].pos());
+            pointLast = Point(segs[i_vline].pos, segs[i_vline].intersections[i_intersection].pos() + line_spacing / 2);
             polyline_current->points.push_back(pointLast);
         }
 
@@ -1349,7 +1349,8 @@ bool FillRectilinear2::fill_surface_by_lines(const Surface *surface, const FillP
         // reset the current vertical line to pick a new starting point in the next round.
         assert(intrsctn->is_outer());
         assert(intrsctn->is_high() == going_up);
-        pointLast = Point(seg.pos, intrsctn->pos());
+        int spacing_revision = polyline_current->points.back()(1) > intrsctn->pos() ? 1 : -1;
+        pointLast = Point(seg.pos, intrsctn->pos() + spacing_revision * line_spacing / 2);
         polyline_current->points.push_back(pointLast);
         // Handle duplicate points and zero length segments.
         polyline_current->remove_duplicate_points();

@@ -69,6 +69,11 @@ bool Print::invalidate_state_by_config_options(const std::vector<t_config_option
     // Cache the plenty of parameters, which influence the G-code generator only,
     // or they are only notes not influencing the generated G-code.
     static std::unordered_set<std::string> steps_gcode = {
+        "powder_feeder_define",
+        "tool_path_spacing",
+        "traverse_speed",
+        "dwell_time",
+        "shield_gas_applied",
         "avoid_crossing_perimeters",
         "bed_shape",
         "bed_temperature",
@@ -92,6 +97,15 @@ bool Print::invalidate_state_by_config_options(const std::vector<t_config_option
         "extrusion_multiplier",
         "fan_always_on",
         "fan_below_layer_time",
+        "corner_rounding_r",
+        "orientation",
+        "start_point_dislocation",
+        "revise_spacing"
+        "method",
+        "start_angle",
+        "rotation_increment",
+        "fixed_for_all_layers",
+        "user_edit",
         "filament_colour",
         "filament_diameter",
         "filament_density",
@@ -1201,17 +1215,17 @@ std::string Print::validate() const
             }
         }
         // Check vertical clearance.
-        {
-            std::vector<coord_t> object_height;
-            for (const PrintObject *object : m_objects)
-                object_height.insert(object_height.end(), object->copies().size(), object->size(2));
-            std::sort(object_height.begin(), object_height.end());
-            // Ignore the tallest *copy* (this is why we repeat height for all of them):
-            // it will be printed as last one so its height doesn't matter.
-            object_height.pop_back();
-            if (! object_height.empty() && object_height.back() > scale_(m_config.extruder_clearance_height.value))
-                return L("Some objects are too tall and cannot be printed without extruder collisions.");
-        }
+        // {
+        //     std::vector<coord_t> object_height;
+        //     for (const PrintObject *object : m_objects)
+        //         object_height.insert(object_height.end(), object->copies().size(), object->size(2));
+        //     std::sort(object_height.begin(), object_height.end());
+        //     // Ignore the tallest *copy* (this is why we repeat height for all of them):
+        //     // it will be printed as last one so its height doesn't matter.
+        //     object_height.pop_back();
+        //     if (! object_height.empty() && object_height.back() > scale_(m_config.extruder_clearance_height.value))
+        //         return L("Some objects are too tall and cannot be printed without extruder collisions.");
+        // }
     } // end if (m_config.complete_objects)
 
     if (m_config.spiral_vase) {
@@ -1354,15 +1368,15 @@ std::string Print::validate() const
 		auto validate_extrusion_width = [min_nozzle_diameter, max_nozzle_diameter](const ConfigBase &config, const char *opt_key, double layer_height, std::string &err_msg) -> bool {
         	double extrusion_width_min = config.get_abs_value(opt_key, min_nozzle_diameter);
         	double extrusion_width_max = config.get_abs_value(opt_key, max_nozzle_diameter);
-        	if (extrusion_width_min == 0) {
-        		// Default "auto-generated" extrusion width is always valid.
-        	} else if (extrusion_width_min <= layer_height) {
-        		err_msg = (boost::format(L("%1%=%2% mm is too low to be printable at a layer height %3% mm")) % opt_key % extrusion_width_min % layer_height).str();
-				return false;
-			} else if (extrusion_width_max >= max_nozzle_diameter * 3.) {
-				err_msg = (boost::format(L("Excessive %1%=%2% mm to be printable with a nozzle diameter %3% mm")) % opt_key % extrusion_width_max % max_nozzle_diameter).str();
-				return false;
-			}
+   //      	if (extrusion_width_min == 0) {
+   //      		// Default "auto-generated" extrusion width is always valid.
+   //      	} else if (extrusion_width_min <= layer_height) {
+   //      		err_msg = (boost::format(L("%1%=%2% mm is too low to be printable at a layer height %3% mm")) % opt_key % extrusion_width_min % layer_height).str();
+			// 	return false;
+			// } else if (extrusion_width_max >= max_nozzle_diameter * 3.) {
+			// 	err_msg = (boost::format(L("Excessive %1%=%2% mm to be printable with a nozzle diameter %3% mm")) % opt_key % extrusion_width_max % max_nozzle_diameter).str();
+			// 	return false;
+			// }
 			return true;
 		};
         for (PrintObject *object : m_objects) {
@@ -1568,32 +1582,32 @@ void Print::process()
     this->set_status(70, L("Infilling layers"));
     for (PrintObject *obj : m_objects)
         obj->infill();
-    for (PrintObject *obj : m_objects)
-        obj->generate_support_material();
-    if (this->set_started(psWipeTower)) {
-        m_wipe_tower_data.clear();
-        if (this->has_wipe_tower()) {
-            //this->set_status(95, L("Generating wipe tower"));
-            this->_make_wipe_tower();
-        }
-        this->set_done(psWipeTower);
-    }
-    if (this->set_started(psSkirt)) {
-        m_skirt.clear();
-        if (this->has_skirt()) {
-            this->set_status(88, L("Generating skirt"));
-            this->_make_skirt();
-        }
-        this->set_done(psSkirt);
-    }
-	if (this->set_started(psBrim)) {
-        m_brim.clear();
-        if (m_config.brim_width > 0) {
-            this->set_status(88, L("Generating brim"));
-            this->_make_brim();
-        }
-       this->set_done(psBrim);
-    }
+    // for (PrintObject *obj : m_objects)
+    //     obj->generate_support_material();
+    // if (this->set_started(psWipeTower)) {
+    //     m_wipe_tower_data.clear();
+    //     if (this->has_wipe_tower()) {
+    //         this->set_status(95, L("Generating wipe tower"));
+    //         this->_make_wipe_tower();
+    //     }
+    //     this->set_done(psWipeTower);
+    // }
+ //    if (this->set_started(psSkirt)) {
+ //        m_skirt.clear();
+ //        if (this->has_skirt()) {
+ //            this->set_status(88, L("Generating skirt"));
+ //            this->_make_skirt();
+ //        }
+ //        this->set_done(psSkirt);
+ //    }
+	// if (this->set_started(psBrim)) {
+ //        m_brim.clear();
+ //        if (m_config.brim_width > 0) {
+ //            this->set_status(88, L("Generating brim"));
+ //            this->_make_brim();
+ //        }
+ //       this->set_done(psBrim);
+ //    }
     BOOST_LOG_TRIVIAL(info) << "Slicing process finished." << log_memory_info();
 }
 
@@ -2122,7 +2136,7 @@ std::string Print::output_filename(const std::string &filename_base) const
     // Set the placeholders for the data know first after the G-code export is finished.
     // These values will be just propagated into the output file name.
     DynamicConfig config = this->finished() ? this->print_statistics().config() : this->print_statistics().placeholders();
-    return this->PrintBase::output_filename(m_config.output_filename_format.value, ".gcode", filename_base, &config);
+    return this->PrintBase::output_filename(m_config.output_filename_format.value, ".nc", filename_base, &config);
 }
 
 DynamicConfig PrintStatistics::config() const

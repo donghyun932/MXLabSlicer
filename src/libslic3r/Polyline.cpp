@@ -86,6 +86,41 @@ void Polyline::extend_start(double distance)
     this->points.front() += (v * distance).cast<coord_t>();
 }
 
+std::pair<Points, int> Polyline::equally_spaced_points_custom(double distance, double start_point_length) const
+{
+    Points points;
+    points.emplace_back(this->first_point());
+    double len = 0;
+    double tot_len = 0;
+    int idx=-1;
+    
+    for (Points::const_iterator it = this->points.begin() + 1; it != this->points.end(); ++it) {
+        Vec2d  p1 = (it-1)->cast<double>();
+        Vec2d  v  = it->cast<double>() - p1;
+        double segment_length = v.norm();
+        len += segment_length;
+        if (len < distance) {
+            points.emplace_back(*it);
+            if (tot_len <= start_point_length) idx++;
+            continue;
+        }
+        if (len == distance) {
+            tot_len += distance;
+            len = 0;
+            points.emplace_back(*it);
+            if (tot_len <= start_point_length) idx++;
+            continue;
+        }
+        double take = segment_length - (len - distance);  // how much we take of this segment
+        points.emplace_back((p1 + v * (take / v.norm())).cast<coord_t>());
+        tot_len += distance;
+        len = - take;
+        if (tot_len <= start_point_length) idx++;
+        -- it;
+    }
+    return std::make_pair(points, idx);
+}
+
 /* this method returns a collection of points picked on the polygon contour
    so that they are evenly spaced according to the input distance */
 Points Polyline::equally_spaced_points(double distance) const

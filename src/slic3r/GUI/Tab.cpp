@@ -178,7 +178,7 @@ void Tab::create_preset_tab()
     m_default_text_clr		= wxGetApp().get_label_clr_default();
 
     // Sizer with buttons for mode changing
-    m_mode_sizer = new ModeSizer(panel);
+    // m_mode_sizer = new ModeSizer(panel);
 
     const float scale_factor = /*wxGetApp().*/em_unit(this)*0.1;// GetContentScaleFactor();
     m_hsizer = new wxBoxSizer(wxHORIZONTAL);
@@ -199,7 +199,7 @@ void Tab::create_preset_tab()
     // StretchSpacer has a strange behavior under OSX, so
     // There is used just additional sizer for m_mode_sizer with right alignment
     auto mode_sizer = new wxBoxSizer(wxVERTICAL);
-    mode_sizer->Add(m_mode_sizer, 1, wxALIGN_RIGHT);
+    // mode_sizer->Add(m_mode_sizer, 1, wxALIGN_RIGHT);
     m_hsizer->Add(mode_sizer, 1, wxALIGN_CENTER_VERTICAL | wxRIGHT, wxOSX ? 15 : 10);
 
     //Horizontal sizer to hold the tree and the selected page.
@@ -240,8 +240,8 @@ void Tab::create_preset_tab()
                 /*selected_string == "------- System presets -------" ||
                 selected_string == "-------  User presets  -------"*/) {
                 m_presets_choice->SetSelection(m_selected_preset_item);
-                if (wxString::FromUTF8(selected_string.c_str()) == PresetCollection::separator(L("Add a new printer")))
-                    wxTheApp->CallAfter([]() { wxGetApp().run_wizard(ConfigWizard::RR_USER); });
+                // if (wxString::FromUTF8(selected_string.c_str()) == PresetCollection::separator(L("Add a new printer")))
+                //     wxTheApp->CallAfter([]() { wxGetApp().run_wizard(ConfigWizard::RR_USER); });
                 return;
             }
             m_selected_preset_item = selected_item;
@@ -657,24 +657,24 @@ void Tab::on_roll_back_value(const bool to_sys /*= true*/)
                     }
 
                 }
-                if (group->title == _("Profile dependencies")) {
-                    if (m_type != Slic3r::Preset::TYPE_PRINTER && (m_options_list["compatible_printers"] & os) == 0) {
-                        to_sys ? group->back_to_sys_value("compatible_printers") : group->back_to_initial_value("compatible_printers");
-                        load_key_value("compatible_printers", true/*some value*/, true);
+                // if (group->title == _("Profile dependencies")) {
+                //     if (m_type != Slic3r::Preset::TYPE_PRINTER && (m_options_list["compatible_printers"] & os) == 0) {
+                //         to_sys ? group->back_to_sys_value("compatible_printers") : group->back_to_initial_value("compatible_printers");
+                //         load_key_value("compatible_printers", true/*some value*/, true);
 
-                        bool is_empty = m_config->option<ConfigOptionStrings>("compatible_printers")->values.empty();
-                        m_compatible_printers.checkbox->SetValue(is_empty);
-                        is_empty ? m_compatible_printers.btn->Disable() : m_compatible_printers.btn->Enable();
-                    }
-                    if ((m_type == Slic3r::Preset::TYPE_PRINT || m_type == Slic3r::Preset::TYPE_SLA_PRINT) && (m_options_list["compatible_prints"] & os) == 0) {
-                        to_sys ? group->back_to_sys_value("compatible_prints") : group->back_to_initial_value("compatible_prints");
-                        load_key_value("compatible_prints", true/*some value*/, true);
+                //         bool is_empty = m_config->option<ConfigOptionStrings>("compatible_printers")->values.empty();
+                //         m_compatible_printers.checkbox->SetValue(is_empty);
+                //         is_empty ? m_compatible_printers.btn->Disable() : m_compatible_printers.btn->Enable();
+                //     }
+                //     if ((m_type == Slic3r::Preset::TYPE_PRINT || m_type == Slic3r::Preset::TYPE_SLA_PRINT) && (m_options_list["compatible_prints"] & os) == 0) {
+                //         to_sys ? group->back_to_sys_value("compatible_prints") : group->back_to_initial_value("compatible_prints");
+                //         load_key_value("compatible_prints", true/*some value*/, true);
 
-                        bool is_empty = m_config->option<ConfigOptionStrings>("compatible_prints")->values.empty();
-                        m_compatible_prints.checkbox->SetValue(is_empty);
-                        is_empty ? m_compatible_prints.btn->Disable() : m_compatible_prints.btn->Enable();
-                    }
-                }
+                //         bool is_empty = m_config->option<ConfigOptionStrings>("compatible_prints")->values.empty();
+                //         m_compatible_prints.checkbox->SetValue(is_empty);
+                //         is_empty ? m_compatible_prints.btn->Disable() : m_compatible_prints.btn->Enable();
+                //     }
+                // }
                 for (auto kvp : group->m_opt_map) {
                     const std::string& opt_key = kvp.first;
                     if ((m_options_list[opt_key] & os) == 0)
@@ -733,7 +733,7 @@ void Tab::update_mode()
     m_mode = wxGetApp().get_mode();
 
     // update mode for ModeSizer
-    m_mode_sizer->SetMode(m_mode);
+    // m_mode_sizer->SetMode(m_mode);
 
     update_visibility();
 
@@ -756,7 +756,7 @@ void Tab::msw_rescale()
 {
     m_em_unit = wxGetApp().em_unit();
 
-    m_mode_sizer->msw_rescale();
+    // m_mode_sizer->msw_rescale();
 
     m_presets_choice->SetSize(35 * m_em_unit, -1);
     m_treectrl->SetMinSize(wxSize(20 * m_em_unit, -1));
@@ -853,33 +853,33 @@ void Tab::on_value_change(const std::string& opt_key, const boost::any& value)
     }
 
     const bool is_fff = supports_printer_technology(ptFFF);
-    ConfigOptionsGroup* og_freq_chng_params = wxGetApp().sidebar().og_freq_chng_params(is_fff);
-    if (opt_key == "fill_density" || opt_key == "pad_enable")
-    {
-        boost::any val = og_freq_chng_params->get_config_value(*m_config, opt_key);
-        og_freq_chng_params->set_value(opt_key, val);
-    }
+    // ConfigOptionsGroup* og_freq_chng_params = wxGetApp().sidebar().og_freq_chng_params(is_fff);
+    // if (opt_key == "fill_density" || opt_key == "pad_enable")
+    // {
+    //     boost::any val = og_freq_chng_params->get_config_value(*m_config, opt_key);
+    //     og_freq_chng_params->set_value(opt_key, val);
+    // }
     
-    if (opt_key == "pad_around_object") {
-        for (PageShp &pg : m_pages) {
-            Field * fld = pg->get_field(opt_key);
-            if (fld) fld->set_value(value, false);
-        }
-    }
+    // if (opt_key == "pad_around_object") {
+    //     for (PageShp &pg : m_pages) {
+    //         Field * fld = pg->get_field(opt_key);
+    //         if (fld) fld->set_value(value, false);
+    //     }
+    // }
 
-    if (is_fff ?
-            (opt_key == "support_material" || opt_key == "support_material_auto" || opt_key == "support_material_buildplate_only") :
-            (opt_key == "supports_enable"  || opt_key == "support_buildplate_only"))
-        og_freq_chng_params->set_value("support", support_combo_value_for_config(*m_config, is_fff));
+    // if (is_fff ?
+    //         (opt_key == "support_material" || opt_key == "support_material_auto" || opt_key == "support_material_buildplate_only") :
+    //         (opt_key == "supports_enable"  || opt_key == "support_buildplate_only"))
+    //     og_freq_chng_params->set_value("support", support_combo_value_for_config(*m_config, is_fff));
 
-    if (! is_fff && (opt_key == "pad_enable" || opt_key == "pad_around_object"))
-        og_freq_chng_params->set_value("pad", pad_combo_value_for_config(*m_config));
+    // if (! is_fff && (opt_key == "pad_enable" || opt_key == "pad_around_object"))
+    //     og_freq_chng_params->set_value("pad", pad_combo_value_for_config(*m_config));
 
-    if (opt_key == "brim_width")
-    {
-        bool val = m_config->opt_float("brim_width") > 0.0 ? true : false;
-        og_freq_chng_params->set_value("brim", val);
-    }
+    // if (opt_key == "brim_width")
+    // {
+    //     bool val = m_config->opt_float("brim_width") > 0.0 ? true : false;
+    //     og_freq_chng_params->set_value("brim", val);
+    // }
 
     if (opt_key == "wipe_tower" || opt_key == "single_extruder_multi_material" || opt_key == "extruders_count" )
         update_wiping_button_visibility();
@@ -897,11 +897,11 @@ void Tab::update_wiping_button_visibility() {
     bool wipe_tower_enabled = dynamic_cast<ConfigOptionBool*>(  (m_preset_bundle->prints.get_edited_preset().config  ).option("wipe_tower"))->value;
     bool multiple_extruders = dynamic_cast<ConfigOptionFloats*>((m_preset_bundle->printers.get_edited_preset().config).option("nozzle_diameter"))->values.size() > 1;
 
-    auto wiping_dialog_button = wxGetApp().sidebar().get_wiping_dialog_button();
-    if (wiping_dialog_button) {
-        wiping_dialog_button->Show(wipe_tower_enabled && multiple_extruders);
-        wiping_dialog_button->GetParent()->Layout();
-    }
+    // auto wiping_dialog_button = wxGetApp().sidebar().get_wiping_dialog_button();
+    // if (wiping_dialog_button) {
+    //     wiping_dialog_button->Show(wipe_tower_enabled && multiple_extruders);
+    //     wiping_dialog_button->GetParent()->Layout();
+    // }
 }
 
 
@@ -918,7 +918,7 @@ void Tab::on_presets_changed()
 
     // Instead of PostEvent (EVT_TAB_PRESETS_CHANGED) just call update_presets
     wxGetApp().plater()->sidebar().update_presets(m_type);
-    update_preset_description_line();
+    // update_preset_description_line();
 
     // Printer selected at the Printer tab, update "compatible" marks at the print and filament selectors.
     for (auto t: m_dependent_tabs)
@@ -1008,36 +1008,50 @@ void Tab::update_preset_description_line()
     m_parent_preset_description_line->SetText(description_line, false);
 }
 
-void Tab::update_frequently_changed_parameters()
-{
-    const bool is_fff = supports_printer_technology(ptFFF);
-    auto og_freq_chng_params = wxGetApp().sidebar().og_freq_chng_params(is_fff);
-    if (!og_freq_chng_params) return;
+// void Tab::update_frequently_changed_parameters()
+// {
+//     const bool is_fff = supports_printer_technology(ptFFF);
+//     auto og_freq_chng_params = wxGetApp().sidebar().og_freq_chng_params(is_fff);
+//     if (!og_freq_chng_params) return;
 
-    og_freq_chng_params->set_value("support", support_combo_value_for_config(*m_config, is_fff));
-    if (! is_fff)
-        og_freq_chng_params->set_value("pad", pad_combo_value_for_config(*m_config));
+//     og_freq_chng_params->set_value("support", support_combo_value_for_config(*m_config, is_fff));
+//     if (! is_fff)
+//         og_freq_chng_params->set_value("pad", pad_combo_value_for_config(*m_config));
 
-    const std::string updated_value_key = is_fff ? "fill_density" : "pad_enable";
+//     const std::string updated_value_key = is_fff ? "fill_density" : "pad_enable";
 
-    const boost::any val = og_freq_chng_params->get_config_value(*m_config, updated_value_key);
-    og_freq_chng_params->set_value(updated_value_key, val);
+//     const boost::any val = og_freq_chng_params->get_config_value(*m_config, updated_value_key);
+//     og_freq_chng_params->set_value(updated_value_key, val);
 
-    if (is_fff)
-    {
-        og_freq_chng_params->set_value("brim", bool(m_config->opt_float("brim_width") > 0.0));
-        update_wiping_button_visibility();
-    }
-}
+//     if (is_fff)
+//     {
+//         og_freq_chng_params->set_value("brim", bool(m_config->opt_float("brim_width") > 0.0));
+//         update_wiping_button_visibility();
+//     }
+// }
 
 void TabPrint::build()
 {
     m_presets = &m_preset_bundle->prints;
     load_initial_data();
 
-    auto page = add_options_page(_(L("Layers and perimeters")), "layers");
-        auto optgroup = page->new_optgroup(_(L("Layer height")));
+    auto page = add_options_page(_(L("Slicing")), "layers");
+        auto optgroup = page->new_optgroup(_(L("Slicing")));
         optgroup->append_single_option_line("layer_height");
+        optgroup->append_single_option_line("tool_path_spacing");
+        optgroup->append_single_option_line("revise_spacing");
+        optgroup->append_single_option_line("fill_density");
+
+        optgroup = page->new_optgroup(_(L("Dwell Time")));
+        optgroup->append_single_option_line("dwell_time");
+        optgroup->append_single_option_line("shield_gas_applied");
+
+        optgroup = page->new_optgroup(_(L("Traverse Speed")));
+        optgroup->append_single_option_line("traverse_speed");
+        optgroup->append_single_option_line("perimeter_speed");
+
+        page = add_options_page(_(L("Layers and perimeters")), "layers");
+        optgroup = page->new_optgroup(_(L("Layer height")));
         optgroup->append_single_option_line("first_layer_height");
 
         optgroup = page->new_optgroup(_(L("Vertical shells")));
@@ -1070,7 +1084,6 @@ void TabPrint::build()
 
     page = add_options_page(_(L("Infill")), "infill");
         optgroup = page->new_optgroup(_(L("Infill")));
-        optgroup->append_single_option_line("fill_density");
         optgroup->append_single_option_line("fill_pattern");
         optgroup->append_single_option_line("top_fill_pattern");
         optgroup->append_single_option_line("bottom_fill_pattern");
@@ -1124,7 +1137,6 @@ void TabPrint::build()
 
     page = add_options_page(_(L("Speed")), "time");
         optgroup = page->new_optgroup(_(L("Speed for print moves")));
-        optgroup->append_single_option_line("perimeter_speed");
         optgroup->append_single_option_line("small_perimeter_speed");
         optgroup->append_single_option_line("external_perimeter_speed");
         optgroup->append_single_option_line("infill_speed");
@@ -1402,8 +1414,25 @@ void TabFilament::build()
     m_presets = &m_preset_bundle->filaments;
     load_initial_data();
 
-    auto page = add_options_page(_(L("Filament")), "spool.png");
-        auto optgroup = page->new_optgroup(_(L("Filament")));
+    auto page = add_options_page(_(L("Tool path")), "infill");
+        auto optgroup = page->new_optgroup(_(L("Contour")));
+        optgroup->append_single_option_line("orientation");
+        optgroup->append_single_option_line("start_point_dislocation");
+        optgroup->append_single_option_line("corner_rounding_r");
+
+        optgroup = page->new_optgroup(_(L("Filling")));
+        optgroup->append_single_option_line("method");
+        Line line = { _(L("Rotation")), "" };
+        line.append_option(optgroup->get_option("start_angle"));
+        line.append_option(optgroup->get_option("rotation_increment"));
+        optgroup->append_line(line);
+        line = { _(L("Ordering Definition")), "" };
+        line.append_option(optgroup->get_option("fixed_for_all_layers"));
+        line.append_option(optgroup->get_option("user_edit"));
+        optgroup->append_line(line);
+
+    page = add_options_page(_(L("Filament")), "spool.png");
+        optgroup = page->new_optgroup(_(L("Filament")));
         optgroup->append_single_option_line("filament_colour");
         optgroup->append_single_option_line("filament_diameter");
         optgroup->append_single_option_line("extrusion_multiplier");
@@ -1411,7 +1440,7 @@ void TabFilament::build()
         optgroup->append_single_option_line("filament_cost");
 
         optgroup = page->new_optgroup(_(L("Temperature")) + wxString(" °C", wxConvUTF8));
-        Line line = { _(L("Extruder")), "" };
+        line = { _(L("Extruder")), "" };
         line.append_option(optgroup->get_option("first_layer_temperature"));
         line.append_option(optgroup->get_option("temperature"));
         optgroup->append_line(line);
@@ -1986,14 +2015,17 @@ void TabPrinter::build_fff()
         option.opt.height = notes_field_height;//250;
         optgroup->append_single_option_line(option);
 
-    page = add_options_page(_(L("Dependencies")), "wrench.png");
-        optgroup = page->new_optgroup(_(L("Profile dependencies")));
-        line = Line{ "", "" };
-        line.full_width = 1;
-        line.widget = [this](wxWindow* parent) {
-            return description_line_widget(parent, &m_parent_preset_description_line);
-        };
-        optgroup->append_line(line);
+    // page = add_options_page(_(L("Dependencies")), "wrench.png");
+    //     optgroup = page->new_optgroup(_(L("Profile dependencies")));
+    //     line = Line{ "", "" };
+    //     line.full_width = 1;
+    //     line.widget = [this](wxWindow* parent) {
+    //         return description_line_widget(parent, &m_parent_preset_description_line);
+    //     };
+    //     optgroup->append_line(line);
+    page = add_options_page(_(L("Feeder")), "funnel");
+        optgroup = page->new_optgroup(_(L("Powder Feeders")));
+        optgroup->append_single_option_line("powder_feeder_define");
 
     build_unregular_pages();
 
@@ -2644,8 +2676,8 @@ void Tab::load_current_preset()
         }
         else {
             on_presets_changed();
-            if (m_type == Preset::TYPE_SLA_PRINT || m_type == Preset::TYPE_PRINT)
-                update_frequently_changed_parameters();
+            // if (m_type == Preset::TYPE_SLA_PRINT || m_type == Preset::TYPE_PRINT)
+            //     update_frequently_changed_parameters();
         }
 
         m_opt_status_value = (m_presets->get_selected_preset_parent() ? osSystemValue : 0) | osInitValue;
@@ -3462,7 +3494,7 @@ void TabSLAMaterial::build()
         on_value_change(opt_key, value);
 
         if (opt_key == "bottle_volume" || opt_key == "bottle_cost") {
-            wxGetApp().sidebar().update_sliced_info_sizer();
+            // wxGetApp().sidebar().update_sliced_info_sizer();
             wxGetApp().sidebar().Layout();
         }
     };

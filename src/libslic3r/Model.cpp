@@ -109,10 +109,10 @@ Model Model::read_from_file(const std::string& input_file, DynamicPrintConfig* c
         result = load_amf(input_file.c_str(), config, &model, check_version);
     else if (boost::algorithm::iends_with(input_file, ".3mf"))
         result = load_3mf(input_file.c_str(), config, &model, false);
-    else if (boost::algorithm::iends_with(input_file, ".prusa"))
+    else if (boost::algorithm::iends_with(input_file, ".mxlab"))
         result = load_prus(input_file.c_str(), &model);
     else
-        throw std::runtime_error("Unknown file format. Input file must have .stl, .obj, .amf(.xml) or .prusa extension.");
+        throw std::runtime_error("Unknown file format. Input file must have .stl, .obj, .amf(.xml) or .mxlab extension.");
 
     if (! result)
         throw std::runtime_error("Loading of a model file failed.");
@@ -636,6 +636,9 @@ ModelObject& ModelObject::assign_copy(const ModelObject &rhs)
     this->layer_config_ranges         = rhs.layer_config_ranges;    // #ys_FIXME_experiment
     this->layer_height_profile        = rhs.layer_height_profile;
     this->printable                   = rhs.printable;
+    this->checked                     = rhs.checked;
+    this->base_dmt                    = rhs.base_dmt;
+    this->object_color                = rhs.object_color;
     this->origin_translation          = rhs.origin_translation;
     m_bounding_box                    = rhs.m_bounding_box;
     m_bounding_box_valid              = rhs.m_bounding_box_valid;

@@ -40,6 +40,8 @@ public:
     float nozzle_diameter;
     // Is it a bridge?
     bool  bridge;
+
+    bool revise_spacing;
     
     Flow(float _w, float _h, float _nd, bool _bridge = false) :
         width(_w), height(_h), nozzle_diameter(_nd), bridge(_bridge) {}
@@ -63,7 +65,7 @@ public:
     // Create a flow from the spacing of extrusion lines.
     // This method is used exclusively to calculate new flow of 100% infill, where the extrusion width was allowed to scale
     // to fit a region with integer number of lines.
-    static Flow new_from_spacing(float spacing, float nozzle_diameter, float height, bool bridge);
+    static Flow new_from_spacing(float spacing, float nozzle_diameter, float height, bool bridge, bool revise_spacing);
 };
 
 extern Flow support_material_flow(const PrintObject *object, float layer_height = 0.f);

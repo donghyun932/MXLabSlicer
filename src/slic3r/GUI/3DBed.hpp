@@ -99,7 +99,7 @@ public:
 
     EType get_type() const { return m_type; }
 
-    bool is_prusa() const { return (m_type == MK2) || (m_type == MK3) || (m_type == SL1); }
+    bool is_mxlab() const { return (m_type == MK2) || (m_type == MK3) || (m_type == SL1); }
     bool is_custom() const { return m_type == Custom; }
 
     const Pointfs& get_shape() const { return m_shape; }
@@ -118,7 +118,6 @@ private:
     void calc_gridlines(const ExPolygon& poly, const BoundingBox& bed_bbox);
     EType detect_type(const Pointfs& shape) const;
     void render_axes() const;
-    void render_prusa(GLCanvas3D& canvas, const std::string& key, bool bottom) const;
     void render_texture(const std::string& filename, bool bottom, GLCanvas3D& canvas) const;
     void render_model(const std::string& filename) const;
     void render_custom(GLCanvas3D& canvas, bool bottom) const;

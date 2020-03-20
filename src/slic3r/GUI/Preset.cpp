@@ -163,7 +163,7 @@ VendorProfile VendorProfile::from_ini(const ptree &tree, const boost::filesystem
             }
 
             model.family = section.second.get<std::string>("family", std::string());
-            if (model.family.empty() && res.name == "Prusa Research") {
+            if (model.family.empty() && res.name == "MXLab Research") {
                 // If no family is specified, it can be inferred for known printers
                 const auto from_pre_map = pre_family_model_map.find(model.id);
                 if (from_pre_map != pre_family_model_map.end()) { model.family = from_pre_map->second; }
@@ -376,6 +376,7 @@ void Preset::set_visible_from_appconfig(const AppConfig &app_config)
 const std::vector<std::string>& Preset::print_options()
 {
     static std::vector<std::string> s_opts {
+        "revise_spacing", "tool_path_spacing", "traverse_speed", "dwell_time", "shield_gas_applied",
         "layer_height", "first_layer_height", "perimeters", "spiral_vase", "slice_closing_radius", "top_solid_layers", "bottom_solid_layers",
         "extra_perimeters", "ensure_vertical_shell_thickness", "avoid_crossing_perimeters", "thin_walls", "overhangs",
         "seam_position", "external_perimeters_first", "fill_density", "fill_pattern", "top_fill_pattern", "bottom_fill_pattern",
@@ -409,6 +410,8 @@ const std::vector<std::string>& Preset::print_options()
 const std::vector<std::string>& Preset::filament_options()
 {
     static std::vector<std::string> s_opts {
+        "corner_rounding_r",
+        "orientation", "start_point_dislocation", "method", "start_angle",  "rotation_increment", "fixed_for_all_layers", "user_edit",
         "filament_colour", "filament_diameter", "filament_type", "filament_soluble", "filament_notes", "filament_max_volumetric_speed",
         "extrusion_multiplier", "filament_density", "filament_cost", "filament_loading_speed", "filament_loading_speed_start", "filament_load_time",
         "filament_unloading_speed", "filament_unloading_speed_start", "filament_unload_time", "filament_toolchange_delay", "filament_cooling_moves",
@@ -430,6 +433,7 @@ const std::vector<std::string>& Preset::printer_options()
     static std::vector<std::string> s_opts;
     if (s_opts.empty()) {
         s_opts = {
+            "powder_feeder_define",
             "printer_technology",
             "bed_shape", "bed_custom_texture", "bed_custom_model", "z_offset", "gcode_flavor", "use_relative_e_distances", "serial_port", "serial_speed",
             "use_firmware_retraction", "use_volumetric_e", "variable_layer_height",
@@ -1113,7 +1117,7 @@ void PresetCollection::update_platter_ui(GUI::PresetComboBox *ui)
             bmps.emplace_back(m_bitmap_add ? *m_bitmap_add : wxNullBitmap);
             bmp = m_bitmap_cache->insert(bitmap_key, bmps);
         }
-        ui->set_label_marker(ui->Append(PresetCollection::separator(L("Add a new printer")), *bmp), GUI::PresetComboBox::LABEL_ITEM_WIZARD_PRINTERS);
+        // ui->set_label_marker(ui->Append(PresetCollection::separator(L("Add a new printer")), *bmp), GUI::PresetComboBox::LABEL_ITEM_WIZARD_PRINTERS);
     } else if (m_type == Preset::TYPE_SLA_MATERIAL) {
         ui->set_label_marker(ui->Append(PresetCollection::separator(L("Add/Remove materials")), wxNullBitmap), GUI::PresetComboBox::LABEL_ITEM_WIZARD_MATERIALS);
     }
@@ -1210,7 +1214,7 @@ size_t PresetCollection::update_tab_ui(wxBitmapComboBox *ui, bool show_incompati
             bmps.emplace_back(m_bitmap_add ? *m_bitmap_add : wxNullBitmap);
             bmp = m_bitmap_cache->insert("add_printer_tab", bmps);
         }
-        ui->Append(PresetCollection::separator("Add a new printer"), *bmp);
+        // ui->Append(PresetCollection::separator("Add a new printer"), *bmp);
     }
 
     /* But, if selected_preset_item is still equal to INT_MAX, it means that

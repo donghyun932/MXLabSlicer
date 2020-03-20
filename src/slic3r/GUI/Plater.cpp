@@ -689,13 +689,13 @@ struct Sidebar::priv
     PresetComboBox *combo_printer;
 
     wxBoxSizer *sizer_params;
-    FreqChangedParams   *frequently_changed_parameters{ nullptr };
+    // FreqChangedParams   *frequently_changed_parameters{ nullptr };
     ObjectList          *object_list{ nullptr };
     ObjectManipulation  *object_manipulation{ nullptr };
     ObjectSettings      *object_settings{ nullptr };
     ObjectLayers        *object_layers{ nullptr };
     ObjectInfo *object_info;
-    SlicedInfo *sliced_info;
+    // SlicedInfo *sliced_info;
 
     wxButton *btn_export_gcode;
     wxButton *btn_reslice;
@@ -716,8 +716,8 @@ Sidebar::priv::~priv()
     if (object_settings != nullptr)
         delete object_settings;
 
-    if (frequently_changed_parameters != nullptr)
-        delete frequently_changed_parameters;
+    // if (frequently_changed_parameters != nullptr)
+    //     delete frequently_changed_parameters;
 
     if (object_layers != nullptr)
         delete object_layers;
@@ -735,7 +735,7 @@ void Sidebar::priv::show_preset_comboboxes()
             sizer_presets->Show(i, showSLA);
     }
 
-    frequently_changed_parameters->Show(!showSLA);
+    // frequently_changed_parameters->Show(!showSLA);
 
     scrolled->GetParent()->Layout();
     scrolled->Refresh();
@@ -756,7 +756,7 @@ Sidebar::Sidebar(Plater *parent)
     p->scrolled->SetSizer(scrolled_sizer);
 
     // Sizer with buttons for mode changing
-    p->mode_sizer = new ModeSizer(p->scrolled);
+    // p->mode_sizer = new ModeSizer(p->scrolled);
 
     // The preset chooser
     p->sizer_presets = new wxFlexGridSizer(10, 1, 1, 2);
@@ -802,18 +802,18 @@ Sidebar::Sidebar(Plater *parent)
 
     p->combos_filament.push_back(nullptr);
     init_combo(&p->combo_print,         _(L("Print settings")),     Preset::TYPE_PRINT,         false);
-    init_combo(&p->combos_filament[0],  _(L("Filament")),           Preset::TYPE_FILAMENT,      true);
+    init_combo(&p->combos_filament[0],  _(L("Toolpath settings")),           Preset::TYPE_FILAMENT,      true);
     init_combo(&p->combo_sla_print,     _(L("SLA print settings")), Preset::TYPE_SLA_PRINT,     false);
     init_combo(&p->combo_sla_material,  _(L("SLA material")),       Preset::TYPE_SLA_MATERIAL,  false);
-    init_combo(&p->combo_printer,       _(L("Printer")),            Preset::TYPE_PRINTER,       false);
+    init_combo(&p->combo_printer,       _(L("Feeder settings")),            Preset::TYPE_PRINTER,       false);
 
     const int margin_5  = int(0.5*wxGetApp().em_unit());// 5;
 
     p->sizer_params = new wxBoxSizer(wxVERTICAL);
 
     // Frequently changed parameters
-    p->frequently_changed_parameters = new FreqChangedParams(p->scrolled);
-    p->sizer_params->Add(p->frequently_changed_parameters->get_sizer(), 0, wxEXPAND | wxTOP | wxBOTTOM, wxOSX ? 1 : margin_5);
+    // p->frequently_changed_parameters = new FreqChangedParams(p->scrolled);
+    // p->sizer_params->Add(p->frequently_changed_parameters->get_sizer(), 0, wxEXPAND | wxTOP | wxBOTTOM, wxOSX ? 1 : margin_5);
 
     // Object List
     p->object_list = new ObjectList(p->scrolled);
@@ -836,16 +836,16 @@ Sidebar::Sidebar(Plater *parent)
 
     // Info boxes
     p->object_info = new ObjectInfo(p->scrolled);
-    p->sliced_info = new SlicedInfo(p->scrolled);
+    // p->sliced_info = new SlicedInfo(p->scrolled);
 
     // Sizer in the scrolled area
-    scrolled_sizer->Add(p->mode_sizer, 0, wxALIGN_CENTER_HORIZONTAL/*RIGHT | wxBOTTOM | wxRIGHT, 5*/);
+    // scrolled_sizer->Add(p->mode_sizer, 0, wxALIGN_CENTER_HORIZONTAL/*RIGHT | wxBOTTOM | wxRIGHT, 5*/);
     is_msw ?
         scrolled_sizer->Add(p->presets_panel, 0, wxEXPAND | wxLEFT, margin_5) :
         scrolled_sizer->Add(p->sizer_presets, 0, wxEXPAND | wxLEFT, margin_5);
     scrolled_sizer->Add(p->sizer_params, 1, wxEXPAND | wxLEFT, margin_5);
     scrolled_sizer->Add(p->object_info, 0, wxEXPAND | wxTOP | wxLEFT, margin_5);
-    scrolled_sizer->Add(p->sliced_info, 0, wxEXPAND | wxTOP | wxLEFT, margin_5);
+    // scrolled_sizer->Add(p->sliced_info, 0, wxEXPAND | wxTOP | wxLEFT, margin_5);
 
     // Buttons underneath the scrolled area
 
@@ -1017,7 +1017,7 @@ void Sidebar::update_presets(Preset::Type preset_type)
 
 void Sidebar::update_mode_sizer() const
 {
-    p->mode_sizer->SetMode(m_mode);
+    // p->mode_sizer->SetMode(m_mode);
 }
 
 void Sidebar::update_reslice_btn_tooltip() const
@@ -1032,7 +1032,7 @@ void Sidebar::msw_rescale()
 {
     SetMinSize(wxSize(40 * wxGetApp().em_unit(), -1));
 
-    p->mode_sizer->msw_rescale();
+    // p->mode_sizer->msw_rescale();
 
     // Rescale preset comboboxes in respect to the current  em_unit ...
     for (PresetComboBox* combo : std::vector<PresetComboBox*> { p->combo_print,
@@ -1046,7 +1046,7 @@ void Sidebar::msw_rescale()
     // ... then refill them and set min size to correct layout of the sidebar
     update_all_preset_comboboxes();
 
-    p->frequently_changed_parameters->msw_rescale();
+    // p->frequently_changed_parameters->msw_rescale();
     p->object_list->msw_rescale();
     p->object_manipulation->msw_rescale();
     p->object_settings->msw_rescale();
@@ -1093,19 +1093,19 @@ wxPanel* Sidebar::presets_panel()
     return p->presets_panel;
 }
 
-ConfigOptionsGroup* Sidebar::og_freq_chng_params(const bool is_fff)
-{
-    return p->frequently_changed_parameters->get_og(is_fff);
-}
+// ConfigOptionsGroup* Sidebar::og_freq_chng_params(const bool is_fff)
+// {
+//     return p->frequently_changed_parameters->get_og(is_fff);
+// }
 
-wxButton* Sidebar::get_wiping_dialog_button()
-{
-    return p->frequently_changed_parameters->get_wiping_dialog_button();
-}
+// wxButton* Sidebar::get_wiping_dialog_button()
+// {
+//     return p->frequently_changed_parameters->get_wiping_dialog_button();
+// }
 
 void Sidebar::update_objects_list_extruder_column(size_t extruders_count)
 {
-    p->object_list->update_objects_list_extruder_column(extruders_count);
+    // p->object_list->update_objects_list_extruder_column(extruders_count);
 }
 
 void Sidebar::show_info_sizer()
@@ -1165,123 +1165,123 @@ void Sidebar::show_info_sizer()
     }
 }
 
-void Sidebar::update_sliced_info_sizer()
-{
-    if (p->sliced_info->IsShown(size_t(0)))
-    {
-        if (p->plater->printer_technology() == ptSLA)
-        {
-            const SLAPrintStatistics& ps = p->plater->sla_print().print_statistics();
-            wxString new_label = _(L("Used Material (ml)")) + " :";
-            const bool is_supports = ps.support_used_material > 0.0;
-            if (is_supports)
-                new_label += wxString::Format("\n    - %s\n    - %s", _(L("object(s)")), _(L("supports and pad")));
+// void Sidebar::update_sliced_info_sizer()
+// {
+//     if (p->sliced_info->IsShown(size_t(0)))
+//     {
+//         if (p->plater->printer_technology() == ptSLA)
+//         {
+//             const SLAPrintStatistics& ps = p->plater->sla_print().print_statistics();
+//             wxString new_label = _(L("Used Material (ml)")) + " :";
+//             const bool is_supports = ps.support_used_material > 0.0;
+//             if (is_supports)
+//                 new_label += wxString::Format("\n    - %s\n    - %s", _(L("object(s)")), _(L("supports and pad")));
 
-            wxString info_text = is_supports ?
-                wxString::Format("%.2f \n%.2f \n%.2f", (ps.objects_used_material + ps.support_used_material) / 1000,
-                                                       ps.objects_used_material / 1000,
-                                                       ps.support_used_material / 1000) :
-                wxString::Format("%.2f", (ps.objects_used_material + ps.support_used_material) / 1000);
-            p->sliced_info->SetTextAndShow(siMateril_unit, info_text, new_label);
+//             wxString info_text = is_supports ?
+//                 wxString::Format("%.2f \n%.2f \n%.2f", (ps.objects_used_material + ps.support_used_material) / 1000,
+//                                                        ps.objects_used_material / 1000,
+//                                                        ps.support_used_material / 1000) :
+//                 wxString::Format("%.2f", (ps.objects_used_material + ps.support_used_material) / 1000);
+//             p->sliced_info->SetTextAndShow(siMateril_unit, info_text, new_label);
 
-            wxString str_total_cost = "N/A";
+//             wxString str_total_cost = "N/A";
 
-            DynamicPrintConfig* cfg = wxGetApp().get_tab(Preset::TYPE_SLA_MATERIAL)->get_config();
-            if (cfg->option("bottle_cost")->getFloat() > 0.0 &&
-                cfg->option("bottle_volume")->getFloat() > 0.0)
-            {
-                double material_cost = cfg->option("bottle_cost")->getFloat() / 
-                                       cfg->option("bottle_volume")->getFloat();
-                str_total_cost = wxString::Format("%.2f", material_cost*(ps.objects_used_material + ps.support_used_material) / 1000);                
-            }
-            p->sliced_info->SetTextAndShow(siCost, str_total_cost);
+//             DynamicPrintConfig* cfg = wxGetApp().get_tab(Preset::TYPE_SLA_MATERIAL)->get_config();
+//             if (cfg->option("bottle_cost")->getFloat() > 0.0 &&
+//                 cfg->option("bottle_volume")->getFloat() > 0.0)
+//             {
+//                 double material_cost = cfg->option("bottle_cost")->getFloat() / 
+//                                        cfg->option("bottle_volume")->getFloat();
+//                 str_total_cost = wxString::Format("%.2f", material_cost*(ps.objects_used_material + ps.support_used_material) / 1000);                
+//             }
+//             p->sliced_info->SetTextAndShow(siCost, str_total_cost);
 
-            wxString t_est = std::isnan(ps.estimated_print_time) ? "N/A" : get_time_dhms(float(ps.estimated_print_time));
-            p->sliced_info->SetTextAndShow(siEstimatedTime, t_est, _(L("Estimated printing time")) + " :");
+//             wxString t_est = std::isnan(ps.estimated_print_time) ? "N/A" : get_time_dhms(float(ps.estimated_print_time));
+//             p->sliced_info->SetTextAndShow(siEstimatedTime, t_est, _(L("Estimated printing time")) + " :");
 
-            // Hide non-SLA sliced info parameters
-            p->sliced_info->SetTextAndShow(siFilament_m, "N/A");
-            p->sliced_info->SetTextAndShow(siFilament_mm3, "N/A");
-            p->sliced_info->SetTextAndShow(siFilament_g, "N/A");
-            p->sliced_info->SetTextAndShow(siWTNumbetOfToolchanges, "N/A");
-        }
-        else
-        {
-            const PrintStatistics& ps = p->plater->fff_print().print_statistics();
-            const bool is_wipe_tower = ps.total_wipe_tower_filament > 0;
+//             // Hide non-SLA sliced info parameters
+//             p->sliced_info->SetTextAndShow(siFilament_m, "N/A");
+//             p->sliced_info->SetTextAndShow(siFilament_mm3, "N/A");
+//             p->sliced_info->SetTextAndShow(siFilament_g, "N/A");
+//             p->sliced_info->SetTextAndShow(siWTNumbetOfToolchanges, "N/A");
+//         }
+//         else
+//         {
+//             const PrintStatistics& ps = p->plater->fff_print().print_statistics();
+//             const bool is_wipe_tower = ps.total_wipe_tower_filament > 0;
 
-            wxString new_label = _(L("Used Filament (m)"));
-            if (is_wipe_tower)
-                new_label += wxString::Format(" :\n    - %s\n    - %s", _(L("objects")), _(L("wipe tower")));
+//             wxString new_label = _(L("Used Filament (m)"));
+//             if (is_wipe_tower)
+//                 new_label += wxString::Format(" :\n    - %s\n    - %s", _(L("objects")), _(L("wipe tower")));
 
-            wxString info_text = is_wipe_tower ?
-                                wxString::Format("%.2f \n%.2f \n%.2f", ps.total_used_filament / 1000,
-                                                (ps.total_used_filament - ps.total_wipe_tower_filament) / 1000,
-                                                ps.total_wipe_tower_filament / 1000) :
-                                wxString::Format("%.2f", ps.total_used_filament / 1000);
-            p->sliced_info->SetTextAndShow(siFilament_m,    info_text,      new_label);
+//             wxString info_text = is_wipe_tower ?
+//                                 wxString::Format("%.2f \n%.2f \n%.2f", ps.total_used_filament / 1000,
+//                                                 (ps.total_used_filament - ps.total_wipe_tower_filament) / 1000,
+//                                                 ps.total_wipe_tower_filament / 1000) :
+//                                 wxString::Format("%.2f", ps.total_used_filament / 1000);
+//             p->sliced_info->SetTextAndShow(siFilament_m,    info_text,      new_label);
 
-            p->sliced_info->SetTextAndShow(siFilament_mm3,  wxString::Format("%.2f", ps.total_extruded_volume));
-            p->sliced_info->SetTextAndShow(siFilament_g,    wxString::Format("%.2f", ps.total_weight));
+//             p->sliced_info->SetTextAndShow(siFilament_mm3,  wxString::Format("%.2f", ps.total_extruded_volume));
+//             p->sliced_info->SetTextAndShow(siFilament_g,    wxString::Format("%.2f", ps.total_weight));
 
 
-            new_label = _(L("Cost"));
-            if (is_wipe_tower)
-                new_label += wxString::Format(" :\n    - %s\n    - %s", _(L("objects")), _(L("wipe tower")));
+//             new_label = _(L("Cost"));
+//             if (is_wipe_tower)
+//                 new_label += wxString::Format(" :\n    - %s\n    - %s", _(L("objects")), _(L("wipe tower")));
 
-            info_text = is_wipe_tower ?
-                        wxString::Format("%.2f \n%.2f \n%.2f", ps.total_cost,
-                                            (ps.total_cost - ps.total_wipe_tower_cost),
-                                            ps.total_wipe_tower_cost) :
-                        wxString::Format("%.2f", ps.total_cost);
-            p->sliced_info->SetTextAndShow(siCost,       info_text,      new_label);
+//             info_text = is_wipe_tower ?
+//                         wxString::Format("%.2f \n%.2f \n%.2f", ps.total_cost,
+//                                             (ps.total_cost - ps.total_wipe_tower_cost),
+//                                             ps.total_wipe_tower_cost) :
+//                         wxString::Format("%.2f", ps.total_cost);
+//             p->sliced_info->SetTextAndShow(siCost,       info_text,      new_label);
 
-            if (ps.estimated_normal_print_time == "N/A" && ps.estimated_silent_print_time == "N/A")
-                p->sliced_info->SetTextAndShow(siEstimatedTime, "N/A");
-            else {
-                new_label = _(L("Estimated printing time")) +" :";
-                info_text = "";
-                if (ps.estimated_normal_print_time != "N/A") {
-                    new_label += wxString::Format("\n    - %s", _(L("normal mode")));
-                    info_text += wxString::Format("\n%s", ps.estimated_normal_print_time);
-                    for (int i = (int)ps.estimated_normal_color_print_times.size() - 1; i >= 0; --i)
-                    {
-                        new_label += wxString::Format("\n      - %s%d", _(L("Color")) + " ", i + 1);
-                        info_text += wxString::Format("\n%s", ps.estimated_normal_color_print_times[i]);
-                    }
-                }
-                if (ps.estimated_silent_print_time != "N/A") {
-                    new_label += wxString::Format("\n    - %s", _(L("stealth mode")));
-                    info_text += wxString::Format("\n%s", ps.estimated_silent_print_time);
-                    for (int i = (int)ps.estimated_silent_color_print_times.size() - 1; i >= 0; --i)
-                    {
-                        new_label += wxString::Format("\n      - %s%d", _(L("Color")) + " ", i + 1);
-                        info_text += wxString::Format("\n%s", ps.estimated_silent_color_print_times[i]);
-                    }
-                }
-                p->sliced_info->SetTextAndShow(siEstimatedTime,  info_text,      new_label);
-            }
+//             if (ps.estimated_normal_print_time == "N/A" && ps.estimated_silent_print_time == "N/A")
+//                 p->sliced_info->SetTextAndShow(siEstimatedTime, "N/A");
+//             else {
+//                 new_label = _(L("Estimated printing time")) +" :";
+//                 info_text = "";
+//                 if (ps.estimated_normal_print_time != "N/A") {
+//                     new_label += wxString::Format("\n    - %s", _(L("normal mode")));
+//                     info_text += wxString::Format("\n%s", ps.estimated_normal_print_time);
+//                     for (int i = (int)ps.estimated_normal_color_print_times.size() - 1; i >= 0; --i)
+//                     {
+//                         new_label += wxString::Format("\n      - %s%d", _(L("Color")) + " ", i + 1);
+//                         info_text += wxString::Format("\n%s", ps.estimated_normal_color_print_times[i]);
+//                     }
+//                 }
+//                 if (ps.estimated_silent_print_time != "N/A") {
+//                     new_label += wxString::Format("\n    - %s", _(L("stealth mode")));
+//                     info_text += wxString::Format("\n%s", ps.estimated_silent_print_time);
+//                     for (int i = (int)ps.estimated_silent_color_print_times.size() - 1; i >= 0; --i)
+//                     {
+//                         new_label += wxString::Format("\n      - %s%d", _(L("Color")) + " ", i + 1);
+//                         info_text += wxString::Format("\n%s", ps.estimated_silent_color_print_times[i]);
+//                     }
+//                 }
+//                 p->sliced_info->SetTextAndShow(siEstimatedTime,  info_text,      new_label);
+//             }
 
-            // if there is a wipe tower, insert number of toolchanges info into the array:
-            p->sliced_info->SetTextAndShow(siWTNumbetOfToolchanges, is_wipe_tower ? wxString::Format("%.d", ps.total_toolchanges) : "N/A");
+//             // if there is a wipe tower, insert number of toolchanges info into the array:
+//             p->sliced_info->SetTextAndShow(siWTNumbetOfToolchanges, is_wipe_tower ? wxString::Format("%.d", ps.total_toolchanges) : "N/A");
 
-            // Hide non-FFF sliced info parameters
-            p->sliced_info->SetTextAndShow(siMateril_unit, "N/A");
-        }
-    }
-}
+//             // Hide non-FFF sliced info parameters
+//             p->sliced_info->SetTextAndShow(siMateril_unit, "N/A");
+//         }
+//     }
+// }
 
-void Sidebar::show_sliced_info_sizer(const bool show)
-{
-    wxWindowUpdateLocker freeze_guard(this);
+// void Sidebar::show_sliced_info_sizer(const bool show)
+// {
+//     wxWindowUpdateLocker freeze_guard(this);
 
-    p->sliced_info->Show(show);
-    if (show)
-        update_sliced_info_sizer();
+//     p->sliced_info->Show(show);
+//     if (show)
+//         update_sliced_info_sizer();
 
-    Layout();
-    p->scrolled->Refresh();
-}
+//     Layout();
+//     p->scrolled->Refresh();
+// }
 
 void Sidebar::enable_buttons(bool enable)
 {
@@ -1315,7 +1315,6 @@ void Sidebar::update_mode()
 
     p->object_list->unselect_objects();
     p->object_list->update_selections();
-    p->object_list->update_object_menu();
 
     Layout();
 }
@@ -1340,7 +1339,7 @@ private:
     static const std::regex pattern_drop;
 };
 
-const std::regex PlaterDropTarget::pattern_drop(".*[.](stl|obj|amf|3mf|prusa)", std::regex::icase);
+const std::regex PlaterDropTarget::pattern_drop(".*[.](stl|obj|amf|3mf|mxlab)", std::regex::icase);
 
 bool PlaterDropTarget::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString &filenames)
 {
@@ -1836,7 +1835,7 @@ struct Plater::priv
     static const std::regex pattern_3mf;
     static const std::regex pattern_zip_amf;
     static const std::regex pattern_any_amf;
-    static const std::regex pattern_prusa;
+    static const std::regex pattern_mxlab;
 
     priv(Plater *q, MainFrame *main_frame);
     ~priv();
@@ -2030,11 +2029,11 @@ private:
     std::string m_last_sla_printer_profile_name;
 };
 
-const std::regex Plater::priv::pattern_bundle(".*[.](amf|amf[.]xml|zip[.]amf|3mf|prusa)", std::regex::icase);
+const std::regex Plater::priv::pattern_bundle(".*[.](amf|amf[.]xml|zip[.]amf|3mf|mxlab)", std::regex::icase);
 const std::regex Plater::priv::pattern_3mf(".*3mf", std::regex::icase);
 const std::regex Plater::priv::pattern_zip_amf(".*[.]zip[.]amf", std::regex::icase);
 const std::regex Plater::priv::pattern_any_amf(".*[.](amf|amf[.]xml|zip[.]amf)", std::regex::icase);
-const std::regex Plater::priv::pattern_prusa(".*prusa", std::regex::icase);
+const std::regex Plater::priv::pattern_mxlab(".*mxlab", std::regex::icase);
 
 Plater::priv::priv(Plater *q, MainFrame *main_frame)
     : q(q)
@@ -2334,10 +2333,10 @@ std::vector<size_t> Plater::priv::load_files(const std::vector<fs::path>& input_
         const bool type_3mf = std::regex_match(path.string(), pattern_3mf);
         const bool type_zip_amf = !type_3mf && std::regex_match(path.string(), pattern_zip_amf);
         const bool type_any_amf = !type_3mf && std::regex_match(path.string(), pattern_any_amf);
-        const bool type_prusa = std::regex_match(path.string(), pattern_prusa);
+        const bool type_mxlab = std::regex_match(path.string(), pattern_mxlab);
 
         Slic3r::Model model;
-        bool is_project_file = type_prusa;
+        bool is_project_file = type_mxlab;
         try {
             if (type_3mf || type_zip_amf) {
                 DynamicPrintConfig config;
@@ -2479,6 +2478,9 @@ std::vector<size_t> Plater::priv::load_files(const std::vector<fs::path>& input_
     {
         // update printable state for new volumes on canvas3D
         wxGetApp().plater()->canvas3D()->update_instance_printable_state_for_objects(obj_idxs);
+        wxGetApp().plater()->canvas3D()->update_instance_object_color_for_objects(obj_idxs);
+        wxGetApp().plater()->canvas3D()->update_instance_base_dmt_for_objects(obj_idxs);
+        wxGetApp().plater()->canvas3D()->update_instance_checked_state_for_objects(obj_idxs);
 
         Selection& selection = view3D->get_canvas3d()->get_selection();
         selection.clear();
@@ -2596,7 +2598,7 @@ wxString Plater::priv::get_export_file(GUI::FileType file_type)
         case FT_STL:
         case FT_AMF:
         case FT_3MF:
-        case FT_GCODE:
+        case FT_NCCODE:
         case FT_OBJ:
             wildcard = file_wildcards(file_type);
         break;
@@ -2787,7 +2789,7 @@ void Plater::priv::reset()
     object_list_changed();
 
     // The hiding of the slicing results, if shown, is not taken care by the background process, so we do it here
-    this->sidebar->show_sliced_info_sizer(false);
+    // this->sidebar->show_sliced_info_sizer(false);
 
     model.custom_gcode_per_print_z.clear();
 }
@@ -3030,7 +3032,7 @@ unsigned int Plater::priv::update_background_process(bool force_validation, bool
     if (invalidated == Print::APPLY_STATUS_INVALIDATED) {
         // Some previously calculated data on the Print was invalidated.
         // Hide the slicing results, as the current slicing status is no more valid.
-        this->sidebar->show_sliced_info_sizer(false);
+        // this->sidebar->show_sliced_info_sizer(false);
         // Reset preview canvases. If the print has been invalidated, the preview canvases will be cleared.
         // Otherwise they will be just refreshed.
         if (this->preview != nullptr)
@@ -3387,6 +3389,9 @@ void Plater::priv::reload_from_disk()
     for (size_t i = 0; i < model.objects.size(); ++i)
     {
         view3D->get_canvas3d()->update_instance_printable_state_for_object(i);
+        view3D->get_canvas3d()->update_instance_object_color_for_object(i);
+        view3D->get_canvas3d()->update_instance_base_dmt_for_object(i);
+        view3D->get_canvas3d()->update_instance_checked_state_for_object(i);
     }
 }
 
@@ -3593,7 +3598,7 @@ void Plater::priv::on_process_completed(wxCommandEvent &evt)
     if (canceled)
         this->statusbar()->set_status_text(_(L("Cancelled")));
 
-    this->sidebar->show_sliced_info_sizer(success);
+    // this->sidebar->show_sliced_info_sizer(success);
 
     // This updates the "Slice now", "Export G-code", "Arrange" buttons status.
     // Namely, it refreshes the "Out of print bed" property of all the ModelObjects, and it enables
@@ -3671,81 +3676,6 @@ void Plater::priv::on_object_select(SimpleEvent& evt)
 
 void Plater::priv::on_right_click(RBtnEvent& evt)
 {
-    int obj_idx = get_selected_object_idx();
-
-    wxMenu* menu = nullptr;
-
-    if (obj_idx == -1) // no one or several object are selected
-    { 
-        if (evt.data.second) // right button was clicked on empty space
-            menu = &default_menu;
-        else
-        {
-            sidebar->obj_list()->show_multi_selection_menu();
-            return;
-        }
-    }
-    else
-    {
-        // If in 3DScene is(are) selected volume(s), but right button was clicked on empty space
-        if (evt.data.second)
-            return; 
-
-        if (printer_technology == ptSLA)
-            menu = &sla_object_menu;
-        else
-        {
-            // show "Object menu" for each one or several FullInstance instead of FullObject
-            const bool is_some_full_instances = get_selection().is_single_full_instance() || 
-                                                get_selection().is_single_full_object() || 
-                                                get_selection().is_multiple_full_instance();
-            menu = is_some_full_instances ? &object_menu : &part_menu;
-        }
-
-        sidebar->obj_list()->append_menu_item_settings(menu);
-
-        if (printer_technology != ptSLA)
-            sidebar->obj_list()->append_menu_item_change_extruder(menu);
-
-        if (menu != &part_menu)
-        {
-            /* Remove/Prepend "increase/decrease instances" menu items according to the view mode.
-             * Suppress to show those items for a Simple mode
-             */
-            const MenuIdentifier id = printer_technology == ptSLA ? miObjectSLA : miObjectFFF;
-            if (wxGetApp().get_mode() == comSimple) {
-                if (menu->FindItem(_(L("Add instance"))) != wxNOT_FOUND)
-                {
-                    /* Detach an items from the menu, but don't delete them
-                     * so that they can be added back later
-                     * (after switching to the Advanced/Expert mode)
-                     */
-                    menu->Remove(items_increase[id]);
-                    menu->Remove(items_decrease[id]);
-                    menu->Remove(items_set_number_of_copies[id]);
-                }
-            }
-            else {
-                if (menu->FindItem(_(L("Add instance"))) == wxNOT_FOUND)
-                {
-                    // Prepend items to the menu, if those aren't not there
-                    menu->Prepend(items_set_number_of_copies[id]);
-                    menu->Prepend(items_decrease[id]);
-                    menu->Prepend(items_increase[id]);
-                }
-            }
-        }
-    }
-
-    if (q != nullptr && menu) {
-#ifdef __linux__
-        // For some reason on Linux the menu isn't displayed if position is specified
-        // (even though the position is sane).
-        q->PopupMenu(menu);
-#else
-        q->PopupMenu(menu, (int)evt.data.first.x(), (int)evt.data.first.y());
-#endif
-    }
 }
 
 void Plater::priv::on_wipetower_moved(Vec3dEvent &evt)
@@ -3856,80 +3786,80 @@ void Plater::priv::set_project_filename(const wxString& filename)
 
 bool Plater::priv::init_common_menu(wxMenu* menu, const bool is_part/* = false*/)
 {
-    if (is_part) {
-        append_menu_item(menu, wxID_ANY, _(L("Delete")) + "\tDel", _(L("Remove the selected object")),
-            [this](wxCommandEvent&) { q->remove_selected();         }, "delete",            nullptr, [this]() { return can_delete(); }, q);
+    // if (is_part) {
+    //     append_menu_item(menu, wxID_ANY, _(L("Delete")) + "\tDel", _(L("Remove the selected object")),
+    //         [this](wxCommandEvent&) { q->remove_selected();         }, "delete",            nullptr, [this]() { return can_delete(); }, q);
 
-        append_menu_item(menu, wxID_ANY, _(L("Reload from disk")), _(L("Reload the selected volumes from disk")),
-            [this](wxCommandEvent&) { q->reload_from_disk(); }, "", menu, [this]() { return can_reload_from_disk(); }, q);
+    //     append_menu_item(menu, wxID_ANY, _(L("Reload from disk")), _(L("Reload the selected volumes from disk")),
+    //         [this](wxCommandEvent&) { q->reload_from_disk(); }, "", menu, [this]() { return can_reload_from_disk(); }, q);
 
-        sidebar->obj_list()->append_menu_item_export_stl(menu);
-    }
-    else {
-        wxMenuItem* item_increase = append_menu_item(menu, wxID_ANY, _(L("Add instance")) + "\t+", _(L("Add one more instance of the selected object")),
-            [this](wxCommandEvent&) { q->increase_instances();      }, "add_copies",        nullptr, [this]() { return can_increase_instances(); }, q);
-        wxMenuItem* item_decrease = append_menu_item(menu, wxID_ANY, _(L("Remove instance")) + "\t-", _(L("Remove one instance of the selected object")),
-            [this](wxCommandEvent&) { q->decrease_instances();      }, "remove_copies",     nullptr, [this]() { return can_decrease_instances(); }, q);
-        wxMenuItem* item_set_number_of_copies = append_menu_item(menu, wxID_ANY, _(L("Set number of instances")) + dots, _(L("Change the number of instances of the selected object")),
-            [this](wxCommandEvent&) { q->set_number_of_copies();    }, "number_of_copies",  nullptr, [this]() { return can_increase_instances(); }, q);
+    //     sidebar->obj_list()->append_menu_item_export_stl(menu);
+    // }
+    // else {
+    //     wxMenuItem* item_increase = append_menu_item(menu, wxID_ANY, _(L("Add instance")) + "\t+", _(L("Add one more instance of the selected object")),
+    //         [this](wxCommandEvent&) { q->increase_instances();      }, "add_copies",        nullptr, [this]() { return can_increase_instances(); }, q);
+    //     wxMenuItem* item_decrease = append_menu_item(menu, wxID_ANY, _(L("Remove instance")) + "\t-", _(L("Remove one instance of the selected object")),
+    //         [this](wxCommandEvent&) { q->decrease_instances();      }, "remove_copies",     nullptr, [this]() { return can_decrease_instances(); }, q);
+    //     wxMenuItem* item_set_number_of_copies = append_menu_item(menu, wxID_ANY, _(L("Set number of instances")) + dots, _(L("Change the number of instances of the selected object")),
+    //         [this](wxCommandEvent&) { q->set_number_of_copies();    }, "number_of_copies",  nullptr, [this]() { return can_increase_instances(); }, q);
 
 
-        items_increase.push_back(item_increase);
-        items_decrease.push_back(item_decrease);
-        items_set_number_of_copies.push_back(item_set_number_of_copies);
+    //     items_increase.push_back(item_increase);
+    //     items_decrease.push_back(item_decrease);
+    //     items_set_number_of_copies.push_back(item_set_number_of_copies);
 
-        // Delete menu was moved to be after +/- instace to make it more difficult to be selected by mistake.
-        append_menu_item(menu, wxID_ANY, _(L("Delete")) + "\tDel", _(L("Remove the selected object")),
-            [this](wxCommandEvent&) { q->remove_selected(); }, "delete",            nullptr, [this]() { return can_delete(); }, q);
+    //     // Delete menu was moved to be after +/- instace to make it more difficult to be selected by mistake.
+    //     append_menu_item(menu, wxID_ANY, _(L("Delete")) + "\tDel", _(L("Remove the selected object")),
+    //         [this](wxCommandEvent&) { q->remove_selected(); }, "delete",            nullptr, [this]() { return can_delete(); }, q);
 
-        menu->AppendSeparator();
-        sidebar->obj_list()->append_menu_item_instance_to_object(menu, q);
-        menu->AppendSeparator();
+    //     menu->AppendSeparator();
+    //     sidebar->obj_list()->append_menu_item_instance_to_object(menu, q);
+    //     menu->AppendSeparator();
 
-        wxMenuItem* menu_item_printable = sidebar->obj_list()->append_menu_item_printable(menu, q);
-        menu->AppendSeparator();
+    //     wxMenuItem* menu_item_printable = sidebar->obj_list()->append_menu_item_printable(menu, q);
+    //     menu->AppendSeparator();
 
-        append_menu_item(menu, wxID_ANY, _(L("Reload from disk")), _(L("Reload the selected object from disk")),
-            [this](wxCommandEvent&) { reload_from_disk(); }, "", nullptr, [this]() { return can_reload_from_disk(); }, q);
+    //     append_menu_item(menu, wxID_ANY, _(L("Reload from disk")), _(L("Reload the selected object from disk")),
+    //         [this](wxCommandEvent&) { reload_from_disk(); }, "", nullptr, [this]() { return can_reload_from_disk(); }, q);
 
-        append_menu_item(menu, wxID_ANY, _(L("Export as STL")) + dots, _(L("Export the selected object as STL file")),
-            [this](wxCommandEvent&) { q->export_stl(false, true); }, "", nullptr, 
-            [this]() {
-                const Selection& selection = get_selection();
-                return selection.is_single_full_instance() || selection.is_single_full_object();
-            }, q);
+    //     append_menu_item(menu, wxID_ANY, _(L("Export as STL")) + dots, _(L("Export the selected object as STL file")),
+    //         [this](wxCommandEvent&) { q->export_stl(false, true); }, "", nullptr, 
+    //         [this]() {
+    //             const Selection& selection = get_selection();
+    //             return selection.is_single_full_instance() || selection.is_single_full_object();
+    //         }, q);
 
-        menu->AppendSeparator();
+    //     menu->AppendSeparator();
 
-        q->Bind(wxEVT_UPDATE_UI, [this](wxUpdateUIEvent& evt) {
-            const Selection& selection = get_selection();
-            int instance_idx = selection.get_instance_idx();
-            evt.Enable(selection.is_single_full_instance() || selection.is_single_full_object());
-            if (instance_idx != -1)
-            {
-                evt.Check(model.objects[selection.get_object_idx()]->instances[instance_idx]->printable);
-                view3D->set_as_dirty();
-            }
-            }, menu_item_printable->GetId());
-    }
+    //     q->Bind(wxEVT_UPDATE_UI, [this](wxUpdateUIEvent& evt) {
+    //         const Selection& selection = get_selection();
+    //         int instance_idx = selection.get_instance_idx();
+    //         evt.Enable(selection.is_single_full_instance() || selection.is_single_full_object());
+    //         if (instance_idx != -1)
+    //         {
+    //             evt.Check(model.objects[selection.get_object_idx()]->instances[instance_idx]->printable);
+    //             view3D->set_as_dirty();
+    //         }
+    //         }, menu_item_printable->GetId());
+    // }
 
-    sidebar->obj_list()->append_menu_item_fix_through_netfabb(menu);
+    // sidebar->obj_list()->append_menu_item_fix_through_netfabb(menu);
 
-    sidebar->obj_list()->append_menu_item_scale_selection_to_fit_print_volume(menu);
+    // sidebar->obj_list()->append_menu_item_scale_selection_to_fit_print_volume(menu);
 
-    wxMenu* mirror_menu = new wxMenu();
-    if (mirror_menu == nullptr)
-        return false;
+    // wxMenu* mirror_menu = new wxMenu();
+    // if (mirror_menu == nullptr)
+    //     return false;
 
-    append_menu_item(mirror_menu, wxID_ANY, _(L("Along X axis")), _(L("Mirror the selected object along the X axis")),
-        [this](wxCommandEvent&) { mirror(X); }, "mark_X", menu);
-    append_menu_item(mirror_menu, wxID_ANY, _(L("Along Y axis")), _(L("Mirror the selected object along the Y axis")),
-        [this](wxCommandEvent&) { mirror(Y); }, "mark_Y", menu);
-    append_menu_item(mirror_menu, wxID_ANY, _(L("Along Z axis")), _(L("Mirror the selected object along the Z axis")),
-        [this](wxCommandEvent&) { mirror(Z); }, "mark_Z", menu);
+    // append_menu_item(mirror_menu, wxID_ANY, _(L("Along X axis")), _(L("Mirror the selected object along the X axis")),
+    //     [this](wxCommandEvent&) { mirror(X); }, "mark_X", menu);
+    // append_menu_item(mirror_menu, wxID_ANY, _(L("Along Y axis")), _(L("Mirror the selected object along the Y axis")),
+    //     [this](wxCommandEvent&) { mirror(Y); }, "mark_Y", menu);
+    // append_menu_item(mirror_menu, wxID_ANY, _(L("Along Z axis")), _(L("Mirror the selected object along the Z axis")),
+    //     [this](wxCommandEvent&) { mirror(Z); }, "mark_Z", menu);
 
-    append_submenu(menu, mirror_menu, wxID_ANY, _(L("Mirror")), _(L("Mirror the selected object")), "",
-        [this]() { return can_mirror(); }, q);
+    // append_submenu(menu, mirror_menu, wxID_ANY, _(L("Mirror")), _(L("Mirror the selected object")), "",
+    //     [this]() { return can_mirror(); }, q);
 
     return true;
 }
@@ -4754,10 +4684,11 @@ void Plater::export_gcode()
 			start_dir = RemovableDriveManager::get_instance().get_drive_path();
 		}
 	}
-    wxFileDialog dlg(this, (printer_technology() == ptFFF) ? _(L("Save G-code file as:")) : _(L("Save SL1 file as:")),
+
+    wxFileDialog dlg(this, (printer_technology() == ptFFF) ? _(L("Save NC-code file as:")) : _(L("Save SL1 file as:")),
         start_dir,
         from_path(default_output_file.filename()),
-        GUI::file_wildcards((printer_technology() == ptFFF) ? FT_GCODE : FT_PNGZIP, default_output_file.extension().string()),
+        GUI::file_wildcards((printer_technology() == ptFFF) ? FT_NCCODE : FT_PNGZIP, default_output_file.extension().string()),
         wxFD_SAVE | wxFD_OVERWRITE_PROMPT
     );
 
@@ -5189,7 +5120,7 @@ void Plater::on_config_change(const DynamicPrintConfig &config)
                     filament_colors.push_back(filaments.find_preset(filament_preset, true)->config.opt_string("filament_colour", (unsigned)0));
 
                 p->config->option<ConfigOptionStrings>(opt_key)->values = filament_colors;
-                p->sidebar->obj_list()->update_extruder_colors();
+                // p->sidebar->obj_list()->update_extruder_colors();
                 continue;
             }
         }
@@ -5215,7 +5146,7 @@ void Plater::on_config_change(const DynamicPrintConfig &config)
         else if(opt_key == "extruder_colour") {
             update_scheduled = true;
             p->preview->set_number_extruders(p->config->option<ConfigOptionStrings>(opt_key)->values.size());
-            p->sidebar->obj_list()->update_extruder_colors();
+            // p->sidebar->obj_list()->update_extruder_colors();
         } else if(opt_key == "max_print_height") {
             update_scheduled = true;
         }
@@ -5266,7 +5197,7 @@ void Plater::force_filament_colors_update()
 
     if (update_scheduled) {
         update();
-        p->sidebar->obj_list()->update_extruder_colors();
+        // p->sidebar->obj_list()->update_extruder_colors();
     }
 
     if (p->main_frame->is_loaded())

@@ -82,7 +82,7 @@ class MainFrame : public DPIFrame
     enum MenuItems
     {                   //   FFF                  SLA
         miExport = 0,   // Export G-code        Export
-        miSend,         // Send G-code          Send to print
+        // miSend,         // Send G-code          Send to print
         miMaterialTab,  // Filament Settings    Material Settings
     };
 

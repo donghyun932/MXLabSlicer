@@ -24,6 +24,22 @@
 
 namespace Slic3r {
 
+enum OrientationEnum {
+    oeAlternating, oeClockwise, oeCounterclockwise,
+};
+
+enum StartPointDislocationEnum {
+    spdClockwise, spdCounterclockwise,
+};
+
+enum MethodEnum {
+    meZig, meZigzag, meSpiral,
+};
+
+enum FixedForAllLayersEnum {
+    ffalC, ffalF, ffalCf, ffalCfc, ffalUserEdit,
+};
+
 enum GCodeFlavor : unsigned char {
     gcfRepRap, gcfRepetier, gcfTeacup, gcfMakerWare, gcfMarlin, gcfSailfish, gcfMach3, gcfMachinekit,
     gcfSmoothie, gcfNoExtrusion,
@@ -144,6 +160,47 @@ template<> inline const t_config_enum_values& ConfigOptionEnum<SeamPosition>::ge
         keys_map["nearest"]             = spNearest;
         keys_map["aligned"]             = spAligned;
         keys_map["rear"]                = spRear;
+    }
+    return keys_map;
+}
+
+template<> inline const t_config_enum_values& ConfigOptionEnum<OrientationEnum>::get_enum_values() {
+    static t_config_enum_values keys_map;
+    if (keys_map.empty()) {
+        keys_map["alternating"]              = oeAlternating;
+        keys_map["clockwise"]                = oeClockwise;
+        keys_map["counterclockwise"]         = oeCounterclockwise;
+    }
+    return keys_map;
+}
+
+template<> inline const t_config_enum_values& ConfigOptionEnum<StartPointDislocationEnum>::get_enum_values() {
+    static t_config_enum_values keys_map;
+    if (keys_map.empty()) {
+        keys_map["clockwise"]                = spdClockwise;
+        keys_map["counterclockwise"]         = spdCounterclockwise;
+    }
+    return keys_map;
+}
+
+template<> inline const t_config_enum_values& ConfigOptionEnum<MethodEnum>::get_enum_values() {
+    static t_config_enum_values keys_map;
+    if (keys_map.empty()) {
+        keys_map["zig"]              = meZig;
+        keys_map["zigzag"]           = meZigzag;
+        keys_map["spiral"]           = meSpiral;
+    }
+    return keys_map;
+}
+
+template<> inline const t_config_enum_values& ConfigOptionEnum<FixedForAllLayersEnum>::get_enum_values() {
+    static t_config_enum_values keys_map;
+    if (keys_map.empty()) {
+        keys_map["c"]              = ffalC;
+        keys_map["f"]              = ffalF;
+        keys_map["cf"]             = ffalCf;
+        keys_map["cfc"]            = ffalCfc;
+        keys_map["user_edit"]      = ffalUserEdit;
     }
     return keys_map;
 }
@@ -484,6 +541,12 @@ class PrintRegionConfig : public StaticPrintConfig
 {
     STATIC_PRINT_CONFIG_CACHE(PrintRegionConfig)
 public:
+    ConfigOptionFloat               corner_rounding_r;
+    ConfigOptionBool                revise_spacing;
+    ConfigOptionEnum<MethodEnum>    method;
+    ConfigOptionFloat               start_angle;
+    ConfigOptionFloat               rotation_increment;
+
     ConfigOptionFloat               bridge_angle;
     ConfigOptionInt                 bottom_solid_layers;
     ConfigOptionFloat               bridge_flow_ratio;
@@ -527,6 +590,12 @@ public:
 protected:
     void initialize(StaticCacheBase &cache, const char *base_ptr)
     {
+        OPT_PTR(corner_rounding_r);
+        OPT_PTR(revise_spacing);
+        OPT_PTR(method);
+        OPT_PTR(start_angle);
+        OPT_PTR(rotation_increment);
+
         OPT_PTR(bridge_angle);
         OPT_PTR(bottom_solid_layers);
         OPT_PTR(bridge_flow_ratio);
@@ -621,6 +690,11 @@ class GCodeConfig : public StaticPrintConfig
 {
     STATIC_PRINT_CONFIG_CACHE(GCodeConfig)
 public:
+    ConfigOptionEnum<OrientationEnum>                    orientation;
+    ConfigOptionEnum<StartPointDislocationEnum>          start_point_dislocation;
+    ConfigOptionEnum<FixedForAllLayersEnum>              fixed_for_all_layers;
+    ConfigOptionString              user_edit;
+
     ConfigOptionString              before_layer_gcode;
     ConfigOptionString              between_objects_gcode;
     ConfigOptionFloats              deretract_speed;
@@ -694,6 +768,11 @@ public:
 protected:
     void initialize(StaticCacheBase &cache, const char *base_ptr)
     {
+        OPT_PTR(orientation);
+        OPT_PTR(start_point_dislocation);
+        OPT_PTR(fixed_for_all_layers);
+        OPT_PTR(user_edit);
+
         OPT_PTR(before_layer_gcode);
         OPT_PTR(between_objects_gcode);
         OPT_PTR(deretract_speed);
@@ -767,7 +846,12 @@ class PrintConfig : public MachineEnvelopeConfig, public GCodeConfig
 public:
     double                          min_object_distance() const;
     static double                   min_object_distance(const ConfigBase *config);
+    ConfigOptionFloat               dwell_time;
+    ConfigOptionBool                shield_gas_applied;
+    ConfigOptionFloat               traverse_speed;
+    ConfigOptionString              powder_feeder_define;
 
+    ConfigOptionFloat               tool_path_spacing;
     ConfigOptionBool                avoid_crossing_perimeters;
     ConfigOptionPoints              bed_shape;
     ConfigOptionInts                bed_temperature;
@@ -840,6 +924,12 @@ protected:
     {
         this->MachineEnvelopeConfig::initialize(cache, base_ptr);
         this->GCodeConfig::initialize(cache, base_ptr);
+        OPT_PTR(dwell_time);
+        OPT_PTR(shield_gas_applied);
+        OPT_PTR(traverse_speed);
+        OPT_PTR(powder_feeder_define);
+
+        OPT_PTR(tool_path_spacing);
         OPT_PTR(avoid_crossing_perimeters);
         OPT_PTR(bed_shape);
         OPT_PTR(bed_temperature);

@@ -17,6 +17,7 @@ static const float MMMIN_TO_MMSEC = 1.0f / 60.0f;
 static const float INCHES_TO_MM = 25.4f;
 static const float DEFAULT_FEEDRATE = 0.0f;
 static const unsigned int DEFAULT_EXTRUDER_ID = 0;
+static const std::string DEFAULT_OBJECT_COLOR = "#FFFFFF";
 static const unsigned int DEFAULT_COLOR_PRINT_ID = 0;
 static const Slic3r::Vec3d DEFAULT_START_POSITION = Slic3r::Vec3d(0.0f, 0.0f, 0.0f);
 static const float DEFAULT_START_EXTRUSION = 0.0f;
@@ -45,11 +46,12 @@ GCodeAnalyzer::Metadata::Metadata()
     , height(GCodeAnalyzer::Default_Height)
     , feedrate(DEFAULT_FEEDRATE)
     , fan_speed(DEFAULT_FAN_SPEED)
+    , object_color(DEFAULT_OBJECT_COLOR)
     , cp_color_id(DEFAULT_COLOR_PRINT_ID)
 {
 }
 
-GCodeAnalyzer::Metadata::Metadata(ExtrusionRole extrusion_role, unsigned int extruder_id, double mm3_per_mm, float width, float height, float feedrate, float fan_speed, unsigned int cp_color_id/* = 0*/)
+GCodeAnalyzer::Metadata::Metadata(ExtrusionRole extrusion_role, unsigned int extruder_id, double mm3_per_mm, float width, float height, float feedrate, float fan_speed, std::string object_color, unsigned int cp_color_id/* = 0*/)
     : extrusion_role(extrusion_role)
     , extruder_id(extruder_id)
     , mm3_per_mm(mm3_per_mm)
@@ -57,6 +59,7 @@ GCodeAnalyzer::Metadata::Metadata(ExtrusionRole extrusion_role, unsigned int ext
     , height(height)
     , feedrate(feedrate)
     , fan_speed(fan_speed)
+    , object_color(object_color)
     , cp_color_id(cp_color_id)
 {
 }
@@ -87,12 +90,15 @@ bool GCodeAnalyzer::Metadata::operator != (const GCodeAnalyzer::Metadata& other)
     if (cp_color_id != other.cp_color_id)
         return true;
 
+    if (object_color != other.object_color)
+        return true;
+
     return false;
 }
 
-GCodeAnalyzer::GCodeMove::GCodeMove(GCodeMove::EType type, ExtrusionRole extrusion_role, unsigned int extruder_id, double mm3_per_mm, float width, float height, float feedrate, const Vec3d& start_position, const Vec3d& end_position, float delta_extruder, float fan_speed, unsigned int cp_color_id/* = 0*/)
+GCodeAnalyzer::GCodeMove::GCodeMove(GCodeMove::EType type, ExtrusionRole extrusion_role, unsigned int extruder_id, double mm3_per_mm, float width, float height, float feedrate, const Vec3d& start_position, const Vec3d& end_position, float delta_extruder, float fan_speed, std::string object_color, unsigned int cp_color_id/* = 0*/)
     : type(type)
-    , data(extrusion_role, extruder_id, mm3_per_mm, width, height, feedrate, fan_speed, cp_color_id)
+    , data(extrusion_role, extruder_id, mm3_per_mm, width, height, feedrate, fan_speed, object_color, cp_color_id)
     , start_position(start_position)
     , end_position(end_position)
     , delta_extruder(delta_extruder)
@@ -122,6 +128,7 @@ void GCodeAnalyzer::reset()
     _set_e_local_positioning_type(Absolute);
     _set_extrusion_role(erNone);
     _set_extruder_id(DEFAULT_EXTRUDER_ID);
+    _set_object_color(DEFAULT_OBJECT_COLOR);
     _set_cp_color_id(DEFAULT_COLOR_PRINT_ID);
     _set_mm3_per_mm(Default_mm3_per_mm);
     _set_width(Default_Width);
@@ -189,6 +196,11 @@ void GCodeAnalyzer::_process_gcode_line(GCodeReader&, const GCodeReader::GCodeLi
     // sets new start position/extrusion
     _set_start_position(_get_end_position());
     _set_start_extrusion(_get_axis_position(E));
+
+    std::string raw_line = line.raw();
+    if (raw_line[0] == 'C') {
+        _processC(&raw_line[2]);
+    }
 
     // processes 'normal' gcode lines
     std::string cmd = line.cmd();
@@ -573,6 +585,11 @@ void GCodeAnalyzer::_reset_cached_position()
     }
 }
 
+void GCodeAnalyzer::_processC(std::string object_color)
+{
+    _set_object_color(object_color.substr(0, 7));
+}
+
 void GCodeAnalyzer::_processT(const std::string& cmd)
 {
     if (cmd.length() > 1)
@@ -762,6 +779,16 @@ ExtrusionRole GCodeAnalyzer::_get_extrusion_role() const
     return m_state.data.extrusion_role;
 }
 
+void GCodeAnalyzer::_set_object_color(std::string color)
+{
+    m_state.data.object_color = color;
+}
+
+std::string GCodeAnalyzer::_get_object_color() const
+{
+    return m_state.data.object_color;
+}
+
 void GCodeAnalyzer::_set_extruder_id(unsigned int id)
 {
     m_state.data.extruder_id = id;
@@ -919,7 +946,7 @@ void GCodeAnalyzer::_store_move(GCodeAnalyzer::GCodeMove::EType type)
 
     Vec3d start_position = _get_start_position() + extruder_offset;
     Vec3d end_position = _get_end_position() + extruder_offset;
-    it->second.emplace_back(type, _get_extrusion_role(), extruder_id, _get_mm3_per_mm(), _get_width(), _get_height(), _get_feedrate(), start_position, end_position, _get_delta_extrusion(), _get_fan_speed(), _get_cp_color_id());
+    it->second.emplace_back(type, _get_extrusion_role(), extruder_id, _get_mm3_per_mm(), _get_width(), _get_height(), _get_feedrate(), start_position, end_position, _get_delta_extrusion(), _get_fan_speed(), _get_object_color(), _get_cp_color_id());
 }
 
 bool GCodeAnalyzer::_is_valid_extrusion_role(int value) const
@@ -957,10 +984,11 @@ void GCodeAnalyzer::_calc_gcode_preview_extrusion_layers(GCodePreviewData& previ
                 path.polyline = polyline;
 				path.extrusion_role = data.extrusion_role;
 				path.mm3_per_mm = data.mm3_per_mm;
-				path.width = data.width;
+				path.width = 0.5;
 				path.height = data.height;
                 path.feedrate = data.feedrate;
                 path.extruder_id = data.extruder_id;
+                path.object_color = data.object_color;
                 path.cp_color_id = data.cp_color_id;
                 path.fan_speed = data.fan_speed;
             }

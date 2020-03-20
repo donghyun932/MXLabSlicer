@@ -66,20 +66,20 @@ void PreferencesDialog::build()
 	m_optgroup->append_single_option_line(option);
 
 	// Please keep in sync with ConfigWizard
-	def.label = L("Check for application updates");
-	def.type = coBool;
-	def.tooltip = L("If enabled, PrusaSlicer will check for the new versions of itself online. When a new version becomes available a notification is displayed at the next application startup (never during program usage). This is only a notification mechanisms, no automatic installation is done.");
-	def.set_default_value(new ConfigOptionBool(app_config->get("version_check") == "1"));
-	option = Option (def, "version_check");
-	m_optgroup->append_single_option_line(option);
+	// def.label = L("Check for application updates");
+	// def.type = coBool;
+	// def.tooltip = L("If enabled, MXLabSlicer will check for the new versions of itself online. When a new version becomes available a notification is displayed at the next application startup (never during program usage). This is only a notification mechanisms, no automatic installation is done.");
+	// def.set_default_value(new ConfigOptionBool(app_config->get("version_check") == "1"));
+	// option = Option (def, "version_check");
+	// m_optgroup->append_single_option_line(option);
 
 	// Please keep in sync with ConfigWizard
-	def.label = L("Update built-in Presets automatically");
-	def.type = coBool;
-	def.tooltip = L("If enabled, Slic3r downloads updates of built-in system presets in the background. These updates are downloaded into a separate temporary location. When a new preset version becomes available it is offered at application startup.");
-	def.set_default_value(new ConfigOptionBool(app_config->get("preset_update") == "1"));
-	option = Option (def, "preset_update");
-	m_optgroup->append_single_option_line(option);
+	// def.label = L("Update built-in Presets automatically");
+	// def.type = coBool;
+	// def.tooltip = L("If enabled, Slic3r downloads updates of built-in system presets in the background. These updates are downloaded into a separate temporary location. When a new preset version becomes available it is offered at application startup.");
+	// def.set_default_value(new ConfigOptionBool(app_config->get("preset_update") == "1"));
+	// option = Option (def, "preset_update");
+	// m_optgroup->append_single_option_line(option);
 
 	def.label = L("Suppress \" - default - \" presets");
 	def.type = coBool;
@@ -89,13 +89,13 @@ void PreferencesDialog::build()
 	option = Option (def,"no_defaults");
 	m_optgroup->append_single_option_line(option);
 
-	def.label = L("Show incompatible print and filament presets");
-	def.type = coBool;
-	def.tooltip = L("When checked, the print and filament presets are shown in the preset editor "
-					  "even if they are marked as incompatible with the active printer");
-	def.set_default_value(new ConfigOptionBool{ app_config->get("show_incompatible_presets") == "1" });
-	option = Option (def,"show_incompatible_presets");
-	m_optgroup->append_single_option_line(option);
+	// def.label = L("Show incompatible print and filament presets");
+	// def.type = coBool;
+	// def.tooltip = L("When checked, the print and filament presets are shown in the preset editor "
+	// 				  "even if they are marked as incompatible with the active printer");
+	// def.set_default_value(new ConfigOptionBool{ app_config->get("show_incompatible_presets") == "1" });
+	// option = Option (def,"show_incompatible_presets");
+	// m_optgroup->append_single_option_line(option);
 
 #if __APPLE__
 	def.label = L("Use Retina resolution for the 3D scene");

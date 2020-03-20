@@ -43,7 +43,7 @@ static std::vector<std::string> s_project_options {
     "wiping_volumes_matrix"
 };
 
-const char *PresetBundle::PRUSA_BUNDLE = "PrusaResearch";
+const char *PresetBundle::MXLAB_BUNDLE = "MXLabResearch";
 
 PresetBundle::PresetBundle() :
     prints(Preset::TYPE_PRINT, Preset::print_options(), static_cast<const HostConfig&>(FullPrintConfig::defaults())), 
@@ -166,36 +166,58 @@ void PresetBundle::reset(bool delete_files)
     this->obsolete_presets.printers.clear();
 }
 
+static void recursive_copy(boost::filesystem::path src, boost::filesystem::path dst)
+{
+    src.make_preferred();
+    dst.make_preferred();
+    if (boost::filesystem::exists(dst)){
+        return ;
+    }
+
+    if (boost::filesystem::is_directory(src)) {
+        boost::filesystem::create_directories(dst);
+        for (boost::filesystem::directory_entry& item : boost::filesystem::directory_iterator(src)) {
+            recursive_copy(item.path(), dst/item.path().filename());
+        }
+    }
+    else if (boost::filesystem::is_regular_file(src)) {
+        boost::filesystem::copy(src, dst);
+    }
+    else {
+        boost::filesystem::create_directories(dst);
+        // throw std::runtime_error(dst.generic_string() + " not dir or file");
+    }
+}
+
 void PresetBundle::setup_directories()
 {
     boost::filesystem::path data_dir = boost::filesystem::path(Slic3r::data_dir());
-    std::initializer_list<boost::filesystem::path> paths = { 
-        data_dir,
-		data_dir / "vendor",
-        data_dir / "cache",
+    boost::filesystem::path resource_dir = boost::filesystem::path(Slic3r::resources_dir());
+    std::initializer_list<std::pair<boost::filesystem::path, boost::filesystem::path> > paths = {
+        {data_dir           ,  resource_dir / "profiles" / SLIC3R_APP_NAME},
+        {data_dir / "vendor",  resource_dir / "profiles" / SLIC3R_APP_NAME / "vendor"},
+        {data_dir / "cache" ,  resource_dir / "profiles" / SLIC3R_APP_NAME / "cache"},
 #ifdef SLIC3R_PROFILE_USE_PRESETS_SUBDIR
         // Store the print/filament/printer presets into a "presets" directory.
-        data_dir / "presets", 
-        data_dir / "presets" / "print", 
-        data_dir / "presets" / "filament", 
-        data_dir / "presets" / "sla_print",  
-        data_dir / "presets" / "sla_material", 
-        data_dir / "presets" / "printer" 
+        {data_dir / "presets"                 ,  resource_dir / "profiles" / SLIC3R_APP_NAME / "presets"},
+        {data_dir / "presets" / "print"       ,  resource_dir / "profiles" / SLIC3R_APP_NAME / "presets" / "print"},
+        {data_dir / "presets" / "filament"    ,  resource_dir / "profiles" / SLIC3R_APP_NAME / "presets" / "filament"},
+        {data_dir / "presets" / "sla_print"   ,  resource_dir / "profiles" / SLIC3R_APP_NAME / "presets" / "sla_print"},
+        {data_dir / "presets" / "sla_material",  resource_dir / "profiles" / SLIC3R_APP_NAME / "presets" / "sla_material"},
+        {data_dir / "presets" / "printer"     ,  resource_dir / "profiles" / SLIC3R_APP_NAME / "presets" / "printer"},
 #else
         // Store the print/filament/printer presets at the same location as the upstream Slic3r.
-        data_dir / "print", 
-        data_dir / "filament", 
-        data_dir / "sla_print", 
-        data_dir / "sla_material", 
-        data_dir / "printer" 
+        {data_dir / "print"       ,  resource_dir / "profiles" / SLIC3R_APP_NAME / "print"},
+        {data_dir / "filament"    ,  resource_dir / "profiles" / SLIC3R_APP_NAME / "filament"},
+        {data_dir / "sla_print"   ,  resource_dir / "profiles" / SLIC3R_APP_NAME / "sla_print"},
+        {data_dir / "sla_material",  resource_dir / "profiles" / SLIC3R_APP_NAME / "sla_material"},
+        {data_dir / "printer"     ,  resource_dir / "profiles" / SLIC3R_APP_NAME / "printer" },
 #endif
     };
-    for (const boost::filesystem::path &path : paths) {
-		boost::filesystem::path subdir = path;
-        subdir.make_preferred();
-        if (! boost::filesystem::is_directory(subdir) && 
-            ! boost::filesystem::create_directory(subdir))
-            throw std::runtime_error(std::string("Slic3r was unable to create its data directory at ") + subdir.string());
+    for (const std::pair<boost::filesystem::path, boost::filesystem::path> &path_pair : paths) {
+    		boost::filesystem::path dstdir = path_pair.first;
+        boost::filesystem::path srcdir = path_pair.second;
+        recursive_copy(srcdir, dstdir);
     }
 }
 
@@ -347,7 +369,7 @@ const std::string& PresetBundle::get_preset_name_by_alias( const Preset::Type& p
 void PresetBundle::load_installed_filaments(AppConfig &config)
 {
     if (! config.has_section(AppConfig::SECTION_FILAMENTS)) {
-		// Compatibility with the PrusaSlicer 2.1.1 and older, where the filament profiles were not installable yet.
+		// Compatibility with the MXLabSlicer 2.1.1 and older, where the filament profiles were not installable yet.
 		// Find all filament profiles, which are compatible with installed printers, and act as if these filament profiles
 		// were installed.
         std::unordered_set<const Preset*> compatible_filaments;
@@ -371,7 +393,7 @@ void PresetBundle::load_installed_sla_materials(AppConfig &config)
 {
     if (! config.has_section(AppConfig::SECTION_MATERIALS)) {
         std::unordered_set<const Preset*> comp_sla_materials;
-		// Compatibility with the PrusaSlicer 2.1.1 and older, where the SLA material profiles were not installable yet.
+		// Compatibility with the MXLabSlicer 2.1.1 and older, where the SLA material profiles were not installable yet.
 		// Find all SLA material profiles, which are compatible with installed printers, and act as if these SLA material profiles
 		// were installed.
         for (const Preset &printer : printers)
@@ -1543,11 +1565,11 @@ void PresetBundle::load_default_preset_bitmaps(wxWindow *window)
     this->sla_materials.clear_bitmap_cache();
     this->printers.clear_bitmap_cache();
 
-    this->prints.load_bitmap_default(window, "cog");
-    this->sla_prints.load_bitmap_default(window, "cog");
-    this->filaments.load_bitmap_default(window, "spool.png");
-    this->sla_materials.load_bitmap_default(window, "resin");
-    this->printers.load_bitmap_default(window, "printer");
+    this->prints.load_bitmap_default(window, "layers");
+    this->sla_prints.load_bitmap_default(window, "layers");
+    this->filaments.load_bitmap_default(window, "infill");
+    this->sla_materials.load_bitmap_default(window, "infill");
+    this->printers.load_bitmap_default(window, "funnel");
     this->printers.load_bitmap_add(window, "add.png");
     this->load_compatible_bitmaps(window);
 }
@@ -1574,7 +1596,7 @@ void PresetBundle::update_platter_filament_ui(unsigned int idx_extruder, GUI::Pr
     // and draw a red flag in front of the selected preset.
     bool          wide_icons      = selected_preset != nullptr && ! selected_preset->is_compatible && m_bitmapIncompatible != nullptr;
     assert(selected_preset != nullptr);
-	std::map<wxString, wxBitmap*> nonsys_presets;
+	std::map<wxString, wxBitmap> nonsys_presets;
 	wxString selected_str = "";
 	if (!this->filaments().front().is_visible)
         ui->set_label_marker(ui->Append(PresetCollection::separator(L("System presets")), wxNullBitmap));
@@ -1643,7 +1665,7 @@ void PresetBundle::update_platter_filament_ui(unsigned int idx_extruder, GUI::Pr
         const std::string name = preset.alias.empty() ? preset.name : preset.alias;
         if (preset.is_default || preset.is_system) {
 			ui->Append(wxString::FromUTF8((/*preset.*/name + (preset.is_dirty ? Preset::suffix_modified() : "")).c_str()), 
-				(bitmap == 0) ? wxNullBitmap : *bitmap);
+				(bitmap == 0) ? wxNullBitmap : create_scaled_bitmap(nullptr, "infill"));
 			if (selected ||
                 // just in case: mark selected_preset_item as a first added element
                 selected_preset_item == INT_MAX ) {
@@ -1654,7 +1676,7 @@ void PresetBundle::update_platter_filament_ui(unsigned int idx_extruder, GUI::Pr
 		else
 		{
 			nonsys_presets.emplace(wxString::FromUTF8((/*preset.*/name + (preset.is_dirty ? Preset::suffix_modified() : "")).c_str()), 
-				(bitmap == 0) ? &wxNullBitmap : bitmap);
+				(bitmap == 0) ? wxNullBitmap : create_scaled_bitmap(nullptr, "infill"));
 			if (selected) {
 				selected_str = wxString::FromUTF8((/*preset.*/name + (preset.is_dirty ? Preset::suffix_modified() : "")).c_str());
                 tooltip = wxString::FromUTF8(preset.name.c_str());
@@ -1667,8 +1689,8 @@ void PresetBundle::update_platter_filament_ui(unsigned int idx_extruder, GUI::Pr
 	if (!nonsys_presets.empty())
 	{
         ui->set_label_marker(ui->Append(PresetCollection::separator(L("User presets")), wxNullBitmap));
-		for (std::map<wxString, wxBitmap*>::iterator it = nonsys_presets.begin(); it != nonsys_presets.end(); ++it) {
-			ui->Append(it->first, *it->second);
+		for (std::map<wxString, wxBitmap>::iterator it = nonsys_presets.begin(); it != nonsys_presets.end(); ++it) {
+			ui->Append(it->first, it->second);
 			if (it->first == selected_str ||
                 // just in case: mark selected_preset_item as a first added element
                 selected_preset_item == INT_MAX) {
@@ -1677,7 +1699,7 @@ void PresetBundle::update_platter_filament_ui(unsigned int idx_extruder, GUI::Pr
 		}
 	}
 
-    ui->set_label_marker(ui->Append(PresetCollection::separator(L("Add/Remove filaments")), wxNullBitmap), GUI::PresetComboBox::LABEL_ITEM_WIZARD_FILAMENTS);
+    // ui->set_label_marker(ui->Append(PresetCollection::separator(L("Add/Remove filaments")), wxNullBitmap), GUI::PresetComboBox::LABEL_ITEM_WIZARD_FILAMENTS);
 
     /* But, if selected_preset_item is still equal to INT_MAX, it means that
      * there is no presets added to the list.

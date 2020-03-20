@@ -391,7 +391,7 @@ private:
                                            std::vector<float>& colors,
                                            std::vector<std::string>& cp_legend_items);
 
-        bool generate(const GCodePreviewData& preview_data, const std::vector<float>& tool_colors, const GLCanvas3D& canvas, bool compress);
+        bool generate(const GCodePreviewData& preview_data, const std::vector<float>& tool_colors, const GLCanvas3D& canvas, bool compress, const std::vector<std::string>& object_names);
 
         void render(const GLCanvas3D& canvas) const;
     };
@@ -504,6 +504,12 @@ public:
     void toggle_model_objects_visibility(bool visible, const ModelObject* mo = nullptr, int instance_idx = -1);
     void update_instance_printable_state_for_object(size_t obj_idx);
     void update_instance_printable_state_for_objects(std::vector<size_t>& object_idxs);
+    void update_instance_checked_state_for_object(size_t obj_idx);
+    void update_instance_checked_state_for_objects(std::vector<size_t>& object_idxs);
+    void update_instance_object_color_for_object(size_t obj_idx);
+    void update_instance_object_color_for_objects(std::vector<size_t>& object_idxs);
+    void update_instance_base_dmt_for_object(size_t obj_idx);
+    void update_instance_base_dmt_for_objects(std::vector<size_t>& object_idxs);
 
     void set_config(const DynamicPrintConfig* config);
     void set_process(BackgroundSlicingProcess* process);
@@ -589,7 +595,7 @@ public:
 
     void reload_scene(bool refresh_immediately, bool force_full_scene_refresh = false);
 
-    void load_gcode_preview(const GCodePreviewData& preview_data, const std::vector<std::string>& str_tool_colors);
+    void load_gcode_preview(const GCodePreviewData& preview_data, const std::vector<std::string>& str_object_colors, const std::vector<std::string>& str_object_names);
     void load_sla_preview();
     void load_preview(const std::vector<std::string>& str_tool_colors, const std::vector<Model::CustomGCode>& color_print_values);
     void bind_event_handlers();
@@ -775,7 +781,7 @@ private:
     void _show_warning_texture_if_needed(WarningTexture::Warning warning);
 
     // generates the legend texture in dependence of the current shown view type
-    void _generate_legend_texture(const GCodePreviewData& preview_data, const std::vector<float>& tool_colors);
+    void _generate_legend_texture(const GCodePreviewData& preview_data, const std::vector<float>& tool_colors, const std::vector<std::string>& object_names);
 
     // generates a warning texture containing the given message
     void _set_warning_texture(WarningTexture::Warning warning, bool state);

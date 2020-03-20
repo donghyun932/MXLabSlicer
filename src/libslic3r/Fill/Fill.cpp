@@ -27,6 +27,8 @@ struct SurfaceFillParams
     coordf_t    	overlap = 0.;
     // Angle as provided by the region config, in radians.
     float       	angle = 0.f;
+    // Angle change value
+    float         angle_increment = 0.f;
     // Non-negative for a bridge.
     float 			bridge_angle = 0.f;
 
@@ -117,7 +119,17 @@ std::vector<SurfaceFill> group_fills(const Layer &layer)
 		        FlowRole extrusion_role = (surface.surface_type == stTop) ? frTopSolidInfill : (surface.is_solid() ? frSolidInfill : frInfill);
 		        bool     is_bridge 	    = layer.id() > 0 && surface.is_bridge();
 		        params.extruder 	 = layerm.region()->extruder(extrusion_role);
-		        params.pattern 		 = layerm.region()->config().fill_pattern.value;
+            
+            auto fill_method   = layerm.region()->config().method.value;
+            if (fill_method == MethodEnum(0)){
+                params.dont_connect = true;
+                params.pattern     = InfillPattern(0);
+            } else if (fill_method == MethodEnum(1)) {
+                params.pattern     = InfillPattern(0);
+            } else if (fill_method == MethodEnum(2)) {
+                params.pattern     = InfillPattern(6);
+            }
+		        
 		        params.density       = float(layerm.region()->config().fill_density);
 
 		        if (surface.is_solid()) {
@@ -135,7 +147,8 @@ std::vector<SurfaceFill> group_fills(const Layer &layer)
 		                    ((surface.surface_type == stTop) ? erTopSolidInfill : erSolidInfill) :
 		                    erInternalInfill);
 		        params.bridge_angle = float(surface.bridge_angle);
-		        params.angle 		= float(Geometry::deg2rad(layerm.region()->config().fill_angle.value));
+		        params.angle 		= float(Geometry::deg2rad(layerm.region()->config().start_angle.value));
+            params.angle_increment = float(Geometry::deg2rad(layerm.region()->config().rotation_increment.value));
 		        
 		        // calculate the actual flow we'll be using for this infill
 		        params.flow = layerm.region()->flow(
@@ -146,6 +159,7 @@ std::vector<SurfaceFill> group_fills(const Layer &layer)
 		            -1,                                 							// auto width
 		            *layer.object()
 		        );
+            params.flow.revise_spacing = layerm.region()->config().revise_spacing.value;
 		        
 		        // Calculate flow spacing for infill pattern generation.
 		        if (! surface.is_solid() && ! is_bridge) {
@@ -344,6 +358,7 @@ void Layer::make_fills()
         f->layer_id = this->id();
         f->z 		= this->print_z;
         f->angle 	= surface_fill.params.angle;
+        f->angle_increment = surface_fill.params.angle_increment;
 
         // calculate flow spacing for infill pattern generation
         bool using_internal_flow = ! surface_fill.surface.is_solid() && ! surface_fill.params.flow.bridge;
@@ -366,6 +381,7 @@ void Layer::make_fills()
         // apply half spacing using this flow's own spacing and generate infill
         FillParams params;
         params.density 		= float(0.01 * surface_fill.params.density);
+        params.dont_connect = surface_fill.params.dont_connect;
         params.dont_adjust 	= surface_fill.params.dont_adjust; // false
 
         for (ExPolygon &expoly : surface_fill.expolygons) {
@@ -383,7 +399,7 @@ void Layer::make_fills()
 		            // so we can safely ignore the slight variation that might have
 		            // been applied to f->spacing
 		        } else {
-		            Flow new_flow = Flow::new_from_spacing(float(f->spacing), surface_fill.params.flow.nozzle_diameter, surface_fill.params.flow.height, surface_fill.params.flow.bridge);
+		            Flow new_flow = Flow::new_from_spacing(float(f->spacing), surface_fill.params.flow.nozzle_diameter, surface_fill.params.flow.height, surface_fill.params.flow.bridge, surface_fill.params.flow.revise_spacing);
 		        	flow_mm3_per_mm = new_flow.mm3_per_mm();
 		        	flow_width      = new_flow.width;
 		        }

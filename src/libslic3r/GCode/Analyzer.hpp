@@ -58,10 +58,11 @@ public:
         float height;    // mm
         float feedrate;  // mm/s
         float fan_speed; // percentage
+        std::string object_color;
         unsigned int cp_color_id;
 
         Metadata();
-        Metadata(ExtrusionRole extrusion_role, unsigned int extruder_id, double mm3_per_mm, float width, float height, float feedrate, float fan_speed, unsigned int cp_color_id = 0);
+        Metadata(ExtrusionRole extrusion_role, unsigned int extruder_id, double mm3_per_mm, float width, float height, float feedrate, float fan_speed, std::string object_color, unsigned int cp_color_id = 0);
 
         bool operator != (const Metadata& other) const;
     };
@@ -85,7 +86,7 @@ public:
         Vec3d end_position;
         float delta_extruder;
 
-        GCodeMove(EType type, ExtrusionRole extrusion_role, unsigned int extruder_id, double mm3_per_mm, float width, float height, float feedrate, const Vec3d& start_position, const Vec3d& end_position, float delta_extruder, float fan_speed, unsigned int cp_color_id = 0);
+        GCodeMove(EType type, ExtrusionRole extrusion_role, unsigned int extruder_id, double mm3_per_mm, float width, float height, float feedrate, const Vec3d& start_position, const Vec3d& end_position, float delta_extruder, float fan_speed, std::string object_color, unsigned int cp_color_id = 0);
         GCodeMove(EType type, const Metadata& data, const Vec3d& start_position, const Vec3d& end_position, float delta_extruder);
     };
 
@@ -199,6 +200,8 @@ private:
     // Repetier: Go to stored position
     void _processM402(const GCodeReader::GCodeLine& line);
 
+    void _processC(std::string object_color);
+
     // Processes T line (Select Tool)
     void _processT(const std::string& command);
     void _processT(const GCodeReader::GCodeLine& line);
@@ -242,6 +245,9 @@ private:
 
     void _set_extruder_id(unsigned int id);
     unsigned int _get_extruder_id() const;
+
+    void _set_object_color(std::string color);
+    std::string _get_object_color() const;
 
     void _set_cp_color_id(unsigned int id);
     unsigned int _get_cp_color_id() const;

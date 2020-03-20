@@ -70,6 +70,7 @@ public:
     void clip_start(double distance);
     void extend_end(double distance);
     void extend_start(double distance);
+    std::pair<Points, int> equally_spaced_points_custom(double distance, double start_point_length) const;
     Points equally_spaced_points(double distance) const;
     void simplify(double tolerance);
     template <class T> void simplify_by_visibility(const T &area);

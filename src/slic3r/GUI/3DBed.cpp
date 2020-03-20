@@ -16,7 +16,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/operations.hpp>
 
-static const float GROUND_Z = -0.02f;
+static const float GROUND_Z = 0.0f;
 
 namespace Slic3r {
 namespace GUI {
@@ -245,7 +245,7 @@ bool Bed3D::set_shape(const Pointfs& shape, const std::string& custom_texture, c
     m_model.reset();
 
     // Set the origin and size for painting of the coordinate system axes.
-    m_axes.origin = Vec3d(0.0, 0.0, (double)GROUND_Z);
+    m_axes.origin = Vec3d(87.5, 87.5, (double)GROUND_Z);
     m_axes.length = 0.1 * m_bounding_box.max_size() * Vec3d::Ones();
 
     // Let the calee to update the UI.
@@ -271,16 +271,9 @@ void Bed3D::render(GLCanvas3D& canvas, float theta, float scale_factor, bool sho
 
     glsafe(::glEnable(GL_DEPTH_TEST));
 
-    switch (m_type)
-    {
-    case MK2: { render_prusa(canvas, "mk2", theta > 90.0f); break; }
-    case MK3: { render_prusa(canvas, "mk3", theta > 90.0f); break; }
-    case SL1: { render_prusa(canvas, "sl1", theta > 90.0f); break; }
-    case MINI: { render_prusa(canvas, "mini", theta > 90.0f); break; }
-    case ENDER3: { render_prusa(canvas, "ender3", theta > 90.0f); break; }
-    default:
-    case Custom: { render_custom(canvas, theta > 90.0f); break; }
-    }
+    if (theta <= 90.f)
+        render_model(resources_dir() + "/models/" + "mxlab_bed.stl");
+    render_texture(resources_dir() + "/icons/bed/" + "mxlab.png", theta > 90.0f, canvas);
 
     glsafe(::glDisable(GL_DEPTH_TEST));
 }
@@ -314,36 +307,19 @@ void Bed3D::calc_triangles(const ExPolygon& poly)
 
 void Bed3D::calc_gridlines(const ExPolygon& poly, const BoundingBox& bed_bbox)
 {
-    Polylines axes_lines;
-    for (coord_t x = bed_bbox.min(0); x <= bed_bbox.max(0); x += scale_(10.0))
-    {
-        Polyline line;
-        line.append(Point(x, bed_bbox.min(1)));
-        line.append(Point(x, bed_bbox.max(1)));
-        axes_lines.push_back(line);
-    }
-    for (coord_t y = bed_bbox.min(1); y <= bed_bbox.max(1); y += scale_(10.0))
-    {
-        Polyline line;
-        line.append(Point(bed_bbox.min(0), y));
-        line.append(Point(bed_bbox.max(0), y));
-        axes_lines.push_back(line);
-    }
-
-    // clip with a slightly grown expolygon because our lines lay on the contours and may get erroneously clipped
-    Lines gridlines = to_lines(intersection_pl(axes_lines, offset(poly, (float)SCALED_EPSILON)));
+    Lines grid_lines;
 
     // append bed contours
     Lines contour_lines = to_lines(poly);
-    std::copy(contour_lines.begin(), contour_lines.end(), std::back_inserter(gridlines));
+    std::copy(contour_lines.begin(), contour_lines.end(), std::back_inserter(grid_lines));
 
-    if (!m_gridlines.set_from_lines(gridlines, GROUND_Z))
+    if (!m_gridlines.set_from_lines(grid_lines, GROUND_Z))
         printf("Unable to create bed grid lines\n");
 }
 
 Bed3D::EType Bed3D::detect_type(const Pointfs& shape) const
 {
-    EType type = Custom;
+    EType type = MINI;
 
     auto bundle = wxGetApp().preset_bundle;
     if (bundle != nullptr)
@@ -351,43 +327,43 @@ Bed3D::EType Bed3D::detect_type(const Pointfs& shape) const
         const Preset* curr = &bundle->printers.get_selected_preset();
         while (curr != nullptr)
         {
-            if (curr->config.has("bed_shape"))
-            {
-                if (curr->vendor != nullptr)
-                {
-                    if ((curr->vendor->name == "Prusa Research") && (shape == dynamic_cast<const ConfigOptionPoints*>(curr->config.option("bed_shape"))->values))
-                    {
-                        if (boost::contains(curr->name, "SL1"))
-                        {
-                            type = SL1;
-                            break;
-                        }
-                        else if (boost::contains(curr->name, "MK3") || boost::contains(curr->name, "MK2.5"))
-                        {
-                            type = MK3;
-                            break;
-                        }
-                        else if (boost::contains(curr->name, "MK2"))
-                        {
-                            type = MK2;
-                            break;
-                        }
-                        else if (boost::contains(curr->name, "MINI"))
-                        {
-                            type = MINI;
-                            break;
-                        }
-                    }
-                    else if ((curr->vendor->name == "Creality") && (shape == dynamic_cast<const ConfigOptionPoints*>(curr->config.option("bed_shape"))->values))
-                    {
-                        if (boost::contains(curr->name, "ENDER-3"))
-                        {
-                            type = ENDER3;
-                            break;
-                        }
-                    }
-                }
-            }
+            // if (curr->config.has("bed_shape"))
+            // {
+            //     if (curr->vendor != nullptr)
+            //     {
+            //         if ((curr->vendor->name == "MXLab Research") && (shape == dynamic_cast<const ConfigOptionPoints*>(curr->config.option("bed_shape"))->values))
+            //         {
+            //             if (boost::contains(curr->name, "SL1"))
+            //             {
+            //                 type = SL1;
+            //                 break;
+            //             }
+            //             else if (boost::contains(curr->name, "MK3") || boost::contains(curr->name, "MK2.5"))
+            //             {
+            //                 type = MK3;
+            //                 break;
+            //             }
+            //             else if (boost::contains(curr->name, "MK2"))
+            //             {
+            //                 type = MK2;
+            //                 break;
+            //             }
+            //             else if (boost::contains(curr->name, "MINI"))
+            //             {
+            //                 type = MINI;
+            //                 break;
+            //             }
+            //         }
+            //         else if ((curr->vendor->name == "Creality") && (shape == dynamic_cast<const ConfigOptionPoints*>(curr->config.option("bed_shape"))->values))
+            //         {
+            //             if (boost::contains(curr->name, "ENDER-3"))
+            //             {
+            //                 type = ENDER3;
+            //                 break;
+            //             }
+            //         }
+            //     }
+            // }
 
             curr = bundle->printers.get_preset_parent(*curr);
         }
@@ -400,14 +376,6 @@ void Bed3D::render_axes() const
 {
     if (!m_shape.empty())
         m_axes.render();
-}
-
-void Bed3D::render_prusa(GLCanvas3D& canvas, const std::string& key, bool bottom) const
-{
-    if (!bottom)
-        render_model(m_custom_model.empty() ? resources_dir() + "/models/" + key + "_bed.stl" : m_custom_model);
-
-    render_texture(m_custom_texture.empty() ? resources_dir() + "/icons/bed/" + key + ".svg" : m_custom_texture, bottom, canvas);
 }
 
 void Bed3D::render_texture(const std::string& filename, bool bottom, GLCanvas3D& canvas) const
@@ -567,7 +535,7 @@ void Bed3D::render_model(const std::string& filename) const
     {
         // move the model so that its origin (0.0, 0.0, 0.0) goes into the bed shape center and a bit down to avoid z-fighting with the texture quad
         Vec3d shift = m_bounding_box.center();
-        shift(2) = -0.03;
+        shift(2) = -15.01;
         m_model.set_offset(shift);
 
         // update extended bounding box

@@ -311,7 +311,7 @@ protected:
 
 	void			on_presets_changed();
 	void			update_preset_description_line();
-	void			update_frequently_changed_parameters();
+	// void			update_frequently_changed_parameters();
 	void			fill_icon_descriptions();
 	void			set_tooltips_text();
 
@@ -349,7 +349,7 @@ class TabFilament : public Tab
 public:
 	TabFilament(wxNotebook* parent) : 
 // 		Tab(parent, _(L("Filament Settings")), L("filament")) {}
-		Tab(parent, _(L("Filament Settings")), Slic3r::Preset::TYPE_FILAMENT) {}
+		Tab(parent, _(L("Toolpath Settings")), Slic3r::Preset::TYPE_FILAMENT) {}
 	~TabFilament() {}
 
 	void		build() override;
@@ -385,7 +385,7 @@ public:
 
 // 	TabPrinter(wxNotebook* parent) : Tab(parent, _(L("Printer Settings")), L("printer")) {}
     TabPrinter(wxNotebook* parent) : 
-        Tab(parent, _(L("Printer Settings")), Slic3r::Preset::TYPE_PRINTER) {}
+        Tab(parent, _(L("Feeder Settings")), Slic3r::Preset::TYPE_PRINTER) {}
 	~TabPrinter() {}
 
 	void		build() override;

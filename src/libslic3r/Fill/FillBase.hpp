@@ -57,6 +57,8 @@ public:
     coordf_t    overlap;
     // in radians, ccw, 0 = East
     float       angle;
+    // angle change each layer
+    float       angle_increment;
     // In scaled coordinates. Maximum lenght of a perimeter segment connecting two infill lines.
     // Used by the FillRectilinear2, FillGrid2, FillTriangles, FillStars and FillCubic.
     // If left to zero, the links will not be limited.
@@ -107,7 +109,7 @@ protected:
         ExPolygon                       & /* expolygon */, 
         Polylines                       & /* polylines_out */) {};
 
-    virtual float _layer_angle(size_t idx) const { return (idx & 1) ? float(M_PI/2.) : 0; }
+    virtual float _layer_angle(size_t idx) const { return idx* angle_increment; }
 
     virtual std::pair<float, Point> _infill_direction(const Surface *surface) const;
 

@@ -307,7 +307,7 @@ int do_op(PROGRAMMER * pgm, struct avrpart * p, UPDATE * upd, enum updateflags f
             progname, mem->desc, size);
 	  }
 
-	//Prusa3D bootloader progress on lcd
+	//MXLab3D bootloader progress on lcd
 	if (strcmp(pgm->type, "Wiring") == 0)
 	{
 		if (pgm->set_upload_size != 0)

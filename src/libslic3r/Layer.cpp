@@ -139,6 +139,16 @@ void Layer::make_perimeters()
             }
         }
         
+        for (LayerRegion *layerm : layerms) {
+            for (Surface &surface : layerm->slices.surfaces) {
+                Polygons new_hols;
+                for (Polygon &hole : surface.expolygon.holes)
+                    polygons_append(new_hols, offset_ex(offset_ex(hole, scale_(config.corner_rounding_r), ClipperLib::jtRound), scale_(-config.corner_rounding_r), ClipperLib::jtRound));
+                surface.expolygon.holes = new_hols;
+                surface.expolygon = offset_ex(offset_ex(surface.expolygon, scale_(config.corner_rounding_r), ClipperLib::jtRound), scale_(-config.corner_rounding_r), ClipperLib::jtRound)[0];
+            }
+        }
+
         if (layerms.size() == 1) {  // optimization
             (*layerm)->fill_surfaces.surfaces.clear();
             (*layerm)->make_perimeters((*layerm)->slices, &(*layerm)->fill_surfaces);

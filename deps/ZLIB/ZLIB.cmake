@@ -1,4 +1,4 @@
-prusaslicer_add_cmake_project(ZLIB
+mxlabslicer_add_cmake_project(ZLIB
   GIT_REPOSITORY https://github.com/madler/zlib.git
   GIT_TAG v1.2.11
   PATCH_COMMAND       ${GIT_EXECUTABLE} checkout -f -- . && git clean -df && 
