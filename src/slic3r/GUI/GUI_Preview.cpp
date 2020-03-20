@@ -531,6 +531,18 @@ void Preview::on_choice_view_type(wxCommandEvent& evt)
 void Preview::on_combochecklist_features(wxCommandEvent& evt)
 {
     int flags = Slic3r::GUI::combochecklist_get_flags(m_combochecklist_features);
+
+    switch (flags) {
+        case 0   : flags = 0; break;
+        case 1   : flags = 2; break;
+        case 2   : flags = 8; break;
+        case 3   : flags = 8 + 2; break;
+        case 4   : flags = 256; break;
+        case 5   : flags = 256 + 2; break;
+        case 6   : flags = 256 + 8; break;
+        case 7   : flags = 256 + 8 + 2; break;
+        default  : assert(false);
+    }
     m_gcode_preview_data->extrusion.role_flags = (unsigned int)flags;
     refresh_print();
 }
