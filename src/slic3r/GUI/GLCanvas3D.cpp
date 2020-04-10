@@ -3496,7 +3496,7 @@ void GLCanvas3D::do_move(const std::string& snapshot_type)
     for (const std::pair<int, int>& i : done)
     {
         ModelObject* m = m_model->objects[i.first];
-        Vec3d shift(0.0, 0.0, -m->get_instance_min_z(i.second));
+        Vec3d shift(0.0, 0.0, 0.0);
         m_selection.translate(i.first, i.second, shift);
         m->translate_instance(i.second, shift);
     }
@@ -3559,7 +3559,7 @@ void GLCanvas3D::do_rotate(const std::string& snapshot_type)
     for (const std::pair<int, int>& i : done)
     {
         ModelObject* m = m_model->objects[i.first];
-        Vec3d shift(0.0, 0.0, -m->get_instance_min_z(i.second));
+        Vec3d shift(0.0, 0.0, 0.0);
         m_selection.translate(i.first, i.second, shift);
         m->translate_instance(i.second, shift);
     }
@@ -3616,7 +3616,7 @@ void GLCanvas3D::do_scale(const std::string& snapshot_type)
     for (const std::pair<int, int>& i : done)
     {
         ModelObject* m = m_model->objects[i.first];
-        Vec3d shift(0.0, 0.0, -m->get_instance_min_z(i.second));
+        Vec3d shift(0.0, 0.0, 0.0);
         m_selection.translate(i.first, i.second, shift);
         m->translate_instance(i.second, shift);
     }
@@ -3676,7 +3676,7 @@ void GLCanvas3D::do_mirror(const std::string& snapshot_type)
     for (const std::pair<int, int>& i : done)
     {
         ModelObject* m = m_model->objects[i.first];
-        Vec3d shift(0.0, 0.0, -m->get_instance_min_z(i.second));
+        Vec3d shift(0.0, 0.0, 0.0);
         m_selection.translate(i.first, i.second, shift);
         m->translate_instance(i.second, shift);
     }

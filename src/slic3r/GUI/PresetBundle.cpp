@@ -1327,9 +1327,9 @@ size_t PresetBundle::load_configbundle(const std::string &path, unsigned int fla
             }
 
             // next step of an preset name aliasing
-            int end_pos = preset_name.find_first_of("@");
-            if (end_pos != std::string::npos)
-                alias_name = preset_name.substr(0, end_pos - 1);
+            // int end_pos = preset_name.find_first_of("@");
+            // if (end_pos != std::string::npos)
+            //     alias_name = preset_name.substr(0, end_pos - 1);
 
             loaded.alias = alias_name.empty() ? preset_name : alias_name;
 

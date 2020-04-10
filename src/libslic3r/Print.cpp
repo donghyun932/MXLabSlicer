@@ -1208,8 +1208,8 @@ std::string Print::validate() const
                 for (const Point &copy : print_object->copies()) {
                     Polygon convex_hull = convex_hull0;
                     convex_hull.translate(copy);
-                    if (! intersection(convex_hulls_other, convex_hull).empty())
-                        return L("Some objects are too close; your extruder will collide with them.");
+                    // if (! intersection(convex_hulls_other, convex_hull).empty())
+                    //     return L("Some objects are too close; your extruder will collide with them.");
                     polygons_append(convex_hulls_other, convex_hull);
                 }
             }

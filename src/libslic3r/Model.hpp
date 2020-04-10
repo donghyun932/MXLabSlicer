@@ -291,6 +291,8 @@ public:
     void bake_xy_rotation_into_meshes(size_t instance_idx);
 
     double get_min_z() const;
+    double get_max_z() const;
+    double get_instance_max_z(size_t instance_idx) const;
     double get_instance_min_z(size_t instance_idx) const;
 
     // Called by Print::validate() from the UI thread.
