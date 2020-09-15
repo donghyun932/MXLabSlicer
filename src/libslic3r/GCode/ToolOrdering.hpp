@@ -135,7 +135,7 @@ public:
             dist_min = d;
         }
         -- it_layer_tools;
-        assert(dist_min < EPSILON);
+        // assert(dist_min < EPSILON);
         return *it_layer_tools;
     }
 
